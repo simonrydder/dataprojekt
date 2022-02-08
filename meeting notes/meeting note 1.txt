@@ -1,0 +1,22 @@
+Meeting notes 1 - 09/02/22
+
+1. Specifikt mål eller selv lede efter spændende sammenhænge i data?
+
+
+2. Hvilket produkt ønskes der? Rapport eller model (el. lignende)?
+
+
+3. Forstå data. Hvad har vi adgang til? Billeder, oplysninger osv?
+
+
+4. Data privacy
+
+
+5. Bestemte metoder? (Fx. cluster analysis)
+
+
+6. Forstå medicinske begreber: 
+
+
+7. Opfølgninger? Hvor ofte? Format (zoom/mail/fysisk)?
+
