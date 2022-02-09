@@ -1,0 +1,91 @@
+Møde
+
+
+dynamisk projekt, begynende beskrivende explorativt, mere in depth senere. data måske kommer (mathis).
+
+fede data for hoved/hals. Mathis, projekt implementering af AI indtegningsværktøjer CT osv, deep learning
+hoved/hals gruppe , hyppigt og stigende. HPV relateret. Demografi yngre og raskere der får det. Før hos rygere
+alkoholikere, men nu HPV. Skiften i demografi gør treatment med hoved/hals mere vigtigt end før. 
+Tumorer, strålebehandling, nogle bliver opereret. stråler også efter operation. data kun dem inden. 
+God overlevelse efter stråle men bivirknignger - spytkirtler/synkebevær. Stor problem. Hvorfor?
+stråling udefra, stråle igennem rask væv. CT-planlægningsskan ikke på højde med en detaljeret/diagnostisk CT. 
+Skal optimere stråle og beregne stråledosis. 3D billeder, tyndt slice igennem patient og lægger sammen i stak
+bliver til 3D. 2 til 3mm i spring for slice. Semi 3d. Først identificere tumor og risikoorganer. Skal
+markeres i CT skan. Derefter kan vi regne. Find Target. Ct, mr og et andet. 
+begrænset opløsning dvs. hvis mulighed for forskellig indtegning for læger. Usikkerheder. Fysikere
+måler/udregner stråledosis. Reele risici for fejlstråling. Viden om risikoorganer. Typsik bestråler fra flere vinkler 
+med mindre styrke, men target bliver godt ramt. Optimering af disse strålingsdosis/procedure. Ramme
+dødelig dosis på target, men beskytte risikorganer. Kompleks strålingsprocedure. Lymfeknuder kan have sygdom
+også. 
+
+artikel 2021 - indtegninger fra læger riskioorganer. forskellige tegninger/variationer i blandt. misfortolkning
+af vjeledning i indtegning. Rygmarv må aldrig give for meget - skal virke hele vejen igennem, spytkirtel
+kan kompensere modsat. Deeep learning fordi vi vil øge konsistensen i indtegninger. Lave en autoindtegning
+baseret på den bedst mulige indtegning fra læger. Fuldstændig konsistent og forkert et problem, men hvis det
+baseres på en ekspert i det, må det være det bedste vi har. 
+
+Gy - enhed for stråledosis. To kolonner en med sikkerhedsmargin og en uden. Spænde patient godt fast
+så præcist og ens som muligt i de forskellige strålebehandlinger. Net ud over ansigt. Imflamattion kan opstå
+osv der besdværligggør. En forkert tegning giver en bias hele vejen igennem, hvorimod lidt forkert position for patient
+osv er en daglig one time ting. 
+
+Reducere indtegningsusikkehred og afhjælpe workload af læger for at indtegne. Lave en algortime der giver et 
+indledende bud, kan spare meget tid for læger. Endnu mere benifit i lavindkomstlande hvor læger måske
+slet ikke er til stede. Ifht hvor længe AI har været her, er vi ikke nået så langt. Hurdle med imlementering osv
+Skeptiske læger hehe. Algoritme autoindtegningsalgoritme, baseret på ATLAS. Repræsentativt udsnit af patienter
+atlas for organerne i udsnittet. Et slags gennemsnit. Matcher en ny patient med ATLAS og overfører strukturer. 
+Generelt siger læger at det ikke er godt. Ting der er lette at se hvor der er mindre variation fx hjerne
+kan det være meget godt. ATLAS i klinisk brug, men er ikke tilfredsstillende.
+AI metoder. Hvis mangel på kontrast svært at se/billedoplæsning kan Deep Learning virke dårligere. 
+Klinikken vil gerne bruge det integrede og så skal AI modellen arbejde sammen med det. 
+Der er ambition af at man ikke bruger alt for mange partnere til at levere AI-teknologier. 
+Vi vil komme med noget selv. Nationalt software et mål til alle klinikker. 
+
+Meget kommer an på hvor uniformt data er man putter ind/indtegnet ordenligt og ens. 
+nnUNet. Pakke. Hvordan får man den best fungerende model/hyperparameter. Decision tree.
+Meget effektivt. Out of the box tool. CT,MR, PET. Indtegn få, ind i model og få noget bedre tilbage.
+Dice koeffciienten overlap mellem volumer. Svært at fortolke - mål for hvor godt en autosegmantisering virker.
+Top og bund integninger. 0.8 over i Dice er det almost perfekt. Forskellige organer bliver indtegnet bedre
+af modellen end andre. Kinda Deep-Laerning og lidt manuelt. Hjælper til at brug det praktisk i klinkken. 
+
+Man har et shot for det bedste bud. Overbevise med en benchmark (mod klinik). Det vi gær er rimelig godt. 
+Bruger ATLAS i praksis. Kan få outcomes af de atlas indtegninger. Vi kan sammenligne deep learning med ATLAS. 
+kAN VI vise et overlap mellem de to modeller, har vi en proxi for at de skal bruge deep learning. Projektets
+mål - benchmarking. Der e rtyndge, stor datasæt, sammenligningen - hvilke relevante scores. Kigge
+på yderligere scores end Dice. 
+
+Housedorff (længste afstand mellem 2 punkter)/Dice/Mean surface distance/Surface Dice. 
+
+Surface dice - tolreance eg. 3mm a/b. 
+
+Edited path length e.g når lægen vil ændre på deep learning ifht. hvis det overlapper en knogle osv.
+
+Sammenligne metoderne med hinanden og mod ground truth. 
+
+Karakteristikker for organerne fx. lægger for mange slices på i toppen. Pege på for et enkelt organ, 
+hvorhenne er der så en stor edited path length. Heatmaps for hvor det godt og skidt fx hvor ATLAS 
+er dårligt osv. Til sidst i projektet. Finde steder hvor der er stor variation i indtegningerne, kan vi se
+i Heatmaps. Gøre deeplearning processen sammen med Mathis. 
+
+Vorter (hollænder) lavede noget med en autoindtegning, hvor meget ændrer lægernes ændringer i indtegninger. 
+ATLAS er deterministisk og kan sammenlignes med det lægerne har godkendt og har lægernes ændringer
+skiftet over tid. 
+
+Resultaterne kan bruges. 
+
+Produkt kan være en deskriptiv statistisk undersøgelse af de forskellige resultater. 
+
+ATLAS fejler også ved spytkirtler og de er vigtige. Hvad går der galt?
+
+Praktiske ting med DATA. Og organer. 
+
+Hver anden uge. Må godt bruge lokaler på AUH. 
+
+Torsdag kl 13 kinda. 
+
+Data ekstern harddisk, overfør, slet igen efter brug på egen PC. Følsom data. 
+Krypteret folder på PC bedre. Slettes når projektet er færdigt. 
+
+mathis@oncology.au.dk
+
+
