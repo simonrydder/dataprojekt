@@ -2,6 +2,8 @@
 
 ## Mappe struktur:
 
+|- articles: relevante artikler 
+|
 |- data: alle datafiler
 |-|- manipulated data: den data vi arbejder på
 |-|- raw data: den data vi modtager, som vi ikke må ændre på
