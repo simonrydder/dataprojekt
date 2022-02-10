@@ -5,7 +5,6 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{enumerate}
-\usepackage{mdwlist}
 \usepackage{longtable}
 \usepackage{array}
 \usepackage[dvipsnames]{xcolor}
@@ -61,9 +60,11 @@ Hausdorff distance measures how far two subsets of a metric space are from each 
 The Hausdorff Distance is commonly used in computer vision. In that field, a typical
 problem is that you are given an image and a model of what you want to match to.
 
-\section*{Mean Surface Distance (MSD)}
+\section*{Average Surface Distance (ASD)}
 
-The mean surface distance (MSD) is the average of all the distances from points on the boundary of machine segmented region to the boundary of the ground truth, and vice versa. \\\\This tell us how much, on average, the surface varies between the segmentation and the "ground truth" (often in mm). Can be calculated as:
+The average surface distance (ASD)  calculates the average of the minimum distances from every point in surface A to every
+point in surface B, and vice versa, and returns the average of the two average distances. 
+\\\\This tell us how much, on average, the surface varies between the segmentation and the "ground truth" (often in mm). Can be calculated as:
 $$
 \frac{1}{2}(h(A, B)+h(B, A))
 $$
