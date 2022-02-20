@@ -1,0 +1,14 @@
+simpleITK: eget tbillede format. til læsning af .nifty
+
+nibabel:
+
+pydicom: 
+
+dcmrtstruct2nii: til convertering af ATLAS filer.
+
+nnunet: 
+
+
+3dslicer: extension rtslicer
+
+itksnap

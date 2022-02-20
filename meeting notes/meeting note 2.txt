@@ -1,0 +1,24 @@
+Meeting notes 2 - 17/02/22
+
+1. Bekræft problemstilling
+
+
+2. Data + privacy (VeraCrypt)
+
+
+3. Møde tidspunkt kl. 13 fast. 
+
+
+
+Få forståelse for hvilke organer der er svære og se på billeder og hvilke der er lette at se.
+
+Læs op på ATLAS metoden. Review artikel omkring ATLAS til Deep Learning.
+
+Vælg et bredt spektra af organer - små/store lette og svære at se. 
+
+
+De vil gerne have trevejs sammenligning. Fordi det ikke vides om "ground truth" er sandt.
+
+DICOM format.
+
+Der er variation i hvordan mesh bliver lavet fra  software til software. 
