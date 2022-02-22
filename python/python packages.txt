@@ -9,6 +9,7 @@ dcmrtstruct2nii: til convertering af ATLAS filer.
 nnunet: 
 
 
+programmer:
 3dslicer: extension rtslicer
 
 itksnap
