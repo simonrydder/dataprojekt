@@ -3,9 +3,9 @@ Authors: Alex Kolby, Eskild Hjerrild Andersen, Simon Rydder
 
 Created: 21/02/2022
 
-File name: skabelon.py
+File name: DataReader.py
 
-Discribtion: Skabelon for nye filer.
+Discribtion: 
 """
 
 # Imports
