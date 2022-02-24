@@ -1,0 +1,3 @@
+https://github.com/kkiser1/Autosegmentation-Spatial-Similarity-Metrics #Added Path Length
+https://github.com/mavillan/py-hausdorff #Hausdorff
+https://github.com/deepmind/surface-distance #Alle kinds of metrics
