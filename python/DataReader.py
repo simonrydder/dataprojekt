@@ -6,61 +6,47 @@ Created: 21/02/2022
 File name: DataReader.py
 
 
-description: Finds the paths to files related to a specific patient ID for specified segmentation methods
+description: Class to find the path for all relevant segmentations related to a specific patient ID
 
-input:  ID: ID of patient 
-        types: A list that's a subset of L where L=["GT","DL","DLB","ATLAS"]. By default types = "All", meaning all of L is the input.
-               types should not consist of duplicates or strings not in L.
+Datareader requires one patient ID to be specified and has the following attributes
 
-Output: A list consisting of the paths to images for the specified segmentation methods images for the specified patient ID. 
+GT: The path to "Ground Truth" segmentations
+DL: The path to Deep learning without bounds segmentations
+DLB: The path to Deep learning with bounds segmentations
+ATLAS: The path to ATLAS based segmentations
+
 """
 
 # Imports
 import os
 import SimpleITK as ITK
 
-def datareader(ID, types = "All"):
 
-    All_types = ["GT","DL","DLB"] # add atlas
-    All = True if types == "All" else False 
+class datareader:
+    def __init__(self, ID):
+        self.ID = ID
+        self.root = "A:\\"
+        self.paths = {"GT":"Task5041_OARBoundsMergedDSCTOnly\\cts\\labels",
+                      "DL":"Task5041_OARBoundsMergedDSCTOnly\\fold_0",
+                      "DLB":"Task5031_OARBoundsMergedDS\\fold_0"} # Add atlas
         
-    if len(types) != len(set(types)) and not All:
-        raise ValueError("types not of valid form, look at documentation")
-    elif not all(type in All_types for type in types) and not All:
-        raise ValueError("types has illegal entries, look at documentation")
-
-    output = []
-    root = "A:\\"
-    paths = {"GT":"Task5041_OARBoundsMergedDSCTOnly\\cts\\labels",
-              "DL":"Task5041_OARBoundsMergedDSCTOnly\\fold_0",
-              "DLB":"Task5031_OARBoundsMergedDS\\fold_0"
-              #add atlas
-            }
-    if types == "All":
-        types = All_types
-
-    for type in types:
-        for f in os.listdir(root + paths.get(type)):
-            if ID in f:
-                file = root + paths.get(type) + "\\" + f
-                output.append(file)
-                break
-        if len(output) == 0:
-            raise ValueError("ID doesnt seem to match any patients")
-
-    return output
-
-
-ID = "4Prj3A5sMvSv1sK4u5ihkzlnU"
-
-L = datareader(ID)
-
-for img in L:
-    print(img)
-    ITK.ReadImage(img)
+        for key, path in self.paths.items():
+            self.exists = False 
+            for f in os.listdir(self.root + path):
+                if ID in f:
+                    setattr(self,key,self.root + path + "\\" + f)
+                    self.exists = True
+                    break
+            if not self.exists:
+                raise ValueError("No image found for " + key + ", Check patient ID is correct")
 
 
 
 
+ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
 
+x = datareader(ID)
+x.DL
+x.DLB
+x.GT
 
