@@ -1,11 +1,11 @@
 """
-Authors: Alex Kolby, Eskild Hjerrild Andersen, Simon Rydder
+Authors:        Alex Kolby, Eskild Hjerrild Andersen, Simon Rydder
 
-Created: 21/02/2022
+Created:        21/02/2022
 
-File name: AlignPath.ipynb
+File name:      AlignPath.py
 
-Discribtion: Aligns the working directory for the users.
+Discribtion:    Aligns the working directory for the users.
 """
 
 # Imports
@@ -16,7 +16,7 @@ class AlignPath():
     def __init__(self):
         self.FileName = "AlignPath.py"
         self.OriginalWD = self.OriginalPath()
-        self.CurrentWD = self.OriginalWD
+        self.CurrentWD = self.SetWD()
         self.VeraCryptLocation = '..\\data\\projectdata.hc' #'..\\data\\readme.txt'
     
     def __str__(self):
@@ -55,10 +55,10 @@ class AlignPath():
         self.CurrentWD = self.GetWD()
         print(self)
 
-# Run file
-print(os.getcwd())
-myPath = AlignPath()
-print(myPath)
-myPath.SetWD()
+# # Test file 
+# print(os.getcwd())
+# myPath = AlignPath()
+# print(myPath)
+# myPath.SetWD()
 
 
