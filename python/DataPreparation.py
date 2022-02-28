@@ -44,7 +44,7 @@ class OAR():
 
     def GetSegment(self):
         return self.OARs.get(self.Name)
-
+    
     def GetImage(self):
         # Read image and important properties.
         img = ITK.ReadImage(self.File)
@@ -53,14 +53,20 @@ class OAR():
         self.Spacing = img.GetSpacing()
         self.Shape = img.GetSize()
 
+        # Transform Image to Array
+        array = ITK.GetArrayFromImage(img)
+
         # Replace all values unequal to SegmentNo with 0.
-        for x in range(self.Shape[0]):
-            for y in range(self.Shape[1]):
-                for z in range(self.Shape[2]):
-                    if img.GetPixel(x, y, z) != self.SegmentNo:
-                        img.SetPixel(x, y, z, 0) # Setting Pixel (x, y, z) to 0.
+        array = np.where(array == self.SegmentNo, array, 0)
+
+        # Retransform Array to Image
+        img = ITK.GetImageFromArray(array)
+        img.SetDirection(self.Direction)
+        img.SetOrigin(self.Origin)
+        img.SetSpacing(self.Spacing)
 
         return img
+
 
     def GetArray(self):
         return ITK.GetArrayFromImage(self.Image)
@@ -84,11 +90,15 @@ class OAR():
 
 
 # # Test
+# import time
+
 # file = "A:\\Task5041_OARBoundsMergedDSCTOnly\\fold_0\\1cbDrFdyzAXjFICMJ58Hmja9U&20130521.nii.gz"
 # segment = 'BraiNSteM'
 
+# t0 = time.time()
 # OAR1 = OAR(file, segment)
-
+# t1 = time.time()
+# print(t1-t0)
 # print(OAR1)
 
 # print(OAR1.PatientID)
