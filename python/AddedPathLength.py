@@ -13,8 +13,13 @@ Python Script
 # Imports
 import os
 import numpy as np
+<<<<<<< HEAD
 from DataReader import datareader
 import DataPreparation
+=======
+import nilearn.image as ni_img
+
+>>>>>>> 3ce09aea0023335f70e5926baa0966d3736b8755
 
 # Import other files
 
@@ -59,9 +64,9 @@ def computeAddedPathLength(P1, P2):
         raise ValueError('Shape of Picture 1 and Picture 2 must be identical!')
 
     # edge_auto has the pixels which are at the edge of the automated segmentation result
-    edge_P1 = getEdgeOfMask(P1)
+    edge_P1 = util.getEdgeOfMask(P1)
     # edge_gt has the pixels which are at the edge of the ground truth segmentation
-    edge_P2 = getEdgeOfMask(P2)
+    edge_P2 = util.getEdgeOfMask(P2)
     
     # Count # pixels on the edge of gt that are on not in the edge of auto
     APL = (edge_P2 > edge_P1).astype(int).sum()
@@ -70,6 +75,7 @@ def computeAddedPathLength(P1, P2):
 
 # Run file (optional)
 
+<<<<<<< HEAD
 ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
 
 x = datareader(ID)
@@ -84,3 +90,7 @@ P1 = P1.GetArray()
 P2 = P2.GetArray()
 
 res = computeAddedPathLength(P1, P2)
+=======
+
+
+>>>>>>> 3ce09aea0023335f70e5926baa0966d3736b8755
