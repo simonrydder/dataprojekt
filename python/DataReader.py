@@ -19,34 +19,26 @@ ATLAS: The path to ATLAS based segmentations
 
 # Imports
 import os
-import SimpleITK as ITK
 
-
-class datareader:
-    def __init__(self, ID):
+class Path:
+    def __init__(self, ID, method):
         self.ID = ID
-        self.root = "A:\\"
-        self.paths = {"GT":"Task5041_OARBoundsMergedDSCTOnly\\cts\\labels",
-                      "DL":"Task5041_OARBoundsMergedDSCTOnly\\fold_0",
-                      "DLB":"Task5031_OARBoundsMergedDS\\fold_0"} # Add atlas
-        
-        for key, path in self.paths.items():
-            self.exists = False 
-            for f in os.listdir(self.root + path):
-                if ID in f:
-                    setattr(self,key,self.root + path + "\\" + f)
-                    self.exists = True
-                    break
-            if not self.exists:
-                raise ValueError("No image found for " + key + ", Check patient ID is correct")
+        self.Root = "A:\\data\\"
+        self.Method = method    # "GT", "DL", "DLB", "ATLAS"
+        self.VeraCryptLocation = '..\\data\\projectdata.hc'
+        self.File = self.getPath()
 
+    def getPath(self):
 
+        for file in os.listdir(self.Root + self.Method):
+            if ID in file:
+                return self.Root + self.Method + "\\" + file
+            
+        raise FileNotFoundError(f"File not found for {self.ID}, {self.Method}")
 
-
+# Test
 ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
+x = Path(ID, "ALTAS")
+x.File
 
-x = datareader(ID)
-x.DL
-x.DLB
-x.GT
 

@@ -20,7 +20,7 @@ import numpy as np
 
 
 # Classes and functions
-class OAR():
+class OAR_Image():
     def __init__(self, file, OAR_name):
         self.File = file
         self.Name = OAR_name.lower()
@@ -39,7 +39,6 @@ class OAR():
 
     def __str__(self):
         OARprint = f'Name: {self.Name}\nSegment#: {self.SegmentNo}\nImage (x, y, z): {self.Shape}'
-        # 'Name:\t' + self.Name + '\nSegment#:\t' + self.SegmentNo + '\nShape:' + self.Array.shape
         return OARprint
 
     def GetSegment(self):
@@ -67,7 +66,6 @@ class OAR():
 
         return img
 
-
     def GetArray(self):
         return ITK.GetArrayFromImage(self.Image)
 
@@ -89,24 +87,24 @@ class OAR():
 # Run file (optional)
 
 
-# # Test
-# import time
+# Test
+import time
 
-# file = "A:\\Task5041_OARBoundsMergedDSCTOnly\\fold_0\\1cbDrFdyzAXjFICMJ58Hmja9U&20130521.nii.gz"
-# segment = 'BraiNSteM'
+file = "A:\\Task5041_OARBoundsMergedDSCTOnly\\fold_0\\1cbDrFdyzAXjFICMJ58Hmja9U&20130521.nii.gz"
+segment = 'BraiNSteM'
 
-# t0 = time.time()
-# OAR1 = OAR(file, segment)
-# t1 = time.time()
-# print(t1-t0)
-# print(OAR1)
+t0 = time.time()
+OAR1 = OAR_Image(file, segment)
+t1 = time.time()
+print(t1-t0)
+print(OAR1)
 
-# print(OAR1.PatientID)
-# print(OAR1.Date)
+print(OAR1.PatientID)
+print(OAR1.Date)
 
-# array = OAR1.GetArray()
-# OAR1.SaveArrayAsImage(array, 'A:\\myFinalArrayTest.nii.gz')
+array = OAR1.GetArray()
+OAR1.SaveArrayAsImage(array, 'A:\\myFinalArrayTest.nii.gz')
 
-# OAR1.SaveImage('A:\\myFinalTest.nii.gz')
+OAR1.SaveImage('A:\\myFinalTest.nii.gz')
 
 
