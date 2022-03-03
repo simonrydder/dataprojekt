@@ -24,11 +24,16 @@ from Hausdorff import Hausdorff
 # from MeanSurfaceDistance import Mean
 
 # # Classes and functions
-def PatientGenerator(n):
+def PatientGenerator(n = "All"):
     dir = "A:\\data\\GT"
-    for file in os.listdir(dir)[:n]:
-        PatientID = file.split("&")[0]
-        yield PatientID
+    if isinstance(n, int):
+        for file in os.listdir(dir)[:n]:
+            PatientID = file.split("&")[0]
+            yield PatientID
+    else:
+        for file in os.listdir(dir):
+            PatientID = file.split("&")[0]
+            yield PatientID
 
 # # Run file (optional)
 for Patient in PatientGenerator(10):
