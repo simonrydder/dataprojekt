@@ -10,39 +10,58 @@ Discribtion:    Skabelon for nye filer.
 
 # Imports
 import os
-from DataPreparation import OAR_Image
+import SimpleITK as ITK
 
 # Import other files
-
+from DataReader import Path
+from DataPreparation import OAR_Image
+# from DICE import DICE
 
 # Classes and functions
 class Metrics():
-    def __inti__(self, ID, segment):
+    def __init__(self, ID, segment, methods):
         self.PatientID = ID     # As id-type
         self.OAR = segment      # As string i.e. "Brainstem"
-        self.Path = Path(self.PatientID)
-        self.GT     = getImage("GT")    # Type OAR_Image from DataPreparation
-        self.DL     = getImage("DL")    # Type OAR_Image from DataPreparation
-        self.DLB    = getImage("DLB")   # Type OAR_Image from DataPreparation
-        self.ATLAS  = getImage("ATLAS") # Type OAR_Image from DataPreparation
-        self.DICE       = getVALUE("dice")     # Dictionary
-        self.Hausdorff  = getHausdorff()     # Dictionary 
-        self.MSD        = getMDS() # Dictionary
-        self.APL        = getAPL() # Dictionary
+        for method in methods:
+            setattr(self, method, self.getImage(method))
+        self.comparisons = [(M1, M2,) for M1 in methods for M2 in methods if M1 < M2]
+        self.DICE       = self.getDICE()     # Dictionary
+        self.Hausdorff  = self.getDICE()     # Dictionary 
+        self.MSD        = self.getDICE() # Dictionary
+        self.APL        = self.getDICE() # Dictionary
+
+    def __str__(self):
+        MetricPrint =   f'PatientID: {self.PatientID}\n' + \
+                        f'OAR: {self.OAR}\n' + \
+                        f'DICE: {self.DICE}\n' + \
+                        f'Hausdorff: {self.Hausdorff}\n' + \
+                        f'Mean Surface Distance: {self.MSD}\n' + \
+                        f'Added Path Length (Ratio): {self.APL}'
+        
+        return MetricPrint
 
     def getImage(self, method):
-        File = datareader(self.PatientID, method)
-        image = OAR_Image(File.getpath(), self.OAR)
+        File = Path(self.PatientID, method).File
+        image = OAR_Image(File, self.OAR)
         return image
     
     def getDICE(self):
-        for img in [self.GT, self.DL, self.DLB, self.ATLAS]:
-            # Create dictionary as {key : value} = {GT_DL = calculateDICE(self.GT, self.DL), GT_DLB = calculateDICE(self.GT, self.DLB)}
+        DICE_dict = {}
+        for i, comp in enumerate(self.comparisons):
+            DICE_dict[comp] = "None" + str(i)
             
-        return None # Created dictionary
+        return DICE_dict
 
     def getHausdorff(self):
         # Same priciple as getDICE() 
         return None
 
-# Run file (optional)
+# Test
+PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
+Segment = "BrainStem"
+Methods = ["GT", "DL", "DLB"]
+
+print(Path(PatientID, Methods[0]).File)
+
+MET = Metrics(PatientID, Segment, Methods)
+print(MET)
