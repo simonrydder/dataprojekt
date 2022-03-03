@@ -37,8 +37,8 @@ class Path:
         raise FileNotFoundError(f"File not found for {self.ID}, {self.Method}")
 
 # Test
-ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
-x = Path(ID, "ALTAS")
-x.File
+#ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
+#x = Path(ID, "ALTAS")
+#x.File
 
 
