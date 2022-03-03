@@ -1,51 +1,57 @@
 
+import os
+import SimpleITK as ITK
+
+# Import other files
 from DataReader import Path
-import DataPreparation
+from DataPreparation import OAR_Image
+from DICE import DICE
 
 # Classes and functions
 class Metrics():
-    def __init__(self, ID, segment):
+    def __init__(self, ID, segment, methods):
         self.PatientID = ID     # As id-type
         self.OAR = segment      # As string i.e. "Brainstem"
-        #self.Path = Path(self.PatientID)
-        self.GT     = self.getImage("GT")    # Type OAR_Image from DataPreparation
-        self.DL     = self.getImage("DL")    # Type OAR_Image from DataPreparation
-        self.DLB    = self.getImage("DLB")   # Type OAR_Image from DataPreparation
-        #self.ATLAS  = self.getImage("ATLAS") # Type OAR_Image from DataPreparation
+        for method in methods:
+            setattr(self, method, self.getImage(method))
+        self.comparisons = [(M1, M2,) for M1 in methods for M2 in methods if M1 < M2]
         self.DICE       = self.getDICE()     # Dictionary
-        self.Hausdorff  = self.getHausdorff()     # Dictionary 
-        self.MSD        = self.getMDS() # Dictionary
-        self.APL        = self.getAPL() # Dictionary
+        self.Hausdorff  = self.getDICE()     # Dictionary 
+        self.MSD        = self.getDICE() # Dictionary
+        self.APL        = self.getDICE() # Dictionary
+
+    def __str__(self):
+        MetricPrint =   f'PatientID: {self.PatientID}\n' + \
+                        f'OAR: {self.OAR}\n' + \
+                        f'DICE: {self.DICE}\n' + \
+                        f'Hausdorff: {self.Hausdorff}\n' + \
+                        f'Mean Surface Distance: {self.MSD}\n' + \
+                        f'Added Path Length (Ratio): {self.APL}'
+        
+        return MetricPrint
 
     def getImage(self, method):
-        x = Path(self.PatientID, method)
-        image = DataPreparation.OAR_Image(x.File, self.OAR)
+        File = Path(self.PatientID, method).File
+        image = OAR_Image(File, self.OAR)
         return image
     
     def getDICE(self):
-        for img in [self.GT, self.DL]:
+        DICE_dict = {}
+        for i, comp in enumerate(self.comparisons):
+            DICE_dict[comp] = "None" + str(i)
             
-            # Create dictionary as {key : value} = {GT_DL = calculateDICE(self.GT, self.DL), GT_DLB = calculateDICE(self.GT, self.DLB)}
-            
-        return None # Created dictionary
+        return DICE_dict
 
     def getHausdorff(self):
         # Same priciple as getDICE() 
         return None
-    
-    def getMDS(self):
-        # Same priciple as getDICE() 
-        return None
 
-    def getAPL(self):
-        # Same priciple as getDICE() 
-        return None
+# Test
+PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
+Segment = "BrainStem"
+Methods = ["GT", "DL", "DLB"]
 
+print(Path(PatientID, Methods[0]).File)
 
-# Run file (optional)
-
-ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
-segment = "bRainStem"
-#x = Path(ID, "GT")
-#x.File
-x = Metrics(ID, segment)
+MET = Metrics(PatientID, Segment, Methods)
+print(MET)
