@@ -15,7 +15,7 @@ Discribtion:    Implements the class OAR. The class takes the inputs: file (comp
 # Imports
 import SimpleITK as ITK
 import numpy as np
-
+ 
 # Import of other files
 
 
@@ -106,5 +106,3 @@ array = OAR1.GetArray()
 OAR1.SaveArrayAsImage(array, 'A:\\myFinalArrayTest.nii.gz')
 
 OAR1.SaveImage('A:\\myFinalTest.nii.gz')
-
-

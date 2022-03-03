@@ -16,11 +16,11 @@ DLB: The path to Deep learning with bounds segmentations
 ATLAS: The path to ATLAS based segmentations
 
 """
-
 # Imports
 import os
 
-class Path:
+# Classes and functions
+class Path():
     def __init__(self, ID, method):
         self.ID = ID
         self.Root = "A:\\data\\"
@@ -31,14 +31,14 @@ class Path:
     def getPath(self):
 
         for file in os.listdir(self.Root + self.Method):
-            if ID in file:
+            if self.ID in file:
                 return self.Root + self.Method + "\\" + file
             
-        raise FileNotFoundError(f"File not found for {self.ID}, {self.Method}")
+        raise FileNotFoundError(f'File not found for {self.ID}, {self.Method}')
 
 # Test
 ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
-x = Path(ID, "ALTAS")
+x = Path(ID, "GT")
 x.File
 
 
