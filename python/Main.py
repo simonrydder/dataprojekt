@@ -5,11 +5,12 @@ Created: 21/02/2022
 
 File name: Main.py
 
-Discribtion:
+Discribtion: 
 """
 
-# # Imports
+# Imports
 import os
+<<<<<<< HEAD
 import SimpleITK as ITK
 import numpy as np
 
@@ -40,6 +41,16 @@ for Patient in PatientGenerator(10):
     print(Patient)
 
     
+=======
+
+# Import other files
+
+
+# Classes and functions
+
+
+# Run file (optional)
+>>>>>>> 3ce09aea0023335f70e5926baa0966d3736b8755
 
 
 
