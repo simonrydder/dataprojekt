@@ -27,8 +27,8 @@ class Metrics():
             setattr(self, method, self.getImage(method))
         self.comparisons = [(M1, M2,) for M1 in methods for M2 in methods if M1 < M2]
         self.DICE       = self.getDICE()     # Dictionary
-        self.Hausdorff  = self.getDICE()     # Dictionary 
-        self.MSD        = self.getDICE() # Dictionary
+        self.Hausdorff  = self.getHausdorff()     # Dictionary 
+        self.MSD        = self.getMSD() # Dictionary
         self.APL        = self.getDICE() # Dictionary
 
     def __str__(self):
@@ -51,29 +51,58 @@ class Metrics():
         for i, comp in enumerate(self.comparisons):
             DICE_dict[comp] = "None" + str(i)
         
-        for comb in self.comparisons:
-            met1, met2 = comb
-            P1, P2 = self.getImage(met1).GetImage(), self.getImage(met2).GetImage()
-            #Compute overlap measurements:
+        for met1, met2 in self.comparisons:
+            P1 = getattr(self, met1).Image
+            P2 = getattr(self, met2).Image
+
             dicecomputer = ITK.LabelOverlapMeasuresImageFilter()
             dicecomputer.Execute(P2>0.5,P1>0.5)
-            DICE_dict[comb]=dicecomputer.GetDiceCoefficient()
+            DICE_dict[(met1, met2)]=dicecomputer.GetDiceCoefficient()
         
         return DICE_dict
 
     def getHausdorff(self):
-        # Same priciple as getDICE() 
-        return None
+        Haus_dict = {}
+
+        for i, comp in enumerate(self.comparisons):
+            Haus_dict[comp] = "None" + str(i)
+        
+        for met1, met2 in self.comparisons:
+            P1 = getattr(self, met1).Image
+            P2 = getattr(self, met2).Image
+
+            hauscomputer = ITK.HausdorffDistanceImageFilter()
+            hauscomputer.Execute(P2>0.5,P1>0.5)
+            Haus_dict[(met1, met2)]=hauscomputer.GetHausdorffDistance()
+        
+        return Haus_dict
+
+    def getMSD(self):
+        MSD_dict = {}
+        for i, comp in enumerate(self.comparisons):
+            MSD_dict[comp] = "None" + str(i)
+        
+        for met1, met2 in self.comparisons:
+            P1 = getattr(self, met1).Image
+            P2 = getattr(self, met2).Image
+
+            MSDcomputer = ITK.HausdorffDistanceImageFilter()
+            MSDcomputer.Execute(P2>0.5,P1>0.5)
+            MSD_dict[(met1, met2)]=MSDcomputer.GetAverageHausdorffDistance()
+        
+        return MSD_dict
 
 # Test
 PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
-Segment = "BrainStem"
+#Segment = "BrainStem"
+Segment = "mandible" 
 Methods = ["GT", "DL", "DLB"]
 
 print(Path(PatientID, Methods[0]).File)
 
 MET = Metrics(PatientID, Segment, Methods)
 print(MET)
+
 
 for m in L:
     P1, P2 = m
