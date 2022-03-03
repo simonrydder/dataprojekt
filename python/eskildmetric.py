@@ -1,11 +1,22 @@
+"""
+Authors:        Alex Kolby, Eskild Hjerrild Andersen, Simon Rydder
 
+Created:        21/02/2022
+
+File name:      Metrics.py
+
+Discribtion:    Skabelon for nye filer.
+"""
+
+# Imports
+from math import comb
 import os
 import SimpleITK as ITK
 
 # Import other files
 from DataReader import Path
 from DataPreparation import OAR_Image
-from DICE import DICE
+# from DICE import DICE
 
 # Classes and functions
 class Metrics():
@@ -39,7 +50,15 @@ class Metrics():
         DICE_dict = {}
         for i, comp in enumerate(self.comparisons):
             DICE_dict[comp] = "None" + str(i)
-            
+        
+        for comb in self.comparisons:
+            met1, met2 = comb
+            P1, P2 = self.getImage(met1).GetImage(), self.getImage(met2).GetImage()
+            #Compute overlap measurements:
+            dicecomputer = ITK.LabelOverlapMeasuresImageFilter()
+            dicecomputer.Execute(P2>0.5,P1>0.5)
+            DICE_dict[comb]=dicecomputer.GetDiceCoefficient()
+        
         return DICE_dict
 
     def getHausdorff(self):
@@ -55,3 +74,6 @@ print(Path(PatientID, Methods[0]).File)
 
 MET = Metrics(PatientID, Segment, Methods)
 print(MET)
+
+for m in L:
+    P1, P2 = m

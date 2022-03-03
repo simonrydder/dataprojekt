@@ -29,16 +29,15 @@ class Path:
         self.File = self.getPath()
 
     def getPath(self):
-
         for file in os.listdir(self.Root + self.Method):
-            if ID in file:
+            if self.ID in file:
                 return self.Root + self.Method + "\\" + file
             
         raise FileNotFoundError(f"File not found for {self.ID}, {self.Method}")
 
 # Test
-#ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
-#x = Path(ID, "ALTAS")
-#x.File
+ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
+x = Path(ID, "GT")
+x.File
 
 
