@@ -14,7 +14,8 @@ Python Script
 import os
 import numpy as np
 import nilearn.image as ni_img
-
+import DataReader
+import DataPreparation
 
 # Import other files
 
@@ -67,9 +68,9 @@ def AddedPathLength(P1, P2):
         raise ValueError('Shape of Picture 1 and Picture 2 must be identical!')
 
     # edge_auto has the pixels which are at the edge of the automated segmentation result
-    edge_P1 = util.getEdgeOfMask(P1)
+    edge_P1 = getEdgeOfMask(P1)
     # edge_gt has the pixels which are at the edge of the ground truth segmentation
-    edge_P2 = util.getEdgeOfMask(P2)
+    edge_P2 = getEdgeOfMask(P2)
     
     # Count # pixels on the edge of gt that are on not in the edge of auto
     APL = (edge_P2 > edge_P1).astype(int).sum()
@@ -78,5 +79,19 @@ def AddedPathLength(P1, P2):
 
 # Run file (optional)
 
+ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
 
+x = DataReader.datareader(ID)
+P1 = x.GT
+P2 = x.GT
+segment = 'BraiNSteM'
 
+P1 = DataPreparation.OAR(P1, segment)
+P2 = DataPreparation.OAR(P2, segment)
+
+P1 = P1.GetArray()
+P2 = P2.GetArray()
+
+res = AddedPathLength(P1, P2)
+
+print(res)

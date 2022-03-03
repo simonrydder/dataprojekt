@@ -16,6 +16,7 @@ import SimpleITK as ITK
 import numpy as np
 import DataReader
 import DataPreparation
+import DICE
 
 # Import other files
 
@@ -24,8 +25,8 @@ import DataPreparation
 def Hausdorff(P1, P2):
 
     #Input must be of type ITK.Image:
-    assert isinstance(P1, ITK.SimpleITK.Image)
-    assert isinstance(P2, ITK.SimpleITK.Image)
+    assert isinstance(P1, ITK.SimpleITK.Image), "Error input P1 is not a valid ITK.Image type"
+    assert isinstance(P2, ITK.SimpleITK.Image), "Error input P2 is not a valid ITK.Image type"
 
 
     #Save results in list and append to dictionary
@@ -52,14 +53,14 @@ ID = "1cbDrFdyzAXjFICMJ58Hmja9U"
 
 x = DataReader.datareader(ID)
 P1 = x.DL
-P2 = x.GT
+P2 = x.DL
 segment = 'BraiNSteM'
 
 P1 = DataPreparation.OAR(P1, segment)
 P2 = DataPreparation.OAR(P2, segment)
 
-P1 = P1.GetImage()
-P2 = P2.GetImage()
+P1 = P1.GetArray()
+P2 = P2.GetArray()
 
 Hausdorff(P1, P2)
-
+DICE.DICE(P1, P2)

@@ -24,8 +24,8 @@ import DataPreparation
 def DICE(P1, P2):
 
     #Input must be of type ITK.Image:
-    assert isinstance(P1, ITK.SimpleITK.Image)
-    assert isinstance(P2, ITK.SimpleITK.Image)
+    assert isinstance(P1, ITK.SimpleITK.Image), "Error input P1 is not a valid ITK.Image type"
+    assert isinstance(P2, ITK.SimpleITK.Image), "Error input P2 is not a valid ITK.Image type"
 
 
     #Save results in list and append to dictionary
