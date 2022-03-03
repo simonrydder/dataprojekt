@@ -13,8 +13,7 @@ Python Script
 # Imports
 import os
 import numpy as np
-import nilearn.image as ni_img
-import DataReader
+from DataReader import datareader
 import DataPreparation
 
 # Import other files
@@ -22,14 +21,6 @@ import DataPreparation
 
 # Classes and functions
 
-def loadNiftiReturnNumpy(filepath):
-    '''
-    filepath: path to nifti file
-    '''
-    niftiFile = ni_img.load_img(filepath)
-    niftiArr = niftiFile.get_fdata()
-    
-    return niftiArr
 
 def getEdgeOfMask(mask):
     '''
@@ -54,7 +45,7 @@ def getEdgeOfMask(mask):
             
     return edge
 
-def AddedPathLength(P1, P2):
+def computeAddedPathLength(P1, P2):
     '''
     Returns the added path length, in pixels
     
@@ -81,7 +72,7 @@ def AddedPathLength(P1, P2):
 
 ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
 
-x = DataReader.datareader(ID)
+x = datareader(ID)
 P1 = x.GT
 P2 = x.GT
 segment = 'BraiNSteM'
@@ -92,6 +83,4 @@ P2 = DataPreparation.OAR(P2, segment)
 P1 = P1.GetArray()
 P2 = P2.GetArray()
 
-res = AddedPathLength(P1, P2)
-
-print(res)
+res = computeAddedPathLength(P1, P2)
