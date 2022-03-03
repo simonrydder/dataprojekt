@@ -93,16 +93,12 @@ class Metrics():
         return MSD_dict
 
 # Test
-PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
-#Segment = "BrainStem"
-Segment = "mandible" 
-Methods = ["GT", "DL", "DLB"]
+# PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
+# #Segment = "BrainStem"
+# Segment = "mandible" 
+# Methods = ["GT", "DL", "DLB"]
 
-print(Path(PatientID, Methods[0]).File)
+# print(Path(PatientID, Methods[0]).File)
 
-MET = Metrics(PatientID, Segment, Methods)
-print(MET)
-
-
-for m in L:
-    P1, P2 = m
+# MET = Metrics(PatientID, Segment, Methods)
+# print(MET)

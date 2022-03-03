@@ -10,18 +10,18 @@ Discribtion:
 
 # Imports
 import os
-<<<<<<< HEAD
 import SimpleITK as ITK
 import numpy as np
 
 # # Import other files
 # Classes
-from DataReader import datareader
-from DataPreparation import OAR
+from DataReader import Path
+from DataPreparation import OAR_Image
+from eskildmetric import Metrics
 
 # Functions
-from DICE import DICE
-from Hausdorff import Hausdorff
+#from DICE import DICE
+#from Hausdorff import Hausdorff
 # from MeanSurfaceDistance import Mean
 
 # # Classes and functions
@@ -37,20 +37,23 @@ def PatientGenerator(n = "All"):
             yield PatientID
 
 # # Run file (optional)
+Segment = "BrainStem"
+Methods = ["GT", "DL", "DLB"]
 for Patient in PatientGenerator(10):
-    print(Patient)
-
-    
-=======
-
-# Import other files
+    MET = Metrics(Patient, Segment, Methods)
+    print(MET)
 
 
-# Classes and functions
 
+# # Run file (optional)
+Segment = "BrainStem"
+Methods = ["GT", "DL", "DLB"]
+for Patient in PatientGenerator(10):
+    L.append(Patient)
 
-# Run file (optional)
->>>>>>> 3ce09aea0023335f70e5926baa0966d3736b8755
+for Patient in L:
+    MET = Metrics(Patient, Segment, Methods)
+    print(MET)
 
 
 
