@@ -1,0 +1,19 @@
+Møde 3/3/2022
+
+COPY.information 
+
+
+
+
+addedpathlength næsten mest vigtig, og måske bedst korreleret i tid med dem der retter. 
+konstruere et eksempel med apl. 
+firkanter nemt. 
+ratio er der rettet ifht hvor meget der er at rette (0, 1) i stedet for 0, 300 fx. 
+0 tolerance 1 pixel. 
+apl vise den virker (vores egen). 
+vise den stemmer overens med andre fra nettet. 
+vær konsistent med konventioner og tag stilling
+hvor starter voxel?
+midten, average effekt 
+
+apl per volumen, hvor vigtig den path er ifht volumen?
