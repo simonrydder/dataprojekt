@@ -9,7 +9,6 @@ Discribtion:    Skabelon for nye filer.
 """
 
 # Imports
-import os
 import SimpleITK as ITK
 
 # Import other files
@@ -47,8 +46,13 @@ class Metrics():
     
     def getDICE(self):
         DICE_dict = {}
-        for i, comp in enumerate(self.comparisons):
-            DICE_dict[comp] = "None" + str(i)
+        for met1, met2 in self.comparisons:
+            P1 = getattr(self, met1).Image
+            P2 = getattr(self, met2).Image
+
+            dicecomputer = ITK.LabelOverlapMeasuresImageFilter()
+            dicecomputer.Execute(P1 > 0.5, P2 > 0.5)
+            DICE_dict[(met1, met2)] = dicecomputer.GetDiceCoefficient()
             
         return DICE_dict
 
