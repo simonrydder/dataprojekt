@@ -16,6 +16,7 @@ import SimpleITK as ITK
 # Import other files
 from DataReader import Path
 from DataPreparation import OAR_Image
+from APL import Addedpathlength
 # from DICE import DICE
 
 # Classes and functions
@@ -29,7 +30,7 @@ class Metrics():
         self.DICE       = self.getDICE()     # Dictionary
         self.Hausdorff  = self.getHausdorff()     # Dictionary 
         self.MSD        = self.getMSD() # Dictionary
-        self.APL        = self.getAPL() # Dictionary
+        self.APL, self.APL_length_ratio, self.APL_volume_ratio = self.getAPL() # Dictionaries
         self.allmetrics = ["DICE", "Hausdorff", "MSD"] #og add APL når den er klar. 
 
     def __str__(self):
@@ -38,7 +39,9 @@ class Metrics():
                         f'DICE: {self.DICE}\n' + \
                         f'Hausdorff: {self.Hausdorff}\n' + \
                         f'Mean Surface Distance: {self.MSD}\n' + \
-                        f'Added Path Length (Ratio): {self.APL}'
+                        f'Added path length: {self.APL}\n' + \
+                        f'APL length ratio: {self.APL_length_ratio}\n' + \
+                        f'APL volume ratio: {self.APL_volume_ratio}'
         
         return MetricPrint
 
@@ -96,15 +99,23 @@ class Metrics():
 
     def getAPL(self):
         APL_dict = {}
+        APL_length_ratio_dict = {}
+        APL_volume_ratio_dict = {}
         for i, comp in enumerate(self.comparisons):
             APL_dict[comp] = "None" + str(i)
+            APL_length_ratio_dict[comp] = "None" + str(i)
+            APL_volume_ratio_dict[comp] = "None" + str(i)
         
         for met1, met2 in self.comparisons:
-            P1 = getattr(self, met1).Image
-            P2 = getattr(self, met2).Image
-            
+            P1 = getattr(self, met1)
+            P2 = getattr(self, met2)
             #Import py-script to get APL
-        pass
+            values = Addedpathlength(P1,P2)
+            APL_dict[(met1,met2)] = values.APL
+            APL_length_ratio_dict[(met1, met2)] = values.APL_line_ratio
+            APL_volume_ratio_dict[(met1, met2)] = values.APL_volume_ratio
+        
+        return APL_dict, APL_length_ratio_dict, APL_volume_ratio_dict
 
     def getAll(self):
         getAll_dict = {}
@@ -121,12 +132,12 @@ class Metrics():
 
 
 #Test
-# PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
-# Segment = "mandible" 
-# Methods = ["GT", "DL", "DLB"]
-# print(Path(PatientID, Methods[0]).File)
+PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
+Segment = "mandible" 
+Methods = ["GT", "DL", "DLB"]
+print(Path(PatientID, Methods[0]).File)
 
-# MET = Metrics(PatientID, Segment, Methods)
-# print(MET)
+MET = Metrics(PatientID, Segment, Methods)
+print(MET)
 
 
