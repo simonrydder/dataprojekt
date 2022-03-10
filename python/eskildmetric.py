@@ -5,7 +5,7 @@ Created:        21/02/2022
 
 File name:      Metrics.py
 
-Discribtion:    Skabelon for nye filer.
+Discription:    Metrics class to perform all metrics relevant to project.
 """
 
 # Imports
@@ -29,7 +29,8 @@ class Metrics():
         self.DICE       = self.getDICE()     # Dictionary
         self.Hausdorff  = self.getHausdorff()     # Dictionary 
         self.MSD        = self.getMSD() # Dictionary
-        self.APL        = self.getDICE() # Dictionary
+        self.APL        = self.getAPL() # Dictionary
+        self.allmetrics = ["DICE", "Hausdorff", "MSD"] #og add APL når den er klar. 
 
     def __str__(self):
         MetricPrint =   f'PatientID: {self.PatientID}\n' + \
@@ -56,7 +57,7 @@ class Metrics():
             P2 = getattr(self, met2).Image
 
             dicecomputer = ITK.LabelOverlapMeasuresImageFilter()
-            dicecomputer.Execute(P2>0.5,P1>0.5)
+            dicecomputer.Execute(P2>0.5,P1>0.5) #Use P1, P2 > 0.5 so we don't compare overlap of entries  == 0. 
             DICE_dict[(met1, met2)]=dicecomputer.GetDiceCoefficient()
         
         return DICE_dict
@@ -94,17 +95,38 @@ class Metrics():
         return MSD_dict
 
     def getAPL(self):
+        APL_dict = {}
+        for i, comp in enumerate(self.comparisons):
+            APL_dict[comp] = "None" + str(i)
+        
+        for met1, met2 in self.comparisons:
+            P1 = getattr(self, met1).Image
+            P2 = getattr(self, met2).Image
+            
+            #Import py-script to get APL
         pass
 
+    def getAll(self):
+        getAll_dict = {}
+        for i, metr in enumerate(self.allmetrics):
+            getAll_dict[metr] = "None" + str(i)
+        
+        for metr in self.allmetrics:
+            res = getattr(self, metr)
+            getAll_dict[metr] = res
+
+        return getAll_dict
 
 
-# Test
-PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
-#Segment = "BrainStem"
-Segment = "mandible" 
-Methods = ["GT", "DL", "DLB"]
 
-print(Path(PatientID, Methods[0]).File)
 
-MET = Metrics(PatientID, Segment, Methods)
-print(MET)
+#Test
+# PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
+# Segment = "mandible" 
+# Methods = ["GT", "DL", "DLB"]
+# print(Path(PatientID, Methods[0]).File)
+
+# MET = Metrics(PatientID, Segment, Methods)
+# print(MET)
+
+
