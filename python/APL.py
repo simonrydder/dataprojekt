@@ -22,7 +22,7 @@ import DataPreparation
 #Classes and functions
 class Addedpathlength():
     def __init__(self,img1,img2):
-        self.width,self.height, _ = OAR_DL.Spacing
+        self.width,self.height, _ = img1.Spacing
         _,_, self.z = img1.Shape
         self.A = img1.GetArray()
         self.B = img2.GetArray()
@@ -39,6 +39,7 @@ class Addedpathlength():
             coordsB = self.findCoordinates(self.B[i])
             VA, HA = self.findLines(coordsA)
             VB, HB = self.findLines(coordsB)
+
 
             VA = set(VA)
             HA = set(HA)
@@ -77,7 +78,6 @@ class Addedpathlength():
         Input:  A list of coordinates for the center of a pixel.
         Outout: Two lists of linesegments. One for horizontal linesegments and one for vertical linesegments.
         """
-
 
         verticals = {}
         horizontals = {}
