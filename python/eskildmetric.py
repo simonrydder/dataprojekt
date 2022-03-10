@@ -90,7 +90,13 @@ class Metrics():
             MSDcomputer.Execute(P2>0.5,P1>0.5)
             MSD_dict[(met1, met2)]=MSDcomputer.GetAverageHausdorffDistance()
         
+        
         return MSD_dict
+
+    def getAPL(self):
+        pass
+
+
 
 # Test
 PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
@@ -102,7 +108,3 @@ print(Path(PatientID, Methods[0]).File)
 
 MET = Metrics(PatientID, Segment, Methods)
 print(MET)
-
-
-for m in L:
-    P1, P2 = m
