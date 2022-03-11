@@ -13,13 +13,8 @@ Python Script
 # Imports
 import os
 import numpy as np
-<<<<<<< HEAD
-from DataReader import datareader
+from DataReader import Path
 import DataPreparation
-=======
-import nilearn.image as ni_img
-
->>>>>>> 3ce09aea0023335f70e5926baa0966d3736b8755
 
 # Import other files
 
@@ -75,7 +70,6 @@ def computeAddedPathLength(P1, P2):
 
 # Run file (optional)
 
-<<<<<<< HEAD
 ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
 
 x = datareader(ID)
@@ -90,7 +84,3 @@ P1 = P1.GetArray()
 P2 = P2.GetArray()
 
 res = computeAddedPathLength(P1, P2)
-=======
-
-
->>>>>>> 3ce09aea0023335f70e5926baa0966d3736b8755
