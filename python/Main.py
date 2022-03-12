@@ -37,23 +37,23 @@ def PatientGenerator(n = "All"):
             yield PatientID
 
 # # Run file (optional)
-Segment = "BrainStem"
-Methods = ["GT", "DL", "DLB"]
-for Patient in PatientGenerator(10):
-    MET = Metrics(Patient, Segment, Methods)
-    print(MET)
+# Segment = "BrainStem"
+# Methods = ["GT", "DL", "DLB"]
+# for Patient in PatientGenerator(100):
+#     MET = Metrics(Patient, Segment, Methods)
+#     print(MET)
 
 
 
-# # Run file (optional)
-Segment = "BrainStem"
-Methods = ["GT", "DL", "DLB"]
-for Patient in PatientGenerator(10):
-    L.append(Patient)
+# # # Run file (optional)
+# Segment = "BrainStem"
+# Methods = ["GT", "DL", "DLB"]
+# for Patient in PatientGenerator(10):
+#     L.append(Patient)
 
-for Patient in L:
-    MET = Metrics(Patient, Segment, Methods)
-    print(MET)
+# for Patient in L:
+#     MET = Metrics(Patient, Segment, Methods)
+#     print(MET)
 
 
 
