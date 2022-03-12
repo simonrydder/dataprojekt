@@ -34,7 +34,7 @@ class OAR_Image():
         self.Origin = None
         self.Direction = None
         self.Spacing = None
-        self.Shape = None
+        self.Shape = None       # x, y, z
         self.Image = self.GetImage()
 
     def __str__(self):

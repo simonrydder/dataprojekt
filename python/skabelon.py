@@ -1,15 +1,15 @@
 """
-Authors: Alex Kolby, Eskild Hjerrild Andersen, Simon Rydder
+Authors:        Alex Kolby, Eskild Hjerrild Andersen, Simon Rydder
 
-Created: 21/02/2022
+Created:        21/02/2022
 
-File name: skabelon.py
+File name:      skabelon.py
 
-Discribtion: Skabelon for nye filer.
+Discribtion:    Skabelon for nye filer.
 """
 
 # Imports
-import os
+
 
 # Import other files
 

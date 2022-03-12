@@ -18,6 +18,7 @@ ATLAS: The path to ATLAS based segmentations
 """
 # Imports
 import os
+from time import sleep
 
 # Classes and functions
 class Path():
@@ -27,16 +28,31 @@ class Path():
         self.Method = method    # "GT", "DL", "DLB", "ATLAS"
         self.VeraCryptLocation = '..\\data\\projectdata.hc'
         self.File = self.getPath()
+        
 
     def getPath(self):
+        notMounted = True
+        while notMounted:
+            try:
+                files = os.listdir(self.Root + self.Method)
+                notMounted = False
+            except FileNotFoundError:
+                print('Unable to find directory: ' + self.Root)
+                print('Opening VeraCrypt')            
+                os.startfile(self.VeraCryptLocation)
+                str_input = input('Is data mounted? [N / Y]: ')
+                notMounted = False if str_input.lower() == 'y' else True
+                if notMounted == False:
+                    files = os.listdir(self.Root + self.Method)
+        
 
-        for file in os.listdir(self.Root + self.Method):
+        for file in files:
             if self.ID in file:
                 return self.Root + self.Method + "\\" + file
             
         raise FileNotFoundError(f'File not found for {self.ID}, {self.Method}')
 
+
 # Test
 ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
-x = Path(ID, "GT")
-x.File
+print(Path(ID, "GT").File)
