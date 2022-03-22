@@ -36,6 +36,7 @@ class Metrics():
     def __str__(self):
         MetricPrint =   f'PatientID: {self.PatientID}\n' + \
                         f'OAR: {self.OAR}\n' + \
+                        f'Comparison: {self.Comparison}\n' + \
                         f'DICE: {self.DICE}\n' + \
                         f'Hausdorff: {self.Hausdorff}\n' + \
                         f'Mean Surface Distance: {self.MSD}\n' + \

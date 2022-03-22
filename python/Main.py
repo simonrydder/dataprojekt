@@ -12,17 +12,14 @@ Discribtion:
 import os
 import SimpleITK as ITK
 import numpy as np
+import pandas as pd
+from pyparsing import col
 
 # # Import other files
 # Classes
-from DataReader import Path
-from DataPreparation import OAR_Image
-from eskildmetric import Metrics
+from Metrics import Metrics
 
 # Functions
-#from DICE import DICE
-#from Hausdorff import Hausdorff
-# from MeanSurfaceDistance import Mean
 
 # # Classes and functions
 def PatientGenerator(n = "All"):
@@ -36,14 +33,46 @@ def PatientGenerator(n = "All"):
             PatientID = file.split("&")[0]
             yield PatientID
 
+
+
+
+
 # # Run file (optional)
 # Segment = "BrainStem"
-# Methods = ["GT", "DL", "DLB"]
-# for Patient in PatientGenerator(100):
-#     MET = Metrics(Patient, Segment, Methods)
+# Methods = ["GT", "DL"]
+# print("\nTEST FROM THIS FILE:")
+# for Patient in PatientGenerator(5):
+#     MET = Metrics(Patient, Segment, *Methods)
 #     print(MET)
+#     print()
 
+# # Main loop
+data = {'ID': [],
+        'Date' : [],
+        'Metric': [],
+        'Comparison':[]}
 
+print(data)
+
+for i, Segment in enumerate(['brainstem', 'parotid_merged']):
+    data[Segment] = []
+    for Comparisons in [('GT', 'DL'), ('GT', 'DLB')]:
+        for Patient in PatientGenerator(10):
+            Metric = Metrics(Patient, Segment, *Comparisons)
+            for value in ['DICE', 'Hausdorff', 'MSD', 'APL', 'APL_length_ratio', 'APL_volume_ratio']:
+
+                if i == 0:
+                    data['ID'].append(Metric.PatientID)
+                    data['Date'].append(Metric.ImageA.Date)
+                    data['Comparison'].append(Metric.Comparison)
+                    data['Metric'].append(value)
+                
+                data[Segment].append(getattr(Metric, value))
+
+# number of rows = number of patients * number of methods
+
+df = pd.DataFrame(data, columns = data.keys())
+df.to_csv('test.csv')
 
 # # # Run file (optional)
 # Segment = "BrainStem"

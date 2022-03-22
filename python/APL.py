@@ -94,22 +94,22 @@ class AddedPathLength():
         
         return Vlines, Hlines
 
-# Test
-from time import time
+# # Test
+# from time import time
 
-fileDL = "A:\\Task5041_OARBoundsMergedDSCTOnly\\fold_0\\4Prj3A5sMvSv1sK4u5ihkzlnU&20190129.nii.gz"
-fileGT = "A:\\Task5041_OARBoundsMergedDSCTOnly\\cts\labels\\4Prj3A5sMvSv1sK4u5ihkzlnU&20190129.nii.gz"
+# fileDL = "A:\\Task5041_OARBoundsMergedDSCTOnly\\fold_0\\4Prj3A5sMvSv1sK4u5ihkzlnU&20190129.nii.gz"
+# fileGT = "A:\\Task5041_OARBoundsMergedDSCTOnly\\cts\labels\\4Prj3A5sMvSv1sK4u5ihkzlnU&20190129.nii.gz"
 
-segment = 'brain'
+# segment = 'brain'
 
-OAR_DL = OAR_Image(fileDL,segment)
-OAR_GT = OAR_Image(fileGT,segment)
+# OAR_DL = OAR_Image(fileDL,segment)
+# OAR_GT = OAR_Image(fileGT,segment)
 
-t0 = time()
-test = AddedPathLength(OAR_GT,OAR_DL)
-t1 = time()
+# t0 = time()
+# test = AddedPathLength(OAR_GT,OAR_DL)
+# t1 = time()
 
-test.APL
-test.APL_line_ratio
-test.APL_volume_ratio
-print(t1-t0)
+# test.APL
+# test.APL_line_ratio
+# test.APL_volume_ratio
+# print(t1-t0)
