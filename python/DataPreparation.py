@@ -18,7 +18,6 @@ import numpy as np
  
 # Import of other files
 
-
 # Classes and functions
 class OAR_Image():
     def __init__(self, file, OAR_name):

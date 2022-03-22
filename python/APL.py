@@ -16,8 +16,8 @@ Discription:    Class to compute added path length between two images
 import numpy as np
 
 #Import other files
-import DataPreparation
-
+from DataReader import Path
+from DataPreparation import OAR_Image
 
 #Classes and functions
 class AddedPathLength():
@@ -66,42 +66,14 @@ class AddedPathLength():
         coords = np.where(array > 0)
         return {(x + 1, N - y) for y, x in zip(*coords)}
 
-    # def findLines(self, coordinates):
-    #     """
-    #     Input:  A list of coordinates for the center of a pixel.
-    #     Outout: Two lists of linesegments. One for horizontal linesegments and one for vertical linesegments.
-    #     """
-
-    #     verticals = {}
-    #     horizontals = {}
-
-    #     for x, y in coordinates:
-    #         left  = ((x - 0.5, y - 0.5), (x - 0.5, y + 0.5)) # left edge line
-    #         right = ((x + 0.5, y - 0.5), (x + 0.5, y + 0.5)) # right edge line
-    #         lower = ((x - 0.5, y - 0.5), (x + 0.5, y - 0.5)) # lower edge line
-    #         upper = ((x - 0.5, y + 0.5), (x + 0.5, y + 0.5)) # upper edge line
-
-    #         for line in left, right, lower, upper:
-    #             (x0, _), (x1, _) = line
-    #             if x0 == x1: # vertical line
-    #                 verticals[line] = verticals.get(line, 0) + 1
-    #             else: # horizontal line
-    #                 horizontals[line] = horizontals.get(line, 0) + 1 
-        
-    #     # Extraxt only lines not dublicating.
-    #     Vlines = {key for key, value in verticals.items() if value == 1}
-    #     Hlines = {key for key, value in horizontals.items() if value == 1}
-        
-    #     return Vlines, Hlines
-
-    def findLines(coordinates):
+    def findLines(self, coordinates):
         """
         Input:  A list of coordinates for the center of a pixel.
         Outout: Two lists of linesegments. One for horizontal linesegments and one for vertical linesegments.
         """
 
-        vLines = set()
-        hLines = set()
+        verticals = {}
+        horizontals = {}
 
         for x, y in coordinates:
             left  = ((x - 0.5, y - 0.5), (x - 0.5, y + 0.5)) # left edge line
@@ -109,29 +81,35 @@ class AddedPathLength():
             lower = ((x - 0.5, y - 0.5), (x + 0.5, y - 0.5)) # lower edge line
             upper = ((x - 0.5, y + 0.5), (x + 0.5, y + 0.5)) # upper edge line
 
-            # Removing vertical dublicates
-            vTemp = {left, right}
-            vLines = (vLines | vTemp) - (vLines & vTemp)
-
-            # Removeing horizontal dublicates
-            hTemp = {upper, lower}
-            hLines = (hLines | hTemp) - (hLines & hTemp)
+            for line in left, right, lower, upper:
+                (x0, _), (x1, _) = line
+                if x0 == x1: # vertical line
+                    verticals[line] = verticals.get(line, 0) + 1
+                else: # horizontal line
+                    horizontals[line] = horizontals.get(line, 0) + 1 
         
-        return vLines, hLines
+        # Extraxt only lines not dublicating.
+        Vlines = {key for key, value in verticals.items() if value == 1}
+        Hlines = {key for key, value in horizontals.items() if value == 1}
+        
+        return Vlines, Hlines
 
 # Test
+from time import time
 
 fileDL = "A:\\Task5041_OARBoundsMergedDSCTOnly\\fold_0\\4Prj3A5sMvSv1sK4u5ihkzlnU&20190129.nii.gz"
 fileGT = "A:\\Task5041_OARBoundsMergedDSCTOnly\\cts\labels\\4Prj3A5sMvSv1sK4u5ihkzlnU&20190129.nii.gz"
 
-segment = 'brainstem'
+segment = 'brain'
 
-OAR_DL = DataPreparation.OAR_Image(fileDL,segment)
-OAR_GT = DataPreparation.OAR_Image(fileGT,segment)
+OAR_DL = OAR_Image(fileDL,segment)
+OAR_GT = OAR_Image(fileGT,segment)
 
-
+t0 = time()
 test = AddedPathLength(OAR_GT,OAR_DL)
+t1 = time()
 
 test.APL
 test.APL_line_ratio
 test.APL_volume_ratio
+print(t1-t0)
