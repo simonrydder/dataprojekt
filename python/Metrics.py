@@ -18,7 +18,7 @@ from APL import AddedPathLength
 # from DICE import DICE
 
 # Classes and functions
-class Metrics():
+class Metrics_Info():
 
     def __init__(self, ID, segment, methodA, methodB):
         self.PatientID = ID     # As id-type
@@ -90,5 +90,5 @@ Methods = ["GT", "DL"]
 
 print(Path(PatientID, Methods[0]).File)
 
-MET = Metrics(PatientID, Segment, Methods[0], Methods[1])
+MET = Metrics_Info(PatientID, Segment, Methods[0], Methods[1])
 print(MET)

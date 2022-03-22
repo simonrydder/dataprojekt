@@ -37,7 +37,9 @@ class OAR_Image():
         self.Image = self.GetImage()
 
     def __str__(self):
-        OARprint = f'Name: {self.Name}\nSegment#: {self.SegmentNo}\nImage (x, y, z): {self.Shape}'
+        OARprint = f'Name: {self.Name}\n' + \
+                   f'Segment#: {self.SegmentNo}\n' + \
+                   f'Image (x, y, z): {self.Shape}'
         return OARprint
 
     def GetSegment(self):
