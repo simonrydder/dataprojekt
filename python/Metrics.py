@@ -10,6 +10,7 @@ Discribtion:    Skabelon for nye filer.
 
 # Imports
 import SimpleITK as ITK
+import numpy as np
 
 # Import other files
 from DataReader import Path
@@ -17,9 +18,12 @@ from DataPreparation import OAR_Image
 from APL import AddedPathLength
 # from DICE import DICE
 
+# Create class of no-existing image for segment:
+class NoSegment(Exception):
+    pass
+
 # Classes and functions
 class Metrics_Info():
-
     def __init__(self, ID, segment, methodA, methodB):
         self.PatientID = ID     # As id-type
         self.OAR = segment      # As string i.e. "Brainstem"
@@ -28,10 +32,22 @@ class Metrics_Info():
         self.Comparison = f'{self.MethodA} vs {self.MethodB}'
         self.ImageA = self.getImage(self.MethodA)    # OAR_Image from method A
         self.ImageB = self.getImage(self.MethodB)    # OAR_Image from method B
-        self.DICE = self.getDICE()
-        self.Hausdorff = self.getHausdorff()
-        self.MSD = self.getMSD()
-        self.APL, self.APL_length_ratio, self.APL_volume_ratio = self.getAPL()
+        
+        try:
+            if np.all(OAR_Image.GetArray(self.ImageA) == 0) or np.all(OAR_Image.GetArray(self.ImageB) == 0):
+                raise NoSegment
+
+            self.DICE = self.getDICE()
+            self.Hausdorff = self.getHausdorff()
+            self.MSD = self.getMSD()
+            self.APL, self.APL_length_ratio, self.APL_volume_ratio = self.getAPL()
+
+        except NoSegment:
+            self.DICE = None
+            self.Hausdorff = None
+            self.MSD = None
+            self.APL, self.APL_length_ratio, self.APL_volume_ratio = None, None, None
+            
 
     def __str__(self):
         MetricPrint =   f'PatientID: {self.PatientID}\n' + \
@@ -43,7 +59,6 @@ class Metrics_Info():
                         f'Added path length: {self.APL}\n' + \
                         f'APL length ratio: {self.APL_length_ratio}\n' + \
                         f'APL volume ratio: {self.APL_volume_ratio}'
-        
         return MetricPrint
 
     def getImage(self, method):
@@ -85,10 +100,12 @@ class Metrics_Info():
 
 # Test
 PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
-Segment = "BrainStem"
+#Segment = "BrainStem"
+Segment = "submandibular_merged"
 Methods = ["GT", "DL"]
 
 print(Path(PatientID, Methods[0]).File)
 
 MET = Metrics_Info(PatientID, Segment, Methods[0], Methods[1])
+print(getattr(MET, "Hausdorff"))
 print(MET)
