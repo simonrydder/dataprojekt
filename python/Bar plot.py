@@ -15,7 +15,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 
-df = pd.read_csv("test.csv")
+df = pd.read_csv("test.csv", index_col = 0)
 df = df.drop(["Date"], axis = 1).round(2)
 
 def bar_plot(df):
