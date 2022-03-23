@@ -1,0 +1,31 @@
+apl især interessant, proxy for tid - hvad kræver det ud over det - eksperiment korrelationen mellem de to mål
+
+vurdere de nye apl lenght ratio, volume ratio
+
+ apl som proxy for tid
+
+selvstædnig metric - meget hvor ændret i forhold til hvad der var dvs. length og volume ratio
+
+tolerance 0 giver meget path length - sjældent ligge lige oven i hinanden
+
+som selvstændig metric have en tolerance - hvor godt har den ramt i gross terms. 
+
+tolerance ifht hvor crucial organet er. øret giver ikke mening med tolreance. 
+
+interessant at se slice for PCM kontra brainstem fx. 
+
+koble tal (statistics) sammen med slices af APL, så det giver mere mening. 
+
+om den nye metric apl hvad den kan give af komplimentær information, relevans. i projektet
+
+forslår en balanced hausdorff distance - hvad mener artiklen?
+
+visuel produkt bedste ide ifht overbevise lægerne - de læser ikke en rapport. 
+
+Powerpoint ikke dårlig idé. Gitside. 
+
+Ikke interesseret i en lang rapport. SPild af tid. 
+
+
+
+
