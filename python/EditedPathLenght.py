@@ -65,6 +65,8 @@ class EPL_Metric():
             VA, HA = self.findLines(coordsA)    # Sets of Vertical and Horizontal Lines for A
             VB, HB = self.findLines(coordsB)    # Sets of Vertical and Horizontal Lines for B
 
+
+
             vrest = VA - VB
             hrest = HA - HB
 
@@ -179,3 +181,65 @@ if __name__ == '__main__':
     
     empty = EPL_Metric()
     print(empty)
+
+
+
+def findLines(coordinates):
+    verticals = {}
+    horizontals = {}
+
+    for x, y in coordinates:
+        left  = ((x - 0.5, y - 0.5), (x - 0.5, y + 0.5)) # left edge line
+        right = ((x + 0.5, y - 0.5), (x + 0.5, y + 0.5)) # right edge line
+        lower = ((x - 0.5, y - 0.5), (x + 0.5, y - 0.5)) # lower edge line
+        upper = ((x - 0.5, y + 0.5), (x + 0.5, y + 0.5)) # upper edge line
+
+        for line in left, right, lower, upper:
+            (x0, _), (x1, _) = line
+            if x0 == x1: # vertical line
+                verticals[line] = verticals.get(line, 0) + 1
+            else: # horizontal line
+                horizontals[line] = horizontals.get(line, 0) + 1 
+    
+    # Extraxt only lines not duplicating.
+    Vlines = {key for key, value in verticals.items() if value == 1}
+    Hlines = {key for key, value in horizontals.items() if value == 1}
+    
+    return Vlines, Hlines
+
+vlines, hlines = findLines({(1,1)})
+
+
+def addTolerance(line, tol = 0):
+    if tol == 0:
+        return line      
+
+    (x0, y0), (x1, y1) = line
+
+    left    = ((x0-1, y0), (x1 - 1, y1))
+    right   = ((x0+1, y0), (x1 + 1, y1))
+    up      = ((x0, y0 +1), (x1, y1 +1))
+    down    = ((x0, y0 -1), (x1, y1 -1))
+
+    new_lines = [line]
+
+    for l in left, right, up, down:
+        new_lines.append(addTolerance(l, tol-1))
+    
+    return new_lines
+
+
+addTolerance(list(vlines)[0], tol = 1)
+
+def x(lines, tol = 0):
+
+    temp = []
+    for line in lines:
+        temp += addTolerance(line, tol)
+    
+
+    return temp
+
+
+
+
