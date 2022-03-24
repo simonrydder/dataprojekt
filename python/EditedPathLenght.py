@@ -77,10 +77,17 @@ class EPL_Metric():
         return ELP
 
     def getLineEPL(self):
-        return self.EPL / self.TotalLengthA
+        try:
+            return self.EPL / self.TotalLengthA
+        except ZeroDivisionError:
+            return 0
+        
 
     def getVolumeEPL(self):
-        return self.EPL / self.TotalAreaA
+        try: 
+            return self.EPL / self.TotalAreaA
+        except ZeroDivisionError:
+            return 0
 
     def findCoordinates(self, array):
         """
@@ -157,11 +164,12 @@ if __name__ == '__main__':
     P1 = Path(ID, Date, 'GT')
     P2 = Path(ID, Date, 'DL')
 
-    for segment in ['brainstem', 'pcm_low', 'parotid_merged', 'brain']:
+    for segment in ['brainstem', 'pcm_low', 'parotid_merged']:
         OARA = OAR_Image(P1, segment)
+        print(OARA)
         OARB = OAR_Image(P2, segment)
 
-        for tol in [0, 1, 2]:
+        for tol in [0]:
             print(f'Test time of {segment} with {tol = }:')
             t0 = time()
             res = EPL_Metric(OARA, OARB, tol)

@@ -93,15 +93,14 @@ class OAR_Image():
         # Transform Image to Array
         array = ITK.GetArrayFromImage(img)
 
+        # Replace all values unequal to SegmentNo with 0.
+        array = np.where(array == self.GetSegment(), array, 0)
+        
         # Retransform Array to Image
         img = ITK.GetImageFromArray(array)
         img.SetDirection(self.Direction)
         img.SetOrigin(self.Origin)
         img.SetSpacing(self.Spacing)
-
-    
-        # Replace all values unequal to SegmentNo with 0.
-        array = np.where(array == self.GetSegment(), array, 0)
 
         # Check if segment exists
         if not np.all(array == 0):
