@@ -31,18 +31,22 @@ class Metrics_Info():
         self.ImageB = ImageB
         self.Tolerance = Tolerence
         self.Comparison = self.getComparison()
+        self.Empty = self.ImageA.Exists and self.ImageB.Exists
 
-        if self.ImageA.Exists and self.ImageB.Exists:
+        if self.Empty:
             self.DICE = self.getDICE()
             self.Hausdorff = self.getHausdorff()
             self.MSD = self.getMSD()
+            self.EPL, self.LineEPL, self.VolumeEPL = self.getEPL()
+
         else:
             self.DICE = None
             self.Hausdorff = None
             self.MSD = None
+            self.EPL = None
+            self.LineEPL = None
+            self.VolumeEPL = None
         
-        self.EPL, self.LineEPL, self.VolumeEPL = self.getEPL()
-
 
     def __str__(self):
         msg = (
@@ -104,6 +108,7 @@ class Metrics_Info():
 
 
     def getAttributes(self):
+        
         output = {'ID' : [self.ImageA.Path.ID],
                   'Date' : [self.ImageA.Path.Date],
                   'DICE': [self.DICE],
