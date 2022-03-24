@@ -18,6 +18,7 @@ import seaborn as sns
 df = pd.read_csv("test.csv", index_col = 0)
 df = df.drop(["Date"], axis = 1).round(2)
 
+
 def bar_plot(df):
     metrics = df["Metric"].unique().tolist()
     df_sliced_dict = {}
@@ -51,3 +52,6 @@ def bar_plot(df):
 
 
 bar_plot(df)
+
+
+
