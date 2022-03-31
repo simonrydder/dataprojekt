@@ -1,0 +1,159 @@
+TestTime: 7.0625, Segment: brain, Tolerance: 0
+EPL: 11199.609375
+EPL (Line Ratio): 0.4772772672792649
+EPL (Volume Ratio): 0.014180913858033576
+
+TestTime: 13.703125, Segment: brain, Tolerance: 1
+EPL: 1736.71875
+EPL (Line Ratio): 0.07401118657610867
+EPL (Volume Ratio): 0.0021990283915042127
+
+TestTime: 34.296875, Segment: brain, Tolerance: 2
+EPL: 822.65625
+EPL (Line Ratio): 0.035057930483419895
+EPL (Volume Ratio): 0.001041645027554627
+
+TestTime: 72.125, Segment: brain, Tolerance: 3
+EPL: 466.40625
+EPL (Line Ratio): 0.019876148621654016
+EPL (Volume Ratio): 0.0005905622805794039
+
+TestTime: 0.15625, Segment: brainstem, Tolerance: 0
+EPL: 1604.296875
+EPL (Line Ratio): 0.8286924939467313
+EPL (Volume Ratio): 0.12518288222384785
+
+TestTime: 0.296875, Segment: brainstem, Tolerance: 1
+EPL: 878.90625
+EPL (Line Ratio): 0.4539951573849879
+EPL (Volume Ratio): 0.06858083394294075
+
+TestTime: 0.828125, Segment: brainstem, Tolerance: 2
+EPL: 430.078125
+EPL (Line Ratio): 0.2221549636803874
+EPL (Volume Ratio): 0.033558888076079006
+
+TestTime: 1.875, Segment: brainstem, Tolerance: 3
+EPL: 237.890625
+EPL (Line Ratio): 0.1228813559322034
+EPL (Volume Ratio): 0.018562545720555962
+
+TestTime: 0.265625, Segment: parotid_merged, Tolerance: 0
+EPL: 4130.859375
+EPL (Line Ratio): 0.7747252747252747
+EPL (Volume Ratio): 0.11288669698328316
+
+TestTime: 0.8125, Segment: parotid_merged, Tolerance: 1
+EPL: 2267.578125
+EPL (Line Ratio): 0.42527472527472526
+EPL (Volume Ratio): 0.06196759110997246
+
+TestTime: 2.234375, Segment: parotid_merged, Tolerance: 2
+EPL: 1530.46875
+EPL (Line Ratio): 0.28703296703296705
+EPL (Volume Ratio): 0.0418241209248703
+
+TestTime: 5.15625, Segment: parotid_merged, Tolerance: 3
+EPL: 1143.75
+EPL (Line Ratio): 0.2145054945054945
+EPL (Volume Ratio): 0.03125600461154166
+
+TestTime: 0.078125, Segment: pcm_low, Tolerance: 0
+EPL: 547.265625
+EPL (Line Ratio): 0.7915254237288135
+EPL (Volume Ratio): 0.20811051693404634
+
+TestTime: 0.09375, Segment: pcm_low, Tolerance: 1
+EPL: 257.8125
+EPL (Line Ratio): 0.3728813559322034
+EPL (Volume Ratio): 0.09803921568627451
+
+TestTime: 0.296875, Segment: pcm_low, Tolerance: 2
+EPL: 111.328125
+EPL (Line Ratio): 0.16101694915254236
+EPL (Volume Ratio): 0.04233511586452763
+
+TestTime: 0.5625, Segment: pcm_low, Tolerance: 3
+EPL: 39.84375
+EPL (Line Ratio): 0.0576271186440678
+EPL (Volume Ratio): 0.015151515151515152
+
+TestTime: 0.0625, Segment: pcm_mid, Tolerance: 0
+EPL: 1150.78125
+EPL (Line Ratio): 0.7683881064162754
+EPL (Volume Ratio): 0.21639488761568973
+
+TestTime: 0.28125, Segment: pcm_mid, Tolerance: 1
+EPL: 498.046875
+EPL (Line Ratio): 0.33255086071987483
+EPL (Volume Ratio): 0.09365359189070074
+
+TestTime: 0.609375, Segment: pcm_mid, Tolerance: 2
+EPL: 125.390625
+EPL (Line Ratio): 0.0837245696400626
+EPL (Volume Ratio): 0.02357866901718819
+
+TestTime: 1.46875, Segment: pcm_mid, Tolerance: 3
+EPL: 21.09375
+EPL (Line Ratio): 0.014084507042253521
+EPL (Volume Ratio): 0.003966505068312032
+
+TestTime: 0.046875, Segment: pcm_low, Tolerance: 0
+EPL: 547.265625
+EPL (Line Ratio): 0.7915254237288135
+EPL (Volume Ratio): 0.20811051693404634
+
+TestTime: 0.125, Segment: pcm_low, Tolerance: 1
+EPL: 257.8125
+EPL (Line Ratio): 0.3728813559322034
+EPL (Volume Ratio): 0.09803921568627451
+
+TestTime: 0.25, Segment: pcm_low, Tolerance: 2
+EPL: 111.328125
+EPL (Line Ratio): 0.16101694915254236
+EPL (Volume Ratio): 0.04233511586452763
+
+TestTime: 0.625, Segment: pcm_low, Tolerance: 3
+EPL: 39.84375
+EPL (Line Ratio): 0.0576271186440678
+EPL (Volume Ratio): 0.015151515151515152
+
+TestTime: 0.140625, Segment: spinalcord, Tolerance: 0
+EPL: 2589.84375
+EPL (Line Ratio): 0.6876166770379589
+EPL (Volume Ratio): 0.1909452220494211
+
+TestTime: 0.296875, Segment: spinalcord, Tolerance: 1
+EPL: 849.609375
+EPL (Line Ratio): 0.2255756067205974
+EPL (Volume Ratio): 0.06264040089856575
+
+TestTime: 0.671875, Segment: spinalcord, Tolerance: 2
+EPL: 243.75
+EPL (Line Ratio): 0.06471686372121967
+EPL (Volume Ratio): 0.017971315016416106
+
+TestTime: 2.0, Segment: spinalcord, Tolerance: 3
+EPL: 55.078125
+EPL (Line Ratio): 0.01462352209085252
+EPL (Volume Ratio): 0.004060825989286331
+
+TestTime: 0.046875, Segment: thyroid, Tolerance: 0
+EPL: 535.546875
+EPL (Line Ratio): 0.833941605839416
+EPL (Volume Ratio): 0.3292507204610951
+
+TestTime: 0.109375, Segment: thyroid, Tolerance: 1
+EPL: 324.609375
+EPL (Line Ratio): 0.5054744525547445
+EPL (Volume Ratio): 0.19956772334293948
+
+TestTime: 0.265625, Segment: thyroid, Tolerance: 2
+EPL: 161.71875
+EPL (Line Ratio): 0.2518248175182482
+EPL (Volume Ratio): 0.0994236311239193
+
+TestTime: 0.640625, Segment: thyroid, Tolerance: 3
+EPL: 85.546875
+EPL (Line Ratio): 0.1332116788321168
+EPL (Volume Ratio): 0.05259365994236311

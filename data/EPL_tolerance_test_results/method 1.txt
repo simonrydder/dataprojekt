@@ -1,0 +1,39 @@
+TestTime: 24.953125, Segment: brain, Tolerance: 0
+EPL: 11199.609375
+EPL (Line Ratio): 0.4772772672792649
+EPL (Volume Ratio): 0.014180913858033576
+
+TestTime: 0.421875, Segment: brainstem, Tolerance: 0
+EPL: 1604.296875
+EPL (Line Ratio): 0.8286924939467313
+EPL (Volume Ratio): 0.12518288222384785
+
+TestTime: 1.109375, Segment: parotid_merged, Tolerance: 0
+EPL: 4130.859375
+EPL (Line Ratio): 0.7747252747252747
+EPL (Volume Ratio): 0.11288669698328316
+
+TestTime: 0.125, Segment: pcm_low, Tolerance: 0
+EPL: 547.265625
+EPL (Line Ratio): 0.7915254237288135
+EPL (Volume Ratio): 0.20811051693404634
+
+TestTime: 0.21875, Segment: pcm_mid, Tolerance: 0
+EPL: 1150.78125
+EPL (Line Ratio): 0.7683881064162754
+EPL (Volume Ratio): 0.21639488761568973
+
+TestTime: 0.125, Segment: pcm_low, Tolerance: 0
+EPL: 547.265625
+EPL (Line Ratio): 0.7915254237288135
+EPL (Volume Ratio): 0.20811051693404634
+
+TestTime: 0.453125, Segment: spinalcord, Tolerance: 0
+EPL: 2589.84375
+EPL (Line Ratio): 0.6876166770379589
+EPL (Volume Ratio): 0.1909452220494211
+
+TestTime: 0.109375, Segment: thyroid, Tolerance: 0
+EPL: 535.546875
+EPL (Line Ratio): 0.833941605839416
+EPL (Volume Ratio): 0.3292507204610951
