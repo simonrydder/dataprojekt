@@ -31,22 +31,11 @@ from DataReader2 import Path
 # Classes and functions
 class OAR_Image():
     # Class static attribute
-    OARs = {"background" : 0,
-            "brain" : 1,
-            "brainstem" : 2,
-            "spinalcord" : 3,
-            "lips" : 4,
-            "esophagus" : 5,    # spiserøret
-            "parotid_merged" : 6,   # spytkirtlen
-            "pcm_low" : 7,      # synkemuskel lower
-            "pcm_mid" : 8,      # synkemuskel middle
-            "pcm_up" : 9,       # synkemuskel upper
-            "mandible" : 10,    # kæben
-            "submandibular_merged" : 11,    # pas
-            "thyroid" : 12,     # 
-            "opticNerve_merged" : 13,
-            "eyefront_merged" : 14,
-            "eyeback_merged" :15}
+    with open('OAR_values.txt') as f:
+        OARs = eval(f.read())
+
+    # with open('OAR_tolerance.txt') as f:
+    #     OAR_tols = eval(f.read())
 
     def __init__(self, Path : Path = Path(), OAR_name : str = ''):
         self.Path = Path
