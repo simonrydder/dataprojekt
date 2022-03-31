@@ -45,9 +45,18 @@ class EPL_Metric():
         
         self.TotalLengthA = 0
         self.TotalAreaA = 0
+        self.TotalAreaAB = 0
+
         self.EPL = self.getEPL()
         self.LineEPL = self.getLineEPL()
-        self.VolumeEPL = self.getVolumeEPL()
+        self.VolumeEPL = self.getVolumeEPL(self.TotalAreaA)
+        self.VolumeEPL2 = self.getVolumeEPL(self.TotalAreaAB)
+
+        self.SliceValuesEPL = []
+        self.SliceLineSegmentsV = []
+        self.SliceLineSegmentsH = []
+        self.SlicePointsA = []
+        self.SlicePointsB = []
 
     def __str__(self):
         msg = (
@@ -145,20 +154,27 @@ class EPL_Metric():
         EPL = 0
         for z in range(self.Slices):
             pointsA = self.findPoints(self.A[z])
+            self.SlicePointsA.append(pointsA)
+
             pointsB = self.findPoints(self.B[z])
+            self.SlicePointsB.append(pointsB)
 
             vLinesA, hLinesA = self.findLines(pointsA)
             vLinesB, hLinesB = self.findLines(pointsB, self.Tolerance)
 
             vDiff = vLinesA - vLinesB
+            self.SliceLineSegmentsV.append(vDiff)
+            
             hDiff = hLinesA - hLinesB
+            self.SliceLineSegmentsH.append(hDiff)
 
             self.TotalLengthA += (len(vLinesA)* self.Height) + (len(hLinesA) * self.Width)
             self.TotalAreaA += (self.Width + self.Height) * len(pointsA)
-            # self.TotalAreaA += (self.Width + self.Height) * len(pointsA & pointsB)
-            EPL += len(vDiff) * self.Height + len(hDiff) * self.Width
+            self.TotalAreaAB += (self.Width + self.Height) * len(pointsA & pointsB)
+            EPL = len(vDiff) * self.Height + len(hDiff) * self.Width
+            self.SliceValuesEPL.append(EPL)
 
-        return EPL
+        return sum(EPL)
 
 
     def getLineEPL(self):
@@ -168,15 +184,15 @@ class EPL_Metric():
             return 0
         
 
-    def getVolumeEPL(self):
+    def getVolumeEPL(self, area):
         try: 
-            return self.EPL / self.TotalAreaA
+            return self.EPL / area
         except ZeroDivisionError:
             return 0
 
 
 # Functions only used for testing
-if __name__ == '__main2__':
+if __name__ == '__main__':
     from time import process_time as pt
     import matplotlib.ticker as plticker
     import matplotlib.pyplot as plt
@@ -303,7 +319,6 @@ if __name__ == '__main2__':
 
 # Actual testing
 if __name__ == '__main__':
-    from time import process_time as pt
     P1 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'GT')
     P2 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'DL')
 
