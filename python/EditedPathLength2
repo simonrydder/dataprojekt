@@ -47,16 +47,17 @@ class EPL_Metric():
         self.TotalAreaA = 0
         self.TotalAreaAB = 0
 
-        self.EPL = self.getEPL()
-        self.LineEPL = self.getLineEPL()
-        self.VolumeEPL = self.getVolumeEPL(self.TotalAreaA)
-        self.VolumeEPL2 = self.getVolumeEPL(self.TotalAreaAB)
-
         self.SliceValuesEPL = []
         self.SliceLineSegmentsV = []
         self.SliceLineSegmentsH = []
         self.SlicePointsA = []
         self.SlicePointsB = []
+
+        self.EPL = self.getEPL()
+        self.LineEPL = self.getLineEPL()
+        self.VolumeEPL = self.getVolumeEPL(self.TotalAreaA)
+        self.VolumeEPL2 = self.getVolumeEPL(self.TotalAreaAB)
+
 
     def __str__(self):
         msg = (
@@ -151,7 +152,6 @@ class EPL_Metric():
 
 
     def getEPL(self):
-        EPL = 0
         for z in range(self.Slices):
             pointsA = self.findPoints(self.A[z])
             self.SlicePointsA.append(pointsA)
@@ -174,7 +174,7 @@ class EPL_Metric():
             EPL = len(vDiff) * self.Height + len(hDiff) * self.Width
             self.SliceValuesEPL.append(EPL)
 
-        return sum(EPL)
+        return sum(self.SliceValuesEPL)
 
 
     def getLineEPL(self):
