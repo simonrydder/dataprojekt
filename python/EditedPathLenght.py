@@ -26,6 +26,7 @@ print(f"Running {__name__}")
 #Imports
 import numpy as np
 
+
 #Import other files
 from DataPreparation2 import OAR_Image
 from DataReader2 import Path
@@ -133,7 +134,7 @@ class EPL_Metric():
 
 
 # Test
-if __name__ == '__main__':
+if __name__ == '__main__2':
     points = {(1,1),(1,2)}
     p_tol = {(0,1), (0,2), (1,0), (1,1), (1,2), (1,3), (2,1), (2,2)}
 
@@ -182,64 +183,19 @@ if __name__ == '__main__':
     empty = EPL_Metric()
     print(empty)
 
+if __name__ == '__main__':
+    from time import process_time as pt
+    P1 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'GT')
+    P2 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'DL')
 
+    for Segment in ['brain', 'brainstem', 'parotid_merged', 'pcm_low', \
+        'pcm_mid', 'pcm_low', 'spinalcord', 'thyroid']:
+        IMGA = OAR_Image(P1, Segment)
+        IMGB = OAR_Image(P2, Segment)
 
-def findLines(coordinates):
-    verticals = {}
-    horizontals = {}
-
-    for x, y in coordinates:
-        left  = ((x - 0.5, y - 0.5), (x - 0.5, y + 0.5)) # left edge line
-        right = ((x + 0.5, y - 0.5), (x + 0.5, y + 0.5)) # right edge line
-        lower = ((x - 0.5, y - 0.5), (x + 0.5, y - 0.5)) # lower edge line
-        upper = ((x - 0.5, y + 0.5), (x + 0.5, y + 0.5)) # upper edge line
-
-        for line in left, right, lower, upper:
-            (x0, _), (x1, _) = line
-            if x0 == x1: # vertical line
-                verticals[line] = verticals.get(line, 0) + 1
-            else: # horizontal line
-                horizontals[line] = horizontals.get(line, 0) + 1 
-    
-    # Extraxt only lines not duplicating.
-    Vlines = {key for key, value in verticals.items() if value == 1}
-    Hlines = {key for key, value in horizontals.items() if value == 1}
-    
-    return Vlines, Hlines
-
-vlines, hlines = findLines({(1,1)})
-
-
-def addTolerance(line, tol = 0):
-    if tol == 0:
-        return line      
-
-    (x0, y0), (x1, y1) = line
-
-    left    = ((x0-1, y0), (x1 - 1, y1))
-    right   = ((x0+1, y0), (x1 + 1, y1))
-    up      = ((x0, y0 +1), (x1, y1 +1))
-    down    = ((x0, y0 -1), (x1, y1 -1))
-
-    new_lines = [line]
-
-    for l in left, right, up, down:
-        new_lines.append(addTolerance(l, tol-1))
-    
-    return new_lines
-
-
-addTolerance(list(vlines)[0], tol = 1)
-
-def x(lines, tol = 0):
-
-    temp = []
-    for line in lines:
-        temp += addTolerance(line, tol)
-    
-
-    return temp
-
-
-
-
+        t0 = pt()
+        M = EPL_Metric(IMGA, IMGB, 0)
+        t1 = pt()
+        print()
+        print(f'TestTime: {t1-t0}, Segment: {Segment}, Tolerance: 0')
+        print(M)
