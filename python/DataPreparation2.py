@@ -36,14 +36,14 @@ class OAR_Image():
             "brainstem" : 2,
             "spinalcord" : 3,
             "lips" : 4,
-            "esophagus" : 5,
-            "parotid_merged" : 6,
-            "pcm_low" : 7,
-            "pcm_mid" : 8,
-            "pcm_up" : 9,
-            "mandible" : 10,
-            "submandibular_merged" : 11,
-            "thyroid" : 12,
+            "esophagus" : 5,    # spiserøret
+            "parotid_merged" : 6,   # spytkirtlen
+            "pcm_low" : 7,      # synkemuskel lower
+            "pcm_mid" : 8,      # synkemuskel middle
+            "pcm_up" : 9,       # synkemuskel upper
+            "mandible" : 10,    # kæben
+            "submandibular_merged" : 11,    # pas
+            "thyroid" : 12,     # 
             "opticNerve_merged" : 13,
             "eyefront_merged" : 14,
             "eyeback_merged" :15}
