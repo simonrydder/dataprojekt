@@ -53,7 +53,7 @@ def findCoordinates(array):
     Input:  An array A[y][x]
     Output: A list of coordinates of the form (x + 1, len(A) - y), where A[y][x] == 1.
     """
-    N = len(A)
+    N = len(array)
     coords = np.where(array > 0)
     return [(x + 1, N - y) for y, x in zip(*coords)]
 
