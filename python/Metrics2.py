@@ -19,7 +19,7 @@ import SimpleITK as ITK
 # Import other files
 from DataReader2 import Path
 from DataPreparation2 import OAR_Image
-from EditedPathLenght import EPL_Metric
+from EditedPathLength2 import EPL_Metric
 
 
 # Classes and functions
