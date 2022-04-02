@@ -297,7 +297,7 @@ def PatientKeys(n = "All"):
 
 # Test
 if __name__ == "__main__":
-    Segments = list(OAR_Image.OARs.keys())[2:]
+    Segments = list(OAR_Image.OARs.keys())[1:]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
     Patients = PatientKeys()
     for Tolerance in {0, 1, 2, 3, 4}:
@@ -308,7 +308,11 @@ if __name__ == "__main__":
     Segments = list(OAR_Image.OARs.keys())[2:]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
     Patients = PatientKeys()
+<<<<<<< HEAD
+    for Tolerance in {0, 1, 2, 3}:
+=======
     for Tolerance in {0, 1, 2}:
+>>>>>>> parent of 3bb805c (First real results - part 2)
         print(f'\n{Tolerance = }')
         GenerateSliceResults(Segments, Comparisons, Patients, Tolerance)
     
