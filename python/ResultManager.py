@@ -5,7 +5,9 @@ Created:        25/03/2022
 
 File name:      ResultManager.py
 
-Description:
+Description:    Contains 5 functions: 
+                - GenerateResults(Segments, Comparisons, Patients, Tolerance = 0, Overwrite = False, root = '')
+                - MergeResults()
 """
 
 # Initialization
@@ -73,6 +75,7 @@ def GenerateResults(
                 df = pd.concat([df, *patient_dfs])
                 df.to_csv(root + file, index = False)
                 print(f'{file} saved')
+
 
 def MergeResults(filename,
     location = '..\\data\\results\\', folder = 'dataframes\\'):
@@ -154,7 +157,7 @@ def GenerateSliceResults(
     Patients,           # Iterable object of tuples with ID and Date
     Tolerance = 0,      
     overwrite = False,  # True : Will calculate new values for files loaded.
-    root = '..\\data\\sliceresults\\dataframes\\'):
+    root = '..\\data\\sliceresults\\dataframes2\\'):
 
     for Segment in Segments:
 
@@ -305,15 +308,16 @@ if __name__ == "__main__":
         GenerateResults(Segments, Comparisons, Patients, Tolerance)
         MergeResults(f'total_tolerance{Tolerance}.csv')
 
-    Segments = list(OAR_Image.OARs.keys())[2:]
+    Segments = list(OAR_Image.OARs.keys())[2:11]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
-    Patients = PatientKeys()
-<<<<<<< HEAD
+    Patients = PatientKeys(3)
+    Patients = {('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129'),
+                ('HNCDL_447', '20170421'),
+                ('HNCDL_340', '20180723'),
+                ('HNCDL_141', '20160926'),
+                ('PHbmDBLzKFUqHWIbGMTmUFSmO', '20200212')}
     for Tolerance in {0, 1, 2, 3}:
-=======
-    for Tolerance in {0, 1, 2}:
->>>>>>> parent of 3bb805c (First real results - part 2)
         print(f'\n{Tolerance = }')
         GenerateSliceResults(Segments, Comparisons, Patients, Tolerance)
     
-    MergeSliceResults('total.csv')
+    # MergeSliceResults('total.csv')
