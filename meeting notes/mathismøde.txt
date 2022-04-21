@@ -1,0 +1,8 @@
+notes mathis møde
+
+differensen mellem volumes / eller 
+validere nye metrik ifht prediction how? 
+
+uafhængig af volumen line%/volume
+
+EPL proxy for tid, EPL ratio for precision. 
