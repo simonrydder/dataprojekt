@@ -6,3 +6,15 @@ validere nye metrik ifht prediction how?
 uafhængig af volumen line%/volume
 
 EPL proxy for tid, EPL ratio for precision. 
+
+dashboard - deskriptiv statistik - mean, var, max, min boxplot.
+
+numbers needed to treat - før at man undgå en eller anden effekt
+
+hvor mange outliers man har pr. 
+
+man kan trække ting ud af dashboard, og vise det på powerpoint
+
+dashboardet letter også arbejdet for mathis og andre scientitst.
+
+atlas og dep ik så meget nyt
