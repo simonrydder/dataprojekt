@@ -18,3 +18,7 @@ man kan trække ting ud af dashboard, og vise det på powerpoint
 dashboardet letter også arbejdet for mathis og andre scientitst.
 
 atlas og dep ik så meget nyt
+
+lave plot af den nye metrik linje/vol (to ratioer) - de skal nok ganges sammen (0,1)
+
+hausdorff distancen mellem ratio
