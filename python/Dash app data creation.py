@@ -5,7 +5,7 @@ Created:        21/02/2022
 
 File name:      ValidateMatrices.py
 
-Discribtion:    This file is a visual check of the implemented 
+Discribtion:    This file is for creating csv files to dash app (meanwhile)
 """
 
 # Imports
@@ -14,7 +14,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as plticker
 import pandas as pd
-import seaborn as sns
 import SimpleITK as ITK
 import os
 
@@ -67,13 +66,14 @@ def findLines(coordinates):
     return Vlines, Hlines
 
 def metrics_slice(patient,method,segment,i):
-    pathA = Path(patient, "GT")
+    m1, m2 = method
+    pathA = Path(patient, m1)
     OAR_A = OAR_Image(pathA.File, segment)
     array_A = OAR_A.GetArray()
     array_A = array_A[i]
     img_A = ITK.GetImageFromArray(array_A)
 
-    pathB = Path(patient, method)
+    pathB = Path(patient, m2)
     OAR_B = OAR_Image(pathB.File, segment)
     array_B = OAR_B.GetArray()
     array_B = array_B[i]
@@ -166,7 +166,7 @@ def PatientGenerator(n = "All"):
             PatientID = file.split("&")[0]
             yield PatientID
 
-segments = [ "brainstem", "spinalcord",
+segments = ["brainstem", "spinalcord",
 "lips", "esophagus", "parotid_merged", "pcm_low",
 "pcm_mid", "pcm_up", "mandible", "submandibular_merged",
 "thyroid", "opticNerve_merged", "eyefront_merged"]
@@ -197,7 +197,7 @@ method = "DL"
 
 def findslice2(patients, method, segments):
 
-    data = {"Patient": [], "Segment": [],"idx": [],"slice": [],
+    data = {"Patient": [], "Segment": [],"method": [],"idx": [],"slice": [],
         "xA": [], "yA": [], "xB":[] , "yB": [],"VA": [],"HA": [],
         "VB": [],"HB": [], 
         "APL": [],"APL_L": [], "APL_V": [], "DICE": [], "MSD": [],
@@ -216,9 +216,6 @@ def findslice2(patients, method, segments):
 
             A = OAR_A.GetArray()
             B = OAR_B.GetArray()
-
-            #min_x,max_x,min_y,max_y = findlimits(A,B)
-
 
             if np.sum(A) == 0:
                 return None
@@ -299,3 +296,108 @@ data = findslice2(patients,method,segments)
 df = pd.DataFrame(data)
 
 df.to_csv("data_slices_test.csv")
+
+
+
+
+patients = ["4Prj3A5sMvSv1sK4u5ihkzlnU"]
+methods = [("GT","DL"),("GT","DLB"),("DL","DLB")]
+segments = ["brain","brainstem", "spinalcord",
+"lips", "esophagus", "parotid_merged", "pcm_low",
+"pcm_mid", "pcm_up", "mandible", "submandibular_merged",
+"thyroid", "opticNerve_merged", "eyefront_merged"]
+
+
+data = {"Patient": [], "Segment": [],"method": [],"idx": [],"slice": [], "xA":[] , "yA": [],
+"xB": [],"yB": [], "VA": [],"HA": [],"VB": [],"HB": [],
+"APL": [],"APL_L": [], "APL_V": [], "DICE": [], "MSD": [],
+"Hausdorff": []}
+for patient in patients:
+    print(patient)
+    for method in methods:
+        m1, m2 = method
+        print(method)
+        for segment in segments:
+            print(segment)
+
+            pathA = Path(patient, m1)
+            pathB = Path(patient, m2)
+
+            OAR_A = OAR_Image(pathA.File, segment)
+            OAR_B = OAR_Image(pathB.File, segment)
+
+            A = OAR_A.GetArray()
+            B = OAR_B.GetArray()
+
+            if np.sum(A) != 0:
+
+                for z in range(A.shape[0]):
+                    if np.sum(A[z,:,:]) > 0 or np.sum(B[z,:,:]):
+                        z_min = z
+                        break
+
+                for z in range(A.shape[0])[::-1]:
+                    if np.sum(A[z,:,:]) > 0 or np.sum(B[z,:,:]):
+                        z_max = z
+                        break 
+
+
+                for idx,z in enumerate(range(z_min,z_max+1)):
+                    coordsA = findCoordinates(A[z])
+                    both = True
+                    if len(coordsA)  == 0:
+                        xA = []
+                        yA = []
+                        VA = []
+                        HA = []
+                        both = False
+                    else:
+                        xA, yA = zip(*coordsA)
+                        VA, HA = findLines(coordsA)
+
+                    coordsB = findCoordinates(B[z])
+                    if len(coordsB) == 0:
+                        xB = []
+                        yB = []
+                        VB = []
+                        HB = []
+                        both = False
+                    else:
+                        xB, yB = zip(*coordsB)
+                        VB, HB = findLines(coordsB)
+
+
+                    if both:
+                        Hausdorff, MSD, DICE = metrics_slice(patient,method,segment,z)
+                        Vrest = set(VA) - set(VB)
+                        Hrest = set(HA) - set(HB)
+                        APL = np.round(len(Vrest)*OAR_A.Spacing[1] + 
+                                    len(Hrest)*OAR_A.Spacing[0],2)
+                        length = len(VA)*OAR_A.Spacing[1] + len(HA)*OAR_A.Spacing[0]
+                        volume = (OAR_A.Spacing[1] + OAR_A.Spacing[0]) * len(coordsA)
+
+                        APL_length = np.round(APL/length,3)
+                        APL_volume = np.round(APL/volume,3)
+
+                    else:
+                        Hausdorff = None
+                        MSD = None
+                        DICE = None
+                        APL = None
+                        APL_length = None
+                        APL_volume = None
+
+
+
+                    data_slice = [patient,segment,method,idx,z,xA,yA,xB,yB,VA,HA,VB,HB,
+                                    APL,APL_length, APL_volume,DICE, MSD, Hausdorff]
+
+
+                    for key, value in zip(data.keys(),data_slice):
+                                data[key].append(value)
+
+
+
+    df = pd.DataFrame(data)
+    name = patient + "_test.csv"
+    df.to_csv(name)
