@@ -1,22 +1,18 @@
 import pandas as pd
 import plotly.express as px
-import dash
-from dash import dcc
-from dash import html
+from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
-from DataReader import Path
-from DataPreparation import OAR_Image
-import numpy as np
 from ast import literal_eval
 from plotly.subplots import make_subplots
 import dash_daq as daq
 
-app = dash.Dash(__name__)
+app = Dash(__name__)
 
 # Read data and prep it
-df = pd.read_csv("data_perform.csv")
-metrics = df["Metric"].unique().tolist()
+
+df = pd.read_csv("..\\data\\results\\merged.csv", index_col = 0)
+metrics = sorted(df["Metric"].unique().tolist())
 df = df.drop(["Date"], axis = 1).round(2)
 df = df.groupby(["Comparison","Metric"]).mean().reset_index()
 df = df.melt(id_vars=["Comparison", "Metric"], 
@@ -24,20 +20,23 @@ df = df.melt(id_vars=["Comparison", "Metric"],
     value_name="value") 
 
 df_organs = pd.read_csv("data_organ_test.csv")
-df_slices = pd.read_csv("data_slices_test.csv")
-
 cols_to_change = ["xA","yA","xB","yB","VA","HA","VB","HB"]
 
 for col in cols_to_change:
     df_organs[col] = df_organs[col].apply(literal_eval)
-    df_slices[col] = df_slices[col].apply(literal_eval)
 
 #options for dropdowns
-segments = df["Segment"].unique().tolist()
-comparisons = df["Comparison"].unique().tolist()
-organs = df_organs["Segment"].unique().tolist()
-patients_slider = df_slices["Patient"].unique().tolist()
-segments_slider = df_slices["Segment"].unique().tolist()
+segments = sorted(df["Segment"].unique().tolist())
+comparisons = sorted(df["Comparison"].unique().tolist())
+organs = sorted(df_organs["Segment"].unique().tolist())
+
+patients_slider = ["4Prj3A5sMvSv1sK4u5ihkzlnU","PHbmDBLzKFUqHWIbGMTmUFSmO", 
+                    "HNCDL_340","HNCDL_447","HNCDL_141"]
+
+segments_slider = ["brainstem","spinalcord",
+                    "lips", "esophagus", "pcm_low",
+                    "pcm_mid", "pcm_up", "mandible"]
+
 
 #defining Plot theme
 
@@ -48,50 +47,49 @@ plot_theme = "seaborn"
 app.layout = html.Div([
     #Performance plot
     html.H1("Dashboard", style ={"text-align": "center"}), #creates a header
-    html.Div([dcc.Dropdown(id="slct_metrics", # dropdown for metrics
-                    options =metrics,
-                    multi = True,
-                    value = [metrics[0]],
-                    style = {"width": 800},
-                    clearable = False),
-    dcc.Dropdown(id="slct_segment", # Dropdown for segments
+    html.Div([dcc.Dropdown(id="slct_segment", # dropdown for metrics
                     options =segments,
                     multi = True,
                     value = [segments[0]],
-                    style = {"width": 400,"display": "inline-block"},
-                    clearable = False),
+                    style = {"width": 1200},
+                    clearable = True),
+    dcc.Dropdown(id="slct_metrics", # Dropdown for segments
+                    options =metrics,
+                    multi = True,
+                    value = [metrics[0]],
+                    style = {"width": 600, "display": "inline-block"},
+                    clearable = True),
     dcc.Dropdown(id="slct_comp", #Dropdown for comparisons
                     options =comparisons,
                     multi = True,
                     value = [comparisons[0]],
-                    style = {"width": 400,"display": "inline-block"},
-                    clearable = False)]),
+                    style = {"width": 600,"display": "inline-block"},
+                    clearable = True)]),
     html.Br(),
     dcc.Graph(id = "figure_perf", figure = {}), #Initializing figure
     html.Br(),
-    # Plot for one organ
-    dcc.Dropdown(id="segment_organ", #Dropdown for organs
-                    options =organs,
-                    multi = False,
-                    value = organs[0],
-                    style = {"width": 400},
-                    clearable = False),
+    # # Plot for one organ
+    # dcc.Dropdown(id="segment_organ", #Dropdown for organs
+    #                 options =organs,
+    #                 multi = False,
+    #                 value = organs[0],
+    #                 style = {"width": 400},
+    #                 clearable = False),
 
-    html.Br(),
-    dcc.Graph(id = "figure_organ", figure = {}, #Initializing figure
-                style={ 'height': 900}), 
-    html.Br(),
+    # html.Br(),
+    # dcc.Graph(id = "figure_organ", figure = {}, #Initializing figure
+    #             style={ 'height': 800}), 
+    # html.Br(),
 
     # Slider plot
     html.Div(id='slider-container', children=[
         daq.Slider(id = "slider", # Slider to switch slice (z)
-                    min = 0, 
-                   max = 18,
-                   value = 0, 
+                    min = 50, 
+                   max = 100,
+                   value = 87, 
                    step = 1, 
                    size = 900,
-                   handleLabel="slice",
-                   marks={'18': 'mark'}),
+                   handleLabel={"label":"slice","showCurrentValue": True}),
 
         dcc.Dropdown(id = "patient", # Dropdown for Patient
                     options = patients_slider, 
@@ -107,24 +105,35 @@ app.layout = html.Div([
                     value = segments_slider[0],
                     style = {"width": 450,
                     "display": "inline-block"},
-                    clearable = False)
+                    clearable = False),
+                    
         ]),
-
+        dcc.Dropdown(id = "method_slider", #Dropdown for Method
+                    options = ["GTvsDL","GTvsDLB"],
+                    multi = False,
+                    value = "GTvsDL",
+                    style = {"width": 450,
+                    "display": "inline-block"},
+                    clearable = False),
+        dcc.Dropdown(id = "tolerance_slider", #Dropdown for Tolerance
+                    options = ["0","1","2","3"],
+                    multi = False,
+                    value = "0",
+                    style = {"width": 450,
+                    "display": "inline-block"},
+                    clearable = False),
+    html.Div([html.Button("-", "minus",style ={'display': 'inline-block'}),
+              html.Button("+", "plus",style ={'display': 'inline-block'})]),
     dcc.Graph(id = "figure_slider", figure = {}, #Initializing figure
              style={'width': 900, 
              'height': 600,'display': 'inline-block'}),
-
-    # html.Div(id = "performance", children = [], #Initializing Peformance box
-    #          style={'width': '30%',
-    #                 'display': 'inline-block', 
-    #                 'verticalAlign': 'top',
-    #                 'margin-left': 10,
-    #                 "border":"2px black solid"})
-
-
+    dcc.Graph(id = "figure_slider_perf", figure = {}, #Initializing figure
+             style={'width': 600, 
+             'height': 600,'display': 'inline-block'})
 ])
 
 ### connections
+
 
 ##Performance plot
 
@@ -164,7 +173,7 @@ def update_graph(slct_metrics, slct_segment,slct_comp):
     fig.for_each_annotation(lambda trace: plots.append(trace.text))
     
     for idx,plot in enumerate(plots):
-        if plot not in ["APL","Hausdorff","MSD"]:
+        if plot not in ["EPL","Hausdorff","MSD"]:
             fig["layout"][axes[idx]].update(range = [0,1])
 
     # #Changes width of bars
@@ -173,128 +182,187 @@ def update_graph(slct_metrics, slct_segment,slct_comp):
 
     return [fig]
 
+# Make metrics dropdown non clearable
+@app.callback(
+    [Output(component_id="slct_metrics", component_property="value")],
+    [Input(component_id="slct_metrics", component_property="value")])
+def update_dropdown_options_metric(values):
+    old_values = values
+    if len(values) == 0:
+        return [metrics[0]]
+    else:
+        return [values]
 
-# @app.callback(
-#     Output(component_id="slct_metrics", component_property="value"),
-#     [
-#     Input(component_id="slct_metrics", component_property="value"),
-#     ],
-# )
-# def update_dropdown_options(values):
-#     if len(values) > 4:
-#         return ["APL","DICE"]
-#     else:
-#         return ()
+# Make segment dropdown non clearable
+@app.callback(
+    [Output(component_id="slct_segment", component_property="value")],
+    [Input(component_id="slct_segment", component_property="value")])
+def update_dropdown_options_segment(values):
+    if len(values) == 0:
+        return [[segments[0]]]
+    else:
+        return [values]
+
+# Make comp dropdown non clearable
+@app.callback(
+    [Output(component_id="slct_comp", component_property="value")],
+    [Input(component_id="slct_comp", component_property="value")])
+def update_dropdown_options_comp(values):
+    if len(values) == 0:
+        return[[comparisons[0]]]
+    else:
+        return [values]
+    
 
 ## Organ plot
 
-#defining where output should go and where input is from
-@app.callback(
-    [Output(component_id="figure_organ", component_property="figure")],
-    [Input(component_id="segment_organ", component_property="value")]
-)
-
-#Function to update organ plot
-def update_segment_plot(segment_organ):
-
-    #Finding them matching data
-    df_organ = df_organs[df_organs["Segment"]==segment_organ]
-    patients = df_organ["Patient"].unique().tolist()
-
-    fig2 = go.Figure() #initializing figure
-
-    rows = 2
-    cols = 3
-    N = rows*cols
-
-    fig2 = make_subplots(rows,cols, subplot_titles=tuple(patients[:N])) #creates subplots
-
-    for idx,row in enumerate(range(rows)):
-        for col in range(cols):
-            xA = df_organ[df_organ["Patient"] == patients[idx]]["xA"].tolist()[0]
-            yA = df_organ[df_organ["Patient"] == patients[idx]]["yA"].tolist()[0]
-            xB = df_organ[df_organ["Patient"] == patients[idx]]["xB"].tolist()[0]
-            yB = df_organ[df_organ["Patient"] == patients[idx]]["yB"].tolist()[0]
-
-            if row == 0 and col == 0:
-                fig2.add_trace( #adds points for A to subplot 1,idx+1
-                    go.Scatter(x=xA, 
-                                y=yA, 
-                                mode = "markers",
-                                name = "GT",
-                                marker=dict(color='red',size=8)),
-                                row+1, col+1)
-                
-                fig2.add_trace( #adds points for B to subplot 1,idx+1
-                    go.Scatter(x=xB, 
-                                y=yB, 
-                                mode = "markers", 
-                                name = "Guess",
-                                marker=dict(color='LightSkyBlue',size=6)),
-                                row+1, col+1)
-            else:
-                fig2.add_trace( #adds points for A to subplot 1,idx+1
-                    go.Scatter(x=xA, 
-                                y=yA,
-                                mode = "markers", 
-                                name = "GT", 
-                                showlegend = False,
-                                marker=dict(color='red',size=8)), 
-                                row+1, col+1)
-                
-                fig2.add_trace( #adds points for B to subplot 1,idx+1
-                    go.Scatter(x=xB,
-                                y=yB, 
-                                mode = "markers", 
-                                name = "Guess",     
-                                showlegend = False,
-                                marker=dict(color='LightSkyBlue',size=6)),
-                                row+1, col+1)   
-
-    fig2.update_layout(legend=dict(
-    orientation="h",
-    yanchor="top",
-    y=1.15,
-    xanchor="left"),font = dict(size = 20))
-   
-    fig2.update_layout(template=plot_theme) # set the theme
-
-    fig2.for_each_yaxis(lambda yaxis: yaxis.update(matches = None, #scale yaxes to match xaxes
-    scaleanchor = "x", scaleratio = 1, visible = False))
-
-    fig2.for_each_xaxis(lambda xaxis: xaxis.update(visible = False))
-
-    return [fig2]
-
-
+# #defining where output should go and where input is from
 # @app.callback(
-#    Output(component_id='slider', component_property="max"),
-#    [Input(component_id='patient', component_property='value')])
+#     [Output(component_id="figure_organ", component_property="figure")],
+#     [Input(component_id="segment_organ", component_property="value")]
+# )
 
-# def myfunc(patient):
-#     df_slice = df_slices[df["patient"==patient]]
-#     return [df_slice["idx"].max()]
-    
+# #Function to update organ plot
+# def update_segment_plot(segment_organ):
+
+#     #Finding them matching data
+#     df_organ = df_organs[df_organs["Segment"]==segment_organ]
+#     patients = df_organ["Patient"].unique().tolist()
+
+#     fig2 = go.Figure() #initializing figure
+
+#     rows = 2
+#     cols = 3
+#     N = rows*cols
+
+#     fig2 = make_subplots(rows,cols, subplot_titles=tuple(patients[:N])) #creates subplots
+
+#     idx = 0
+
+#     for row in range(rows):
+#         for col in range(cols):
+
+#             xA = df_organ[df_organ["Patient"] == patients[idx]]["xA"].tolist()[0]
+#             yA = df_organ[df_organ["Patient"] == patients[idx]]["yA"].tolist()[0]
+#             xB = df_organ[df_organ["Patient"] == patients[idx]]["xB"].tolist()[0]
+#             yB = df_organ[df_organ["Patient"] == patients[idx]]["yB"].tolist()[0]
+
+#             if row == 0 and col == 0:
+#                 fig2.add_trace( #adds points for A to subplot 1,idx+1
+#                     go.Scatter(x=xA, 
+#                                 y=yA, 
+#                                 mode = "markers",
+#                                 name = "GT",
+#                                 marker=dict(color='red',size=8)),
+#                                 row+1, col+1)
+                
+#                 fig2.add_trace( #adds points for B to subplot 1,idx+1
+#                     go.Scatter(x=xB, 
+#                                 y=yB, 
+#                                 mode = "markers", 
+#                                 name = "Guess",
+#                                 marker=dict(color='LightSkyBlue',size=6)),
+#                                 row+1, col+1)
+#             else:
+#                 fig2.add_trace( #adds points for A to subplot 1,idx+1
+#                     go.Scatter(x=xA, 
+#                                 y=yA,
+#                                 mode = "markers", 
+#                                 name = "GT", 
+#                                 showlegend = False,
+#                                 marker=dict(color='red',size=8)), 
+#                                 row+1, col+1)
+                
+#                 fig2.add_trace( #adds points for B to subplot 1,idx+1
+#                     go.Scatter(x=xB,
+#                                 y=yB, 
+#                                 mode = "markers", 
+#                                 name = "Guess",     
+#                                 showlegend = False,
+#                                 marker=dict(color='LightSkyBlue',size=6)),
+#                                 row+1, col+1)   
+#             idx += 1
+
+
+
+#     fig2.update_layout(legend=dict(
+#     orientation="h",
+#     yanchor="top",
+#     y=1.15,
+#     xanchor="left"),font = dict(size = 20))
+   
+#     fig2.update_layout(template=plot_theme) # set the theme
+
+#     fig2.for_each_yaxis(lambda yaxis: yaxis.update(matches = None, #scale yaxes to match xaxes
+#     scaleanchor = "x", scaleratio = 1, visible = False))
+
+#     fig2.for_each_xaxis(lambda xaxis: xaxis.update(visible = False))
+
+#     return [fig2]
+
+ 
 ## Slider plot
-
+old_patient = 0
+old_segment = 0
+old_method = 0
+old_tolerance = 0
+df_slices = 0
 #defining where output should go and where input is from
 @app.callback(
-    [Output(component_id="figure_slider", component_property="figure")],
+    [Output(component_id="figure_slider", component_property="figure"),
+     Output(component_id="figure_slider_perf", component_property="figure")],
     [Input(component_id="slider", component_property="value"),
     Input(component_id="patient", component_property="value"),
-    Input(component_id="segment_slider", component_property="value")])
+    Input(component_id="segment_slider", component_property="value"),
+    Input(component_id="method_slider", component_property="value"),
+    Input(component_id="tolerance_slider", component_property="value")])
 
 #Function to update slider plot
-def update_slider(slider, patient,segment_slider):
-    
+def update_slider(slider, patient,segment,method,tolerance):
+    global old_patient
+    global old_segment
+    global old_method
+    global old_tolerance
+    global df_slices
     #Finding the matching data
-    df_slice = df_slices[df_slices["idx"]==slider]
-    df_slice = df_slice[df_slice["Patient"]==patient]
-    df_slice = df_slice[df_slice["Segment"]==segment_slider]
-    xA = df_slice["xA"].tolist()[0]
-    yA = df_slice["yA"].tolist()[0]
-    xB = df_slice["xB"].tolist()[0]
-    yB = df_slice["yB"].tolist()[0]
+    if any([patient != old_patient,segment != old_segment,
+    method != old_method,tolerance != old_tolerance]):
+
+        file = method + "&" + segment + "&Tolerance" + tolerance
+        df_slices = pd.read_csv(f"..\\data\\sliceresults\\dataframes2\\{file}.csv")
+        df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
+
+        cols_to_change = ["PointsA","PointsB","Vlines","Hlines"]
+
+        for col in cols_to_change:
+            df_slices[col] = df_slices[col].replace(["set()"],["[]"])
+            df_slices[col] = df_slices[col].apply(literal_eval)
+
+    metrics = ["EPL","EPL_Line","EPL_Volume","DICE","Haus","MSD"]
+    df_slice = df_slices[df_slices["ID"]==patient]
+    range_max = {metric: df_slice[metric].max()*1.1
+                if metric not in ["DICE"] 
+                else 1 for metric in metrics}
+    df_slice = df_slice[df_slice["Index"]==slider]
+    df_perf = df_slice[df_slice["Index"]==slider].round(3)
+
+    old_patient = patient
+    old_segment = segment
+    old_method = method
+    old_tolerance = tolerance
+    
+    if df_slice["PointsA"].tolist()[0] == []:
+        xA = []
+        yA = []
+    else:
+        xA,yA = zip(*df_slice["PointsA"].tolist()[0])
+    if df_slice["PointsB"].tolist()[0] == []:
+        xB = []
+        yB = []
+    else:
+        xB,yB = zip(*df_slice["PointsB"].tolist()[0])
+    Vlines = df_slice["Vlines"].tolist()[0]
+    Hlines = df_slice["Hlines"].tolist()[0]
 
 
     fig3 = go.Figure()
@@ -310,58 +378,149 @@ def update_slider(slider, patient,segment_slider):
                     y=yB, mode = "markers", 
                     name = "Guess",
                     marker=dict(color='LightSkyBlue',size=6)))
+
+
+    #Plotting the boundary
+    for (x0,y0),(x1,y1) in Vlines:
+                x = [x0,x1]
+                y = [y0,y1]
+                fig3.add_trace(
+                    go.Scatter(x = x, 
+                                y = y, 
+                                mode = "lines",
+                                line = dict(dash = "dot"),
+                                showlegend = False, marker = dict(color = "red")))
+
+    for (x0,y0),(x1,y1) in Hlines:
+                x = [x0,x1]
+                y = [y0,y1]
+                fig3.add_trace(
+                    go.Scatter(x = x, 
+                                y = y, 
+                                mode = "lines",
+                                line = dict(dash = "dot"),
+                                showlegend = False, marker = dict(color = "red")))
+    
                     
     fig3.update_layout(template=plot_theme) #set theme
 
     fig3.update_yaxes(scaleanchor = "x", scaleratio = 1) #scales yaxes to xaxes
 
-    #Finding matching data
-    df_perf = df_slice[df_slice["idx"]==slider]
-    df_perf = df_perf.iloc[0]
-
-    metrics = ["APL","APL_L","APL_V","DICE","Hausdorff","MSD"] #all metrics
-    title =  ""# initializing title
-
-    #creating output string
+    fig4 = make_subplots(6,1)  #creates subplots
+    
+    color = "blue"
+    #plotting for each metric
     for idx, metric in enumerate(metrics):
-        value = np.round(df_perf[metric],2)
-        title += f"{metric}: {value}  "
-        if idx == 2:
-            title += "<br>"
+        value = df_perf[metric].iloc[0]
+        #limits = color_range.get(metric)
+    #     if metric == "DICE":
+    #         color = find_color(value,limits,True)
+    #     else: 
+    #          color = find_color(value,limits)
+    
         
+        #adding trace to subplot
+        fig4.add_trace(
+            go.Bar(x = [value], 
+            y = [metric], 
+            orientation = "h", 
+            showlegend = False,
+            text = value,
+            marker=dict(color = color)),
+            idx+1,1)
 
-    fig3.update_layout(title = title)
-                    
-    return [fig3]
+    fig4.update_xaxes(matches=None) #Creates individual xaxis for subplots
+    fig4.for_each_xaxis(lambda xaxis: xaxis.update(showticklabels=True, 
+                                                    visible = False)) # shows labels for all xaxis
+    fig4.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1])) # changes subplot title
 
-# Changing Options for dropdown when changing patient
-@app.callback(
-    [Output(component_id="segment_slider", component_property="options"),
-    Output(component_id="segment_slider", component_property="value")],
-    [Input(component_id="patient", component_property="value"),
-    Input(component_id="segment_slider", component_property="value")])
-
-def change_options(patient,current):
-    options = df_slices[df_slices["Patient"]==patient] \
-                            ["Segment"].unique().tolist()
-    if current in options:
-        value = current
-    else:
-         value = options[0]
-    return [options,current]
+    # Setting the range of barplots
+    axes = ["xaxis","xaxis2","xaxis3","xaxis4","xaxis5","xaxis6"]
+    for idx,metric in enumerate(metrics):
+        range_upper = range_max.get(metric)
+        fig4["layout"][axes[idx]].update(range = [0,range_upper])
+    
 
 
-#Change slider range and reset the value of the slider
+    return [fig3,fig4]
+
+# # Changing Options for dropdown when changing patient
+# # @app.callback(
+# #     [Output(component_id="segment_slider", component_property="options"),
+# #     Output(component_id="segment_slider", component_property="value")],
+# #     [Input(component_id="patient", component_property="value"),
+# #     Input(component_id="segment_slider", component_property="value")])
+
+# # def change_options(patient,current):
+# #     options = sorted(df_slices[df_slices["Patient"]==patient] \
+# #                             ["Segment"].unique().tolist())
+# #     if current in options:
+# #         value = current
+# #     else:
+# #          value = options[0]
+# #     return [options,current]
+
+old_slice = 0
+old_plus_clicks = None
+old_minus_clicks = None
+
 @app.callback(
     [Output(component_id="slider", component_property="max"),
-    Output(component_id="slider", component_property="value")],
+    Output(component_id="slider", component_property="min")],
     [Input(component_id="patient", component_property="value"),
-    Input(component_id="segment_slider", component_property="value")])
+    Input(component_id="segment_slider", component_property="value"),
+    Input(component_id="method_slider", component_property="value"),
+    Input(component_id="tolerance_slider", component_property="value"),
+    Input(component_id="slider", component_property="value")])
 
-def change_slider_range(patient,segment):
-    df_plot = df_slices[df_slices["Patient"]==patient]
-    df_plot = df_plot[df_plot["Segment"]==segment]
-    return [df_plot["idx"].max(),0]
+def change_slider_range(patient,segment,method,tolerance,slice):
+    global old_slice
+    file = method + "&" + segment + "&Tolerance" + tolerance
+    df_slices = pd.read_csv(f"..\\data\\sliceresults\\dataframes2\\{file}.csv")
+    df_slices = df_slices[df_slices["ID"]==patient] 
+    df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
+    old_slice = slice
+
+    return [df_slices["Index"].max(),df_slices["Index"].min()]
+
+#Change slider value dynamically when chancing tolerance,method,segment and patient
+@app.callback(
+    [Output(component_id="slider", component_property="value")],
+    [Input(component_id="patient", component_property="value"),
+    Input(component_id="segment_slider", component_property="value"),
+    Input(component_id="method_slider", component_property="value"),
+    Input(component_id="tolerance_slider", component_property="value"),
+    Input('plus', 'n_clicks'),
+    Input('minus', 'n_clicks')])
+
+def change_slider_value(patient,segment,method,tolerance,plus,minus):
+    global old_slice 
+    global old_plus_clicks
+    global old_minus_clicks
+    file = method + "&" + segment + "&Tolerance" + tolerance
+    df_slices = pd.read_csv(f"..\\data\\sliceresults\\dataframes2\\{file}.csv")
+    df_slices = df_slices[df_slices["ID"]==patient] 
+    df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
+
+    if df_slices["Index"].min() <= old_slice <= df_slices["Index"].max():
+        new_slice = old_slice
+    else:
+        new_slice = df_slices["Index"].min()
+    old_slice = new_slice
+
+    # applying plus button
+    if plus != old_plus_clicks and  new_slice < df_slices["Index"].max():
+        new_slice += 1
+    
+    # applying minus button
+    if minus != old_minus_clicks and df_slices["Index"].min() < new_slice:
+        new_slice -= 1
+        
+    old_plus_clicks = plus
+    old_minus_clicks = minus
+    
+    return [new_slice]
+
     
 
 
