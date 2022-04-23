@@ -46,93 +46,176 @@ plot_theme = "seaborn"
 
 app.layout = html.Div([
     #Performance plot
-    html.H1("Dashboard", style ={"text-align": "center"}), #creates a header
-    html.Div([dcc.Dropdown(id="slct_segment", # dropdown for metrics
+    dcc.Tabs(id="tabs", value='tab-perf', children=[
+        dcc.Tab(label='Performance overview', value='tab-perf'),
+        dcc.Tab(label='View per slice', value='tab-slices'),
+    ]),
+    # initializing tabs content to contain all ID's used for connections, 
+    # to avoid errors when loading the page. this Div's children will be 
+    # dynamically changed in the connections section
+    html.Div(id='tabs-content', children = [
+
+        html.Div([
+           dcc.Dropdown(id="slct_segment", # dropdown for metrics
                     options =segments,
                     multi = True,
                     value = [segments[0]],
                     style = {"width": 1200},
                     clearable = True),
-    dcc.Dropdown(id="slct_metrics", # Dropdown for segments
-                    options =metrics,
-                    multi = True,
-                    value = [metrics[0]],
-                    style = {"width": 600, "display": "inline-block"},
-                    clearable = True),
-    dcc.Dropdown(id="slct_comp", #Dropdown for comparisons
-                    options =comparisons,
-                    multi = True,
-                    value = [comparisons[0]],
-                    style = {"width": 600,"display": "inline-block"},
-                    clearable = True)]),
-    html.Br(),
-    dcc.Graph(id = "figure_perf", figure = {}), #Initializing figure
-    html.Br(),
-    # # Plot for one organ
-    # dcc.Dropdown(id="segment_organ", #Dropdown for organs
-    #                 options =organs,
-    #                 multi = False,
-    #                 value = organs[0],
-    #                 style = {"width": 400},
-    #                 clearable = False),
-
-    # html.Br(),
-    # dcc.Graph(id = "figure_organ", figure = {}, #Initializing figure
-    #             style={ 'height': 800}), 
-    # html.Br(),
-
-    # Slider plot
-    html.Div(id='slider-container', children=[
-        daq.Slider(id = "slider", # Slider to switch slice (z)
-                    min = 50, 
-                   max = 100,
-                   value = 87, 
-                   step = 1, 
-                   size = 900,
-                   handleLabel={"label":"slice","showCurrentValue": True}),
-
-        dcc.Dropdown(id = "patient", # Dropdown for Patient
-                    options = patients_slider, 
-                    multi = False,
-                    value = patients_slider[0],
-                    style = {"width": 450, 
-                    "display": "inline-block"},
-                    clearable = False),
-
-        dcc.Dropdown(id = "segment_slider", #Dropdown for segments
-                    options = segments_slider,
-                    multi = False,
-                    value = segments_slider[0],
-                    style = {"width": 450,
-                    "display": "inline-block"},
-                    clearable = False),
-                    
+            dcc.Dropdown(id="slct_metrics", # Dropdown for segments
+                            options =metrics,
+                            multi = True,
+                            value = [metrics[0]],
+                            style = {"width": 600, "display": "inline-block"},
+                            clearable = True),
+            dcc.Dropdown(id="slct_comp", #Dropdown for comparisons
+                            options =comparisons,
+                            multi = True,
+                            value = [comparisons[0]],
+                            style = {"width": 600,"display": "inline-block"},
+                            clearable = True),
+            html.Br(),
+            dcc.Graph(id = "figure_perf", figure = {}), #Initializing figure
         ]),
-        dcc.Dropdown(id = "method_slider", #Dropdown for Method
-                    options = ["GTvsDL","GTvsDLB"],
-                    multi = False,
-                    value = "GTvsDL",
-                    style = {"width": 450,
-                    "display": "inline-block"},
-                    clearable = False),
-        dcc.Dropdown(id = "tolerance_slider", #Dropdown for Tolerance
-                    options = ["0","1","2","3"],
-                    multi = False,
-                    value = "0",
-                    style = {"width": 450,
-                    "display": "inline-block"},
-                    clearable = False),
-    html.Div([html.Button("-", "minus",style ={'display': 'inline-block'}),
-              html.Button("+", "plus",style ={'display': 'inline-block'})]),
-    dcc.Graph(id = "figure_slider", figure = {}, #Initializing figure
-             style={'width': 900, 
-             'height': 600,'display': 'inline-block'}),
-    dcc.Graph(id = "figure_slider_perf", figure = {}, #Initializing figure
-             style={'width': 600, 
-             'height': 600,'display': 'inline-block'})
-])
+
+        html.Div(id='slider-container', children=[
+            daq.Slider(id = "slider", # Slider to switch slice (z)
+                        min = 50, 
+                    max = 100,
+                    value = 87, 
+                    step = 1, 
+                    size = 900,
+                    handleLabel={"label":"slice","showCurrentValue": True}),
+
+            dcc.Dropdown(id = "patient", # Dropdown for Patient
+                        options = patients_slider, 
+                        multi = False,
+                        value = patients_slider[0],
+                        style = {"width": 450, 
+                        "display": "inline-block"},
+                        clearable = False),
+
+            dcc.Dropdown(id = "segment_slider", #Dropdown for segments
+                        options = segments_slider,
+                        multi = False,
+                        value = segments_slider[0],
+                        style = {"width": 450,
+                        "display": "inline-block"},
+                        clearable = False),
+                        
+            dcc.Dropdown(id = "method_slider", #Dropdown for Method
+                        options = ["GTvsDL","GTvsDLB"],
+                        multi = False,
+                        value = "GTvsDL",
+                        style = {"width": 450,
+                        "display": "inline-block"},
+                        clearable = False),
+            dcc.Dropdown(id = "tolerance_slider", #Dropdown for Tolerance
+                        options = ["0","1","2","3"],
+                        multi = False,
+                        value = "0",
+                        style = {"width": 450,
+                        "display": "inline-block"},
+                        clearable = False),
+        html.Div([
+            html.Button("-", "minus",style ={'display': 'inline-block'}), # plus button
+            html.Button("+", "plus",style ={'display': 'inline-block'})]), # minus button
+
+        dcc.Graph(id = "figure_slider", figure = {}, #Initializing slider figure
+                style={'width': 900, 
+                'height': 600,'display': 'inline-block'}),
+
+        dcc.Graph(id = "figure_slider_perf", figure = {}, #Initializing perf_slider figure
+                style={'width': 600, 
+                'height': 600,'display': 'inline-block'})])
+    ]) # end of tabs content     
+]) # end of app layout
+
 
 ### connections
+
+
+@app.callback(Output('tabs-content', 'children'),
+              Input('tabs', 'value'))
+
+def render_content(tab):
+    if tab == 'tab-perf':
+        return html.Div([
+                    dcc.Dropdown(id="slct_segment", # dropdown for metrics
+                                options =segments,
+                                multi = True,
+                                value = [segments[0]],
+                                style = {"width": 1200},
+                                clearable = True),
+                    dcc.Dropdown(id="slct_metrics", # Dropdown for segments
+                                    options =metrics,
+                                    multi = True,
+                                    value = [metrics[0]],
+                                    style = {"width": 600, "display": "inline-block"},
+                                    clearable = True),
+                    dcc.Dropdown(id="slct_comp", #Dropdown for comparisons
+                                    options =comparisons,
+                                    multi = True,
+                                    value = [comparisons[0]],
+                                    style = {"width": 600,"display": "inline-block"},
+                                    clearable = True),
+                    html.Br(),
+                    dcc.Graph(id = "figure_perf", figure = {}), #Initializing figure
+                        ])
+    elif tab == 'tab-slices':
+        return html.Div(id='slider-container', children=[
+                    daq.Slider(id = "slider", # Slider to switch slice (z)
+                                min = 50, 
+                            max = 100,
+                            value = 87, 
+                            step = 1, 
+                            size = 900,
+                            handleLabel={"label":"slice","showCurrentValue": True}),
+
+                    dcc.Dropdown(id = "patient", # Dropdown for Patient
+                                options = patients_slider, 
+                                multi = False,
+                                value = patients_slider[0],
+                                style = {"width": 450, 
+                                "display": "inline-block"},
+                                clearable = False),
+
+                    dcc.Dropdown(id = "segment_slider", #Dropdown for segments
+                                options = segments_slider,
+                                multi = False,
+                                value = segments_slider[0],
+                                style = {"width": 450,
+                                "display": "inline-block"},
+                                clearable = False),
+                    html.Br(),
+                    dcc.Dropdown(id = "method_slider", #Dropdown for Method
+                                options = ["GTvsDL","GTvsDLB"],
+                                multi = False,
+                                value = "GTvsDL",
+                                style = {"width": 450,
+                                "display": "inline-block"},
+                                clearable = False),
+
+                    dcc.Dropdown(id = "tolerance_slider", #Dropdown for Tolerance
+                                options = ["0","1","2","3"],
+                                multi = False,
+                                value = "0",
+                                style = {"width": 450,
+                                "display": "inline-block"},
+                                clearable = False),
+
+                html.Div([
+                    html.Button("-", "minus",style ={'display': 'inline-block'}), #plus button
+                    html.Button("+", "plus",style ={'display': 'inline-block'})]), # minus button
+
+                dcc.Graph(id = "figure_slider", figure = {}, #Initializing slider figure 
+                        style={'width': 900, 
+                        'height': 600,'display': 'inline-block'}),
+
+                dcc.Graph(id = "figure_slider_perf", figure = {}, #Initializing slider_perf figure
+                        style={'width': 600, 
+                        'height': 600,'display': 'inline-block'})])
+                    
 
 
 ##Performance plot
@@ -176,9 +259,9 @@ def update_graph(slct_metrics, slct_segment,slct_comp):
         if plot not in ["EPL","Hausdorff","MSD"]:
             fig["layout"][axes[idx]].update(range = [0,1])
 
-    # #Changes width of bars
-    # for data in fig.data:
-    #     data["width"] = 0.15
+    #Changes width of bars
+    for data in fig.data:
+        data["width"] = 0.15
 
     return [fig]
 
@@ -213,95 +296,9 @@ def update_dropdown_options_comp(values):
     else:
         return [values]
     
-
-## Organ plot
-
-# #defining where output should go and where input is from
-# @app.callback(
-#     [Output(component_id="figure_organ", component_property="figure")],
-#     [Input(component_id="segment_organ", component_property="value")]
-# )
-
-# #Function to update organ plot
-# def update_segment_plot(segment_organ):
-
-#     #Finding them matching data
-#     df_organ = df_organs[df_organs["Segment"]==segment_organ]
-#     patients = df_organ["Patient"].unique().tolist()
-
-#     fig2 = go.Figure() #initializing figure
-
-#     rows = 2
-#     cols = 3
-#     N = rows*cols
-
-#     fig2 = make_subplots(rows,cols, subplot_titles=tuple(patients[:N])) #creates subplots
-
-#     idx = 0
-
-#     for row in range(rows):
-#         for col in range(cols):
-
-#             xA = df_organ[df_organ["Patient"] == patients[idx]]["xA"].tolist()[0]
-#             yA = df_organ[df_organ["Patient"] == patients[idx]]["yA"].tolist()[0]
-#             xB = df_organ[df_organ["Patient"] == patients[idx]]["xB"].tolist()[0]
-#             yB = df_organ[df_organ["Patient"] == patients[idx]]["yB"].tolist()[0]
-
-#             if row == 0 and col == 0:
-#                 fig2.add_trace( #adds points for A to subplot 1,idx+1
-#                     go.Scatter(x=xA, 
-#                                 y=yA, 
-#                                 mode = "markers",
-#                                 name = "GT",
-#                                 marker=dict(color='red',size=8)),
-#                                 row+1, col+1)
-                
-#                 fig2.add_trace( #adds points for B to subplot 1,idx+1
-#                     go.Scatter(x=xB, 
-#                                 y=yB, 
-#                                 mode = "markers", 
-#                                 name = "Guess",
-#                                 marker=dict(color='LightSkyBlue',size=6)),
-#                                 row+1, col+1)
-#             else:
-#                 fig2.add_trace( #adds points for A to subplot 1,idx+1
-#                     go.Scatter(x=xA, 
-#                                 y=yA,
-#                                 mode = "markers", 
-#                                 name = "GT", 
-#                                 showlegend = False,
-#                                 marker=dict(color='red',size=8)), 
-#                                 row+1, col+1)
-                
-#                 fig2.add_trace( #adds points for B to subplot 1,idx+1
-#                     go.Scatter(x=xB,
-#                                 y=yB, 
-#                                 mode = "markers", 
-#                                 name = "Guess",     
-#                                 showlegend = False,
-#                                 marker=dict(color='LightSkyBlue',size=6)),
-#                                 row+1, col+1)   
-#             idx += 1
-
-
-
-#     fig2.update_layout(legend=dict(
-#     orientation="h",
-#     yanchor="top",
-#     y=1.15,
-#     xanchor="left"),font = dict(size = 20))
-   
-#     fig2.update_layout(template=plot_theme) # set the theme
-
-#     fig2.for_each_yaxis(lambda yaxis: yaxis.update(matches = None, #scale yaxes to match xaxes
-#     scaleanchor = "x", scaleratio = 1, visible = False))
-
-#     fig2.for_each_xaxis(lambda xaxis: xaxis.update(visible = False))
-
-#     return [fig2]
-
  
 ## Slider plot
+#initializing global values for later calls
 old_patient = 0
 old_segment = 0
 old_method = 0
@@ -319,14 +316,13 @@ df_slices = 0
 
 #Function to update slider plot
 def update_slider(slider, patient,segment,method,tolerance):
-    global old_patient
     global old_segment
     global old_method
     global old_tolerance
     global df_slices
     #Finding the matching data
-    if any([patient != old_patient,segment != old_segment,
-    method != old_method,tolerance != old_tolerance]):
+    if any([segment != old_segment,
+    method != old_method,tolerance != old_tolerance]): # loading data if new file is needed
 
         file = method + "&" + segment + "&Tolerance" + tolerance
         df_slices = pd.read_csv(f"..\\data\\sliceresults\\dataframes2\\{file}.csv")
@@ -346,21 +342,22 @@ def update_slider(slider, patient,segment,method,tolerance):
     df_slice = df_slice[df_slice["Index"]==slider]
     df_perf = df_slice[df_slice["Index"]==slider].round(3)
 
-    old_patient = patient
+    # changing global variables
     old_segment = segment
     old_method = method
     old_tolerance = tolerance
-    
-    if df_slice["PointsA"].tolist()[0] == []:
-        xA = []
-        yA = []
-    else:
+
+    # Checking if their is points to plot for the slice
+    try:
         xA,yA = zip(*df_slice["PointsA"].tolist()[0])
-    if df_slice["PointsB"].tolist()[0] == []:
-        xB = []
-        yB = []
-    else:
+    except ValueError:
+        xA,yA = ([],[])
+    try:
         xB,yB = zip(*df_slice["PointsB"].tolist()[0])
+    except ValueError:
+        xB,yB = ([],[])
+
+    # vertical and horizontal lines to plot
     Vlines = df_slice["Vlines"].tolist()[0]
     Hlines = df_slice["Hlines"].tolist()[0]
 
@@ -409,15 +406,10 @@ def update_slider(slider, patient,segment,method,tolerance):
     fig4 = make_subplots(6,1)  #creates subplots
     
     color = "blue"
+    axes = ["xaxis","xaxis2","xaxis3","xaxis4","xaxis5","xaxis6"]
     #plotting for each metric
     for idx, metric in enumerate(metrics):
         value = df_perf[metric].iloc[0]
-        #limits = color_range.get(metric)
-    #     if metric == "DICE":
-    #         color = find_color(value,limits,True)
-    #     else: 
-    #          color = find_color(value,limits)
-    
         
         #adding trace to subplot
         fig4.add_trace(
@@ -428,38 +420,32 @@ def update_slider(slider, patient,segment,method,tolerance):
             text = value,
             marker=dict(color = color)),
             idx+1,1)
+        range_upper = range_max.get(metric)
+        fig4["layout"][axes[idx]].update(range = [0,range_upper])
 
     fig4.update_xaxes(matches=None) #Creates individual xaxis for subplots
     fig4.for_each_xaxis(lambda xaxis: xaxis.update(showticklabels=True, 
                                                     visible = False)) # shows labels for all xaxis
     fig4.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1])) # changes subplot title
 
-    # Setting the range of barplots
-    axes = ["xaxis","xaxis2","xaxis3","xaxis4","xaxis5","xaxis6"]
-    for idx,metric in enumerate(metrics):
-        range_upper = range_max.get(metric)
-        fig4["layout"][axes[idx]].update(range = [0,range_upper])
-    
-
-
     return [fig3,fig4]
 
 # # Changing Options for dropdown when changing patient
-# # @app.callback(
-# #     [Output(component_id="segment_slider", component_property="options"),
-# #     Output(component_id="segment_slider", component_property="value")],
-# #     [Input(component_id="patient", component_property="value"),
-# #     Input(component_id="segment_slider", component_property="value")])
+# @app.callback(
+#     [Output(component_id="patient", component_property="options"),
+#     Output(component_id="patient", component_property="value")],
+#     [Input(component_id="segment_slider", component_property="value"),
+#     Input(component_id="patient", component_property="value")])
 
-# # def change_options(patient,current):
-# #     options = sorted(df_slices[df_slices["Patient"]==patient] \
-# #                             ["Segment"].unique().tolist())
-# #     if current in options:
-# #         value = current
-# #     else:
-# #          value = options[0]
-# #     return [options,current]
+# def change_options(segment,current_patient):
+#     options = sorted(df_slices["ID"].unique().tolist())
+#     if current_patient in options:
+#         value = current_patient
+#     else:
+#          value = options[0]
+#     return [options,current_patient]
 
+# initializing global values for later usage
 old_slice = 0
 old_plus_clicks = None
 old_minus_clicks = None
@@ -520,8 +506,6 @@ def change_slider_value(patient,segment,method,tolerance,plus,minus):
     old_minus_clicks = minus
     
     return [new_slice]
-
-    
 
 
 # Run the app:
