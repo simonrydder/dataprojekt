@@ -1,0 +1,9 @@
+body {
+    font-family: sans-serif;
+    background-color: rgb(248,249,250);
+    margin: 0.1;
+}
+
+#figure_perf{
+    border: 2px solid rgb(0, 0, 0);
+}
