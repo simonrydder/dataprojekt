@@ -1,0 +1,4 @@
+første side forklarende indgang
+andre sider forklaring om de forskellige metrikker
+Mere forklaring generelt fx til plots. 
+ryd lidt op i Github
