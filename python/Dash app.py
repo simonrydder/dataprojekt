@@ -6,10 +6,12 @@ import plotly.graph_objects as go
 from ast import literal_eval
 from plotly.subplots import make_subplots
 import dash_daq as daq
+import dash_bootstrap_components as dbc
 
 app = Dash(__name__)
 
 # Read data and prep it
+
 
 df = pd.read_csv("..\\data\\results\\merged.csv", index_col = 0)
 metrics = sorted(df["Metric"].unique().tolist())
@@ -41,8 +43,10 @@ segments_slider = ["brainstem","spinalcord",
 #defining Plot theme
 
 plot_theme = "seaborn"
+bgcolor = "darkcyan"
 
 ### creating layout
+
 
 app.layout = html.Div([
     #Performance plot
@@ -60,19 +64,21 @@ app.layout = html.Div([
                     options =segments,
                     multi = True,
                     value = [segments[0]],
-                    style = {"width": 1200},
+                    style = {"width": 1200,"backgroundColor": bgcolor},
                     clearable = True),
             dcc.Dropdown(id="slct_metrics", # Dropdown for segments
                             options =metrics,
                             multi = True,
                             value = [metrics[0]],
-                            style = {"width": 600, "display": "inline-block"},
+                            style = {"width": 600, "display": "inline-block",
+                            "backgroundColor": bgcolor},
                             clearable = True),
             dcc.Dropdown(id="slct_comp", #Dropdown for comparisons
                             options =comparisons,
                             multi = True,
                             value = [comparisons[0]],
-                            style = {"width": 600,"display": "inline-block"},
+                            style = {"width": 600,"display": "inline-block",
+                            "backgroundColor": bgcolor},
                             clearable = True),
             html.Br(),
             dcc.Graph(id = "figure_perf", figure = {}), #Initializing figure
@@ -92,7 +98,8 @@ app.layout = html.Div([
                         multi = False,
                         value = patients_slider[0],
                         style = {"width": 450, 
-                        "display": "inline-block"},
+                        "display": "inline-block",
+                        "backgroundColor": bgcolor},
                         clearable = False),
 
             dcc.Dropdown(id = "segment_slider", #Dropdown for segments
@@ -100,7 +107,8 @@ app.layout = html.Div([
                         multi = False,
                         value = segments_slider[0],
                         style = {"width": 450,
-                        "display": "inline-block"},
+                        "display": "inline-block",
+                        "backgroundColor": bgcolor},
                         clearable = False),
                         
             dcc.Dropdown(id = "method_slider", #Dropdown for Method
@@ -108,18 +116,22 @@ app.layout = html.Div([
                         multi = False,
                         value = "GTvsDL",
                         style = {"width": 450,
-                        "display": "inline-block"},
+                        "display": "inline-block",
+                        "backgroundColor": bgcolor},
                         clearable = False),
             dcc.Dropdown(id = "tolerance_slider", #Dropdown for Tolerance
                         options = ["0","1","2","3"],
                         multi = False,
                         value = "0",
                         style = {"width": 450,
-                        "display": "inline-block"},
+                        "display": "inline-block",
+                        "backgroundColor": bgcolor},
                         clearable = False),
         html.Div([
-            html.Button("-", "minus",style ={'display': 'inline-block'}), # plus button
-            html.Button("+", "plus",style ={'display': 'inline-block'})]), # minus button
+            dbc.Button("-", "minus",style ={'display': 'inline-block'},
+            outline=True, color="success", className="me-1"), # plus button
+            dbc.Button("+", "plus",style ={'display': 'inline-block'},
+            outline=True, color="success", className="me-1")]), # minus button
 
         dcc.Graph(id = "figure_slider", figure = {}, #Initializing slider figure
                 style={'width': 900, 
@@ -133,7 +145,6 @@ app.layout = html.Div([
 
 
 ### connections
-
 
 @app.callback(Output('tabs-content', 'children'),
               Input('tabs', 'value'))
@@ -204,9 +215,9 @@ def render_content(tab):
                                 "display": "inline-block"},
                                 clearable = False),
 
-                html.Div([
-                    html.Button("-", "minus",style ={'display': 'inline-block'}), #plus button
-                    html.Button("+", "plus",style ={'display': 'inline-block'})]), # minus button
+                dbc.ButtonGroup([dbc.Button("-", "minus",outline=True, color="success", className="me-1"),
+                dbc.Button("+", "plus",
+                    outline=True, color="success", className="me-1")]),
 
                 dcc.Graph(id = "figure_slider", figure = {}, #Initializing slider figure 
                         style={'width': 900, 
@@ -246,9 +257,13 @@ def update_graph(slct_metrics, slct_segment,slct_comp):
                 title = "Performance",
                 template = plot_theme)
 
+    #fig.layout.plot_bgcolor = bgcolor
+    #fig.layout.paper_bgcolor = bgcolor
+
     fig.update_yaxes(matches=None) #Creates individual yaxis for subplots
     fig.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True)) # shows labels for all yaxis
     fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1])) # changes subplot title
+
 
     #Changes range of yaxis to [0,1] for "DICE", "MSD", "APL_L", "APL_V"
     plots = []
@@ -376,7 +391,6 @@ def update_slider(slider, patient,segment,method,tolerance):
                     name = "Guess",
                     marker=dict(color='LightSkyBlue',size=6)))
 
-
     #Plotting the boundary
     for (x0,y0),(x1,y1) in Vlines:
                 x = [x0,x1]
@@ -400,6 +414,9 @@ def update_slider(slider, patient,segment,method,tolerance):
     
                     
     fig3.update_layout(template=plot_theme) #set theme
+
+    #fig3.layout.plot_bgcolor = bgcolor
+    #fig3.layout.paper_bgcolor = bgcolor
 
     fig3.update_yaxes(scaleanchor = "x", scaleratio = 1) #scales yaxes to xaxes
 
@@ -427,6 +444,9 @@ def update_slider(slider, patient,segment,method,tolerance):
     fig4.for_each_xaxis(lambda xaxis: xaxis.update(showticklabels=True, 
                                                     visible = False)) # shows labels for all xaxis
     fig4.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1])) # changes subplot title
+
+    #fig4.layout.plot_bgcolor = bgcolor
+    #fig4.layout.paper_bgcolor = bgcolor
 
     return [fig3,fig4]
 
