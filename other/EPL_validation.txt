@@ -1,0 +1,27 @@
+ID: 4Prj3A5sMvSv1sK4u5ihkzlnU
+Method: GT vs DL
+Segment: pcm_low
+z: 54
+W: 1.171875
+H: 1.171875
+
+Area = W * H = 1.373291015625
+
+TotalAreaModel = 203 * Area = 278.778076171875
+
+Area_removed = 3 * Area = 7.03125
+Area_added = 3 * Area = 7.03125
+
+TotalArea = TotalAreaModel - Area_removed + Area_added = 278.778076171875
+TotalAreaChanged = 6 * Area = 8.23974609375
+
+VolumeRatio = TotalAreaChanged/TotalArea = 0.02955665026305417
+
+
+TotalLineModel = 36 * H + 62 * W = 98*H = 114.84375
+
+EPL = 5 * H + 5 * W = 10*H = 11.71875
+
+TotalLineAfter = (36+5-3)*H + (62+5-5)*W = 100*H = 117.1875
+
+LineRatio = EPL/TotalLineAfter = 0.1
