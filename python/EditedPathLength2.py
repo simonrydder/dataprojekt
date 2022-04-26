@@ -34,30 +34,40 @@ from DataReader2 import Path
 
 #Classes and functions
 class EPL_Metric():
-    def __init__(self, ImageA : OAR_Image = OAR_Image(),
-                 ImageB : OAR_Image = OAR_Image(), Tolerance : int = 0):
-        self.A = ImageA.GetArray()  # np.array (z, y, x)
-        self.B = ImageB.GetArray()  # np.array (z, y, x)
+    def __init__(self, model : OAR_Image = OAR_Image(),
+                 gt : OAR_Image = OAR_Image(), Tolerance : int = 0):
+
+        # Inputs
+        self.model = model.GetArray()  # np.array (z, y, x)
+        self.gt = gt.GetArray()  # np.array (z, y, x)
         self.Tolerance = Tolerance
 
-        self.Width, self.Height, _ = ImageA.Spacing   # x, y, z
-        _, _, self.Slices = ImageA.Shape   # x, y, z
+
+        # Spacing and shape
+        self.Width, self.Height, _ = model.Spacing   # x, y, z
+        _, _, self.Slices = gt.Shape   # x, y, z
         
-        self.TotalLengthA = 0
-        self.TotalAreaA = 0
-        self.TotalAreaAB = 0
 
-        self.SliceValuesEPL = []
-        self.SliceLineSegmentsV = []
-        self.SliceLineSegmentsH = []
-        self.SlicePointsA = []
-        self.SlicePointsB = []
+        # Ekstra list to save slice information to dashboard
+        self.SliceEPL = []
+        self.SliceLR = []           # LR = Line Ratio
+        self.SliceVR = []           # VR = Volume Ratio
+        self.SliceLinesModel = []   
+        self.SliceLinesChanged = [] 
+        self.SlicePointsModel = []  # Points for model pr. slice
+        self.SlicePointsGT = []     # Points for 'ground truth' pr. slice
 
-        self.EPL = self.getEPL()
-        self.LineEPL = self.getLineEPL()
-        self.VolumeEPL = self.getVolumeEPL(self.TotalAreaA)
-        self.VolumeEPL2 = self.getVolumeEPL(self.TotalAreaAB)
 
+        # Metrics
+        self.EPL = 0                # Defined as the total length of the edited path.
+        self.TotalLength = 0        # Defined as the total lenght after change.
+        self.LineRatio = 0          # Defined as the ratio between EPL and TotalLength
+
+        self.TotalAreaChanged = 0   # Defined as the total area changed.
+        self.TotalArea = 0          # Defined as the total area after change.
+        self.VolumeRatio = 0        # Defined as the ratio between TotalAreaChanged and TotalArea
+
+        self.updateMetrics()
 
     def __str__(self):
         msg = (
@@ -68,130 +78,161 @@ class EPL_Metric():
 
         return msg
 
-
-    def getLine(self, p0, p1):
-        x0, y0 = p0
-        x1, y1 = p1
-
-        if x0 == x1:
-            x = x0
-            y = (y0 + y1)/2
-            
-            return ((x - 0.5, y), (x + 0.5, y))
-
-        else:
-            y = y0
-            x = (x0 + x1)/2
-            
-            return ((x, y - 0.5), (x, y + 0.5))
-
     
-    def findPoints(self, A):
-        return {(x, y) for y, x in zip(*np.nonzero(A))}
+    def findPoints(self, array):
+        """ 
+        Function take a 2D array where the rows of the array correspond to the 
+        y-axis and the columns correspond to the x-axis and returns a set of 
+        (x, y)-coordinates where the input array are non-zero.        
+        """
+        return {(x, y) for y, x in zip(*np.nonzero(array))}
 
 
-    def findEdgePoints(self, points, tol = 0):
-    
-        @lru_cache
-        def isEdge(x, y, tol = 0):
+    def findResultingPoints(self, gtPoints, modelPoints):
+        """
+        Function take two set of points, where modelPoints are non-zero points 
+        of a model that a doctor gets and edit and gtPoints are non-zero points
+        of the 'ground truth'. A tolerance of 0 mean the modelPoints are 
+        changed exactly to the 'ground truth' where any positive number indicates
+        the number of pixels (not diagonally) the model are allowed to be away
+        from the 'ground truth'.
+        The function returns the resulting points which are a union of modelPoints
+        that are at most tolerance pixels away from the 'grund truht' and gtPoints 
+        that are not on the edge of the segmentation.
+        """        
+        
+        def findValidModelPoints(tol = 0):
             """
-            Returns 'True' if the point (x, y) can get to the background/edge in
-            'tol' steps.
+            Function that finds the modelPoints which are at most tol pixels 
+            away from the gtPoints.
             """
-            nonlocal points
+            nonlocal gtPoints, modelPoints
 
-            if tol == 0:
-                return (x, y) not in points # not in points = point is edge
-            
-            for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-                if isEdge(x + dx, y + dy, tol - 1):
-                    return True 
-            
-            return False # return false if could not get to the edge.
-
-        if tol:
-            return {(x, y) for x, y in points if isEdge(x, y, tol)}
-        else:
-            return set()
-
-
-    def findLines(self, points, tol = 0):
-        edgePoints = self.findEdgePoints(points, tol)
-
-        @lru_cache
-        def findLinesRecursive(x, y, tol = 0):
-            nonlocal points
-            nonlocal edgePoints
-
-            lines = []
-            for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+            @lru_cache
+            def isValid(x, y, tol = 0):
+                
                 if tol == 0:
-                    if (((x, y) in edgePoints) or 
-                        ((x + dx, y + dy) in edgePoints) or
-                        ((x + dx, y + dy) not in points)   
-                    ):
-                        lines += [self.getLine((x, y), (x + dx, y + dy))]
-                else:
-                    lines += [*findLinesRecursive(x + dx, y + dy, tol - 1)]
+                    return (x, y) in gtPoints
+                
+                for dx, dy in [(0, 0), (0, 1), (0, -1), (1, 0), (-1, 0)]:
+                    if isValid(x + dx, y + dy, tol - 1):
+                        return True
+                
+                return False
+
+            return {(x, y) for x, y in modelPoints if isValid(x, y, tol)}
+
+
+        def findValidGTPoints(tol = 0):
+            """
+            Function that finds the center gtPoints and removes the edge points.
+            Where an edge point is defined as a point which can reach the background
+            in tol (not diagonally) pixels.
+            """
+            nonlocal gtPoints
+
+            @lru_cache
+            def isEdge(x, y, tol = 0):
+
+                if tol == 0:
+                    return (x, y) not in gtPoints
+
+                for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+                    if isEdge(x + dx, y + dy, tol - 1):
+                        return True 
             
-            return lines
+                return False # return false if could not get to the edge.
 
-        allLines = set()
-        for p in points:
-            allLines |= set(findLinesRecursive(*p, tol))
+            return {(x, y) for x, y in gtPoints if not isEdge(x, y, tol)}
 
-        vlines = set()
-        hlines = set()
-        for (x0, y0), (x1, y1) in allLines:
-            if x0 == x1:
-                vlines.add(((x0, y0), (x1, y1)))
-            else:
-                hlines.add(((x0, y0), (x1, y1)))
+        ValidModelPoints = findValidModelPoints(self.Tolerance) 
+        ValidGTPoints = findValidGTPoints(self.Tolerance)
 
-        return vlines, hlines
+        return ValidModelPoints | ValidGTPoints
 
 
-    def getEPL(self):
+    def findLines(self, coordinates):
+        """
+        Input:  A list of coordinates for the center of a pixel.
+        Outout: Two lists of linesegments. One for horizontal linesegments and 
+                one for vertical linesegments.
+        """
+
+        verticals = {}
+        horizontals = {}
+
+        for x, y in coordinates:
+            left  = ((x - 0.5, y - 0.5), (x - 0.5, y + 0.5)) # left edge line
+            right = ((x + 0.5, y - 0.5), (x + 0.5, y + 0.5)) # right edge line
+            lower = ((x - 0.5, y - 0.5), (x + 0.5, y - 0.5)) # lower edge line
+            upper = ((x - 0.5, y + 0.5), (x + 0.5, y + 0.5)) # upper edge line
+
+            for line in left, right, lower, upper:
+                (x0, _), (x1, _) = line
+                if x0 == x1: # vertical line
+                    verticals[line] = verticals.get(line, 0) + 1
+                else: # horizontal line
+                    horizontals[line] = horizontals.get(line, 0) + 1 
+        
+        # Extraxt only lines not dublicating.
+        Vlines = {key for key, value in verticals.items() if value == 1}
+        Hlines = {key for key, value in horizontals.items() if value == 1}
+        
+        return Vlines, Hlines
+
+
+    def updateMetrics(self):
+        
         for z in range(self.Slices):
-            pointsA = self.findPoints(self.A[z])
-            self.SlicePointsA.append(pointsA)
-
-            pointsB = self.findPoints(self.B[z])
-            self.SlicePointsB.append(pointsB)
-
-            vLinesA, hLinesA = self.findLines(pointsA)
-            vLinesB, hLinesB = self.findLines(pointsB, self.Tolerance)
-
-            vDiff = vLinesA - vLinesB
-            self.SliceLineSegmentsV.append(vDiff)
+            pM = self.findPoints(self.model[z])
+            pGT = self.findPoints(self.gt[z])
+            pRes = self.findResultingPoints(pGT, pM)
             
-            hDiff = hLinesA - hLinesB
-            self.SliceLineSegmentsH.append(hDiff)
+            vM, hM = self.findLines(pM)
+            vRes, hRes = self.findLines(pRes)
+            vEPL, hEPL = vRes - vM, hRes - hM
 
-            self.TotalLengthA += (len(vLinesA)* self.Height) + (len(hLinesA) * self.Width)
-            self.TotalAreaA += (self.Width + self.Height) * len(pointsA)
-            self.TotalAreaAB += (self.Width + self.Height) * len(pointsA & pointsB)
-            EPL = len(vDiff) * self.Height + len(hDiff) * self.Width
-            self.SliceValuesEPL.append(EPL)
+            SliceEPL = len(vRes - vM)*self.Height + len(hRes - hM)*self.Width
+            self.EPL += SliceEPL
 
-        return sum(self.SliceValuesEPL)
+            SliceLine = len(vRes) * self.Height + len(hRes) * self.Width
+            self.TotalLength += SliceLine
 
+            SliceArea = self.Height*self.Width * len(pRes)
+            self.TotalArea += SliceArea
 
-    def getLineEPL(self):
+            SliceAreaChanged = self.Height*self.Width * len(pM ^ pRes)
+            self.TotalAreaChanged += SliceAreaChanged
+
+            # Add slice results to lists for plotting i dashboard.
+            self.SlicePointsModel.append(pM)
+            self.SlicePointsGT.append(pGT)
+            self.SliceLinesModel.append(vM | hM)
+            self.SliceLinesChanged.append(vEPL | hEPL)
+            self.SliceEPL.append(SliceEPL)
+            SliceLR = SliceEPL / SliceLine if SliceLine != 0 else 0
+            self.SliceLR.append(SliceLR)
+            SliceVR = SliceAreaChanged / SliceArea if SliceArea != 0 else 0
+            self.SliceVR.append(SliceVR)
+
+        self.updateLineRatio()
+        self.updateVolumeRatio()
+
+    def updateLineRatio(self):
         try:
-            return self.EPL / self.TotalLengthA
+            return self.EPL / self.TotalLength
         except ZeroDivisionError:
             return 0
         
 
-    def getVolumeEPL(self, area):
+    def updateVolumeRatio(self):
         try: 
-            return self.EPL / area
+            return self.TotalAreaChanged / self.TotalArea
         except ZeroDivisionError:
             return 0
 
 
-# Functions only used for testing
+
 if __name__ == '__main__':
     from time import process_time as pt
     import matplotlib.ticker as plticker
@@ -208,107 +249,30 @@ if __name__ == '__main__':
         return np.array(array)
 
 
-    def getLine(p0, p1):
-        x0, y0 = p0
-        x1, y1 = p1
-
-        if x0 == x1:
-            x = x0
-            y = (y0 + y1)/2
-            return ((x - 0.5, y), (x + 0.5, y))
-        else:
-            y = y0
-            x = (x0 + x1)/2
-            return ((x, y - 0.5), (x, y + 0.5))
-
-    
-    def findPoints(A, tol = 0):
-    
-        @lru_cache
-        def isEdge(x, y, tol = 0):
-            nonlocal A
-
-            if tol == 0:
-                return not A[y, x]
-            
-            if A[y, x]: # != 0:
-                for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-                    if isEdge(x + dx, y + dy, tol - 1):
-                        return True
-            
-                return False
-            
-            else:
-                return True
+    def plotPoints(points, col = 'k', mark = '.'):
+            x, y = zip(*points)
+            plt.plot(x, y, color = col, marker = mark, ls = '')
 
 
-        points = [(x, y) for y, x in zip(*np.nonzero(A))]
-        edges = [(x, y) for x, y in points if isEdge(x, y, tol)] if tol else []
-
-        return points, edges
-
-
-    def findLines(A, tol = 0):
-        points, edgePoints = findPoints(A, tol)
-
-        @lru_cache
-        def findLinesRecursive(x, y, tol = 0):
-            nonlocal A
-            nonlocal edgePoints
-
-            lines = []
-            for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-                if tol == 0:
-                    if (((x, y) in edgePoints) or 
-                        ((x + dx, y + dy) in edgePoints) or
-                        (not (A[y + dy, x + dx]))   
-                    ):
-                        lines += [getLine((x, y), (x + dx, y + dy))]
-                else:
-                    lines += [*findLinesRecursive(x + dx, y + dy, tol - 1)]
-            
-            return lines
-
-        allLines = set()
-        for p in points:
-            allLines |= set(findLinesRecursive(*p, tol))
-
-        vlines = set()
-        hlines = set()
-        for (x0, y0), (x1, y1) in allLines:
-            if x0 == x1:
-                vlines.add(((x0, y0), (x1, y1)))
-            else:
-                hlines.add(((x0, y0), (x1, y1)))
-
-        return vlines, hlines
-
-
-    def plotPoints(points, col = 'b', mark = 'o'):
-        x, y = zip(*points)
-        y = [-y_ for y_ in y]
-        plt.plot(x, y, color = col, marker = mark, ls = '')
-
-
-    def plotLines(lines):
+    def plotLines(lines, color = 'b', style = 'dashdot', width = 1):
         for (x0, y0), (x1, y1) in lines:
             if x0 == x1:
-                plt.vlines(x0, ymin = -y0, ymax = -y1, colors = 'b', ls = 'dashdot')
+                plt.vlines(x0, ymin = y0, ymax = y1, colors = color, ls = style, lw = width)
             else:
-                plt.hlines(-y0, xmin = x0, xmax = x1, colors = 'b', ls = 'dashdot')
+                plt.hlines(y0, xmin = x0, xmax = x1, colors = color, ls = style, lw = width)
 
 
-    def plot(xlen, ylen, title = ''):
-        plt.xlim([0, xlen])
-        plt.ylim([-ylen, 0])
+    def plot(xlim, ylim, title = ''):
+        plt.xlim(xlim)
+        plt.ylim(ylim)
         plt.grid(linestyle='-', linewidth=0.25, which = 'both')
 
         ax = plt.gca()
         loc = plticker.MultipleLocator(base=1)
         ax.xaxis.set_major_locator(loc)
         ax.yaxis.set_major_locator(loc)
-        ax.set_xticks(np.arange(0, xlen))
-        ax.set_yticks(np.arange(ylen, 0))
+        ax.set_xticks(np.arange(*xlim))
+        ax.set_yticks(np.arange(*ylim))
         ax.xaxis.set_ticklabels([])
         ax.yaxis.set_ticklabels([])
         ax.set_aspect(1)
@@ -317,22 +281,64 @@ if __name__ == '__main__':
         plt.show()
 
 
-# Actual testing
 if __name__ == '__main__':
     P1 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'GT')
     P2 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'DL')
 
-    for Segment in ['brain', 'brainstem', 'parotid_merged', 'pcm_low', \
-    'pcm_mid', 'pcm_low', 'spinalcord', 'thyroid']:
-        IMGA = OAR_Image(P1, Segment)
-        IMGB = OAR_Image(P2, Segment)
+    Segment = 'pcm_low'
+    IMGA = OAR_Image(P1, Segment)
+    IMGB = OAR_Image(P2, Segment)
 
-        for testTol in [0, 1, 2, 3]:
-            t0 = pt()
-            M = EPL_Metric(IMGA, IMGB, testTol)
-            t1 = pt()
-            print()
-            print(f'TestTime: {t1-t0}, Segment: {Segment}, Tolerance: {testTol}')
-            print(M)
-    
+    EPL = EPL_Metric(model = IMGB, gt = IMGA, Tolerance = 1)
+
+    nPointsGT = [len(points) for points in EPL.SlicePointsGT]
+    nPointsM = [len(points) for points in EPL.SlicePointsModel]
+    nPoints = [gt + m for gt, m in zip(nPointsGT, nPointsM)]
+    layer = np.argmax(nPoints)
+
+    xGT, yGT = zip(*EPL.SlicePointsGT[layer])
+    xM, yM = zip(*EPL.SlicePointsModel[layer])
+
+    buffer = 3
+    xlimits = [min(xGT + xM) - buffer, max(xGT + xM) + buffer + 1]
+    ylimits = [min(yGT + yM) - buffer, max(yGT + yM) + buffer + 1]
+
+    plotLines(EPL.SliceLinesModel[layer])
+    plotLines(EPL.SliceLinesChanged[layer], color = 'r', style = 'dashed')
+    plotPoints(EPL.SlicePointsGT[layer])
+    plot(xlimits, ylimits,
+        title = f'{Segment}[{layer}]: EPL = {EPL.SliceEPL[layer]}, LineRatio = {EPL.SliceLR[layer]}, VolumeRatio = {EPL.SliceVR[layer]}')
+
+    print('Done')
+
+
+# P1 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'GT')
+# P2 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'DL')
+
+# Segment = 'parotid_merged'
+# IMGA = OAR_Image(P1, Segment)
+# IMGB = OAR_Image(P2, Segment)
+
+# A = IMGA.GetArray()
+# B = IMGB.GetArray()
+# Slice = np.argmax(np.sum(np.sum(A, axis = 1), axis = 1) + np.sum(np.sum(B, axis = 1), axis = 1))
+# A = A[Slice]
+# B = B[Slice]
+# xA, yA = A.nonzero()
+# xB, yB = B.nonzero()
+# x_min = min(list(xA) + list(xB)) - 3
+# x_max = max(list(xA) + list(xB)) + 3
+# y_min = min(list(yA) + list(yB)) - 3
+# y_max = max(list(yA) + list(yB)) + 3
+
+# A = A[x_min:x_max, y_min:y_max]
+# B = B[x_min:x_max, y_min:y_max]
+
+# with open(f'EPL_examples\\{Segment}A{Slice}.txt', 'w') as f:
+#     for row in A[::-1]:
+#         f.write(' '.join([str(n) for n in list(row)]) + '\n')
+
+# with open(f'EPL_examples\\{Segment}B{Slice}.txt', 'w') as f:
+#     for row in B[::-1]:
+#         f.write(' '.join([str(n) for n in list(row)]) + '\n')
 
