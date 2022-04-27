@@ -36,13 +36,19 @@ X, Y = np.meshgrid(lRatio, vRatio)
 
 def metric1(lr, vr):
     """LineRatio / VolumeRatio"""
-    return lr/vr
+    return lr / vr
 
 def metric2(lr, vr):
     """LineRatio * VolumeRatio"""
     return lr * vr
 
 funcs = [metric1]
+
+
+fig = plt.figure()
+ax = plt.axes(projection='3d')
+ax.plot_surface(X, Y, metric2(X, Y))
+fig.show()
 
 fig, axs = plt.subplots(nrows = 1, ncols = len(funcs))
 for i, func in enumerate(funcs):
