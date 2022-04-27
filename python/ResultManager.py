@@ -157,7 +157,7 @@ def GenerateSliceResults(
     Patients,           # Iterable object of tuples with ID and Date
     Tolerance = 0,      
     overwrite = False,  # True : Will calculate new values for files loaded.
-    root = '..\\data\\sliceresults\\dataframes2\\'):
+    root = '..\\data\\sliceresults\\dataframes\\'):
 
     for Segment in Segments:
 
@@ -193,17 +193,13 @@ def GenerateSliceResults(
                 EPL_Info = EPL_Metric(ImgA, ImgB, Tolerance)
                 DICE, Haus, MSD = GetMetricSlice(ImgA, ImgB, Tolerance)
 
-                EPL = EPL_Info.SliceValuesEPL
-                TotalLine = EPL_Info.TotalLengthA
-                EPL_Line = [val/TotalLine if TotalLine else None for val in EPL]
-
-                Volume = EPL_Info.TotalAreaA
-                EPL_Volume = [val/Volume if Volume else None for val in EPL]
-
-                PointsA = EPL_Info.SlicePointsA
-                PointsB = EPL_Info.SlicePointsB
-                Vlines = EPL_Info.SliceLineSegmentsV
-                Hlines = EPL_Info.SliceLineSegmentsH
+                EPL = EPL_Info.SliceEPL
+                LineRatio = EPL_Info.SliceLR
+                VolumeRatio = EPL_Info.SliceVR
+                pModel = EPL_Info.SlicePointsModel
+                pGT = EPL_Info.SlicePointsGT
+                LinesModel = EPL_Info.SliceLinesModel
+                LinesChanged = EPL_Info.SliceLinesChanged
 
                 df = pd.DataFrame({'Index' : list(range(Z)),
                                    'ID' : [ID]*Z,
@@ -212,12 +208,12 @@ def GenerateSliceResults(
                               'Haus' : Haus,
                               'MSD' : MSD,
                               'EPL' : EPL,
-                              'EPL_Line' : EPL_Line,
-                              'EPL_Volume' : EPL_Volume,
-                              'PointsA' : PointsA,
-                              'PointsB' : PointsB,
-                              'Vlines' : Vlines,
-                              'Hlines' : Hlines})
+                              'LineRatio' : LineRatio,
+                              'VolumeRatio' : VolumeRatio,
+                              'PointsModel' : pModel,
+                              'PointsGT' : pGT,
+                              'LinesModel' : LinesModel,
+                              'LinesChanged' : LinesChanged})
 
                 patient_dfs.append(df)
 
@@ -277,8 +273,8 @@ def MergeSliceResults(filename,
         df['Segment'] = [segment] * N
         df['Tolerance'] = [int(tol[-1])] * N
         
-        cols = df.columns
-        df = df[cols[:3] + cols[-2:] + cols[3:-2]]
+        cols = list(df.columns)
+        df = df[cols[:3] + cols[-3:] + cols[3:-3]]
 
         dfs.append(df)
 
@@ -300,10 +296,10 @@ def PatientKeys(n = "All"):
 
 # Test
 if __name__ == "__main__":
-    Segments = list(OAR_Image.OARs.keys())[1:]
+    Segments = list(OAR_Image.OARs.keys())[2:]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
     Patients = PatientKeys()
-    for Tolerance in {0, 1, 2, 3, 4}:
+    for Tolerance in {0, 1, 2, 3}:
         print(f'{Tolerance = }')
         GenerateResults(Segments, Comparisons, Patients, Tolerance)
         MergeResults(f'total_tolerance{Tolerance}.csv')
@@ -320,4 +316,4 @@ if __name__ == "__main__":
         print(f'\n{Tolerance = }')
         GenerateSliceResults(Segments, Comparisons, Patients, Tolerance)
     
-    # MergeSliceResults('total.csv')
+    MergeSliceResults('total.csv')

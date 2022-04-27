@@ -37,15 +37,15 @@ class Metrics_Info():
             self.DICE = self.getDICE()
             self.Hausdorff = self.getHausdorff()
             self.MSD = self.getMSD()
-            self.EPL, self.LineEPL, self.VolumeEPL = self.getEPL()
+            self.EPL, self.LineRatio, self.VolumeRatio = self.getEPL()
 
         else:
             self.DICE = None
             self.Hausdorff = None
             self.MSD = None
             self.EPL = None
-            self.LineEPL = None
-            self.VolumeEPL = None
+            self.LineRatio = None
+            self.VolumeRatio = None
         
 
     def __str__(self):
@@ -57,8 +57,8 @@ class Metrics_Info():
             f'Hausdorff: {self.Hausdorff}\n'
             f'Mean Surface Distance: {self.MSD}\n'
             f'Edited Path Length: {self.EPL}\n'
-            f'EPL Length Ratio: {self.LineEPL}\n'
-            f'EPL Volume Ratio: {self.VolumeEPL}'
+            f'Line Ratio: {self.LineRatio}\n'
+            f'Volume Ratio: {self.VolumeRatio}'
         )
         
         return msg
@@ -104,7 +104,7 @@ class Metrics_Info():
     def getEPL(self):
         EPL = EPL_Metric(self.ImageA, self.ImageB, self.Tolerance)
 
-        return EPL.EPL, EPL.LineEPL, EPL.VolumeEPL
+        return EPL.EPL, EPL.LineRatio, EPL.VolumeRatio
 
 
     def getAttributes(self):
@@ -115,8 +115,8 @@ class Metrics_Info():
                   'Hausdorff' : [self.Hausdorff],
                   'MSD' : [self.MSD],
                   'EPL' : [self.EPL],
-                  'EPL_L' : [self.LineEPL],
-                  'EPL_V' : [self.VolumeEPL]}
+                  'LineRatio' : [self.LineRatio],
+                  'VolumeRatio' : [self.VolumeRatio]}
         return output
 
 # Test

@@ -218,6 +218,7 @@ class EPL_Metric():
         self.updateLineRatio()
         self.updateVolumeRatio()
 
+
     def updateLineRatio(self):
         try:
             return self.EPL / self.TotalLength
@@ -285,7 +286,7 @@ if __name__ == '__main__':
     P1 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'GT')
     P2 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'DL')
 
-    Segment = 'pcm_low'
+    Segment = 'brain'
     IMGA = OAR_Image(P1, Segment)
     IMGB = OAR_Image(P2, Segment)
 
