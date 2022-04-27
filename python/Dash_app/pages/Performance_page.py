@@ -1,33 +1,61 @@
 from dash import dcc, html, Input, Output, callback
 from dataloading import segments, metrics, comparisons, plot_theme, df
 import plotly.express as px
+import plotly.graph_objects as go
+import numpy as np
+import dash_bootstrap_components as dbc
+Style = {'textAlign': 'center', "border-bottom":"2px black solid"}
 
-Style = {'textAlign': 'center'}
 layout = html.Div([
-    html.H3('Performance', style = Style),
+    html.H1('Performance', style = Style),
     html.Br(),
-    #html.Div([
-           dcc.Dropdown(id="slct_segment", # dropdown for metrics
+            dbc.Row([
+                dbc.Col([
+                        dcc.Dropdown(id="slct_segment", # dropdown for metrics
+                        options =segments,
+                        multi = True,
+                        value = [segments[0]],
+                        clearable = True)
+
+                ], width = 9),
+                dbc.Col([
+                        dbc.Checklist(
+                        options=[
+                        {"label": "Show Tolerance options", "value": 1}],
+                        value=[1],
+                        id="tolerance_toggle",
+                        switch=True)
+                ],width = 3)
+            ]),
+
+            dbc.Row([
+                dbc.Col([
+                        dcc.Dropdown(id="slct_metrics", # Dropdown for segments
+                        options =metrics,
+                        multi = True,
+                        value = [metrics[0]],
+                        clearable = True)
+
+                ],width = 6),
+                dbc.Col([ dcc.Dropdown(id="slct_comp", #Dropdown for comparisons
+                            options =comparisons,
+                            multi = True,
+                            value = [comparisons[0]],
+                            clearable = True)
+
+                ],width = 6)
+            ],className="g-0"),
+            html.Br(),
+            dcc.Graph(id = "figure_perf", figure = {}), #Initializing figure,
+            html.Br(),
+            dcc.Dropdown(id="boxplot_segment", # dropdown for metrics
                             options =segments,
                             multi = True,
                             value = [segments[0]],
                             style = {"width": 1000},
                             clearable = True),
-            dcc.Dropdown(id="slct_metrics", # Dropdown for segments
-                            options =metrics,
-                            multi = True,
-                            value = [metrics[0]],
-                            style = {"width": 500, "display": "inline-block"},
-                            clearable = True),
-            dcc.Dropdown(id="slct_comp", #Dropdown for comparisons
-                            options =comparisons,
-                            multi = True,
-                            value = [comparisons[0]],
-                            style = {"width": 500,"display": "inline-block"},
-                            clearable = True),
             html.Br(),
-            dcc.Graph(id = "figure_perf", figure = {}), #Initializing figure
-        #])
+            dcc.Graph(id = "figure_boxplot", figure = {}), #Initializing figure,
 ])
 
 #Update graph for performance
@@ -75,14 +103,14 @@ def update_graph(slct_metrics, slct_segment,slct_comp):
 
 
 # Make segment dropdown non clearable
-@callback(
-    [Output(component_id="slct_segment", component_property="value")],
-    [Input(component_id="slct_segment", component_property="value")])
-def update_dropdown_options_segment(values):
-    if len(values) == 0:
-        return [[segments[0]]]
-    else:
-        return [values]
+# @callback(
+#     [Output(component_id="slct_segment", component_property="value")],
+#     [Input(component_id="slct_segment", component_property="value")])
+# def update_dropdown_options_segment(values):
+#     if len(values) == 0:
+#         return [[segments[0]]]
+#     else:
+#         return [values]
 
 # Make metrics dropdown non clearable
 @callback(
@@ -104,4 +132,24 @@ def update_dropdown_options_comp(values):
         return[[comparisons[0]]]
     else:
         return [values]
+
+
+@callback(
+    Output("slct_segment", "options"),
+    Output("slct_segment", "value"),
+    [Input("tolerance_toggle", "value"),
+    Input("slct_segment", "value")])
+def toggle_tolerance(toggle,current):
+    if len(toggle) == 1:
+        options = segments
+        values = current
+    else:
+        options = [segment for segment in segments if segment.endswith("0")]
+        values = [segment for segment in current if segment in options]
+    
+    if len(current) == 0:
+        values = [segments[0]]
+
+    return [options,values]
+
     

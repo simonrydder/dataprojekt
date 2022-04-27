@@ -7,3 +7,35 @@ body {
 #figure_perf{
     border: 2px solid rgb(0, 0, 0);
 }
+
+#slct_segment{
+    cursor: pointer;
+    padding: 2px;
+}
+
+#slct_metrics{
+    cursor: pointer;
+    padding: 2px
+}
+
+#slct_comp{
+    cursor: pointer;
+    padding: 0px
+}
+
+#minus{
+    margin: 5px
+}
+
+#plus{
+    margin: 5px
+}
+
+#figure_slider{
+    border: 2px solid rgb(0, 0, 0);
+}
+
+#figure_slider_perf{
+    border: 2px solid rgb(0, 0, 0);
+}
+
