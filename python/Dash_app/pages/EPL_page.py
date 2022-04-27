@@ -83,7 +83,9 @@ df_slices = 0
 
 @callback(
     [Output(component_id="figure_slider", component_property="figure"),
-     Output(component_id="figure_slider_perf", component_property="figure")],
+     Output(component_id="figure_slider_perf", component_property="figure"),
+     Output(component_id="slider", component_property="max"),
+    Output(component_id="slider", component_property="min")],
     [Input(component_id="slider", component_property="value"),
     Input(component_id="patient", component_property="value"),
     Input(component_id="segment_slider", component_property="value"),
@@ -112,9 +114,13 @@ def update_slider(slider, patient,segment,method,tolerance):
 
     metrics = ["EPL","EPL_Line","EPL_Volume","DICE","Haus","MSD"]
     df_slice = df_slices[df_slices["ID"]==patient]
+    max = df_slice["Index"].max() #range for slider
+    min = df_slice["Index"].min() #range for slider
+
     range_max = {metric: df_slice[metric].max()*1.1
                 if metric not in ["DICE"] 
                 else 1 for metric in metrics}
+
     df_slice = df_slice[df_slice["Index"]==slider]
     df_perf = df_slice[df_slice["Index"]==slider].round(3)
 
@@ -176,9 +182,6 @@ def update_slider(slider, patient,segment,method,tolerance):
                     
     fig3.update_layout(template=plot_theme) #set theme
 
-    #fig3.layout.plot_bgcolor = bgcolor
-    #fig3.layout.paper_bgcolor = bgcolor
-
     fig3.update_yaxes(scaleanchor = "x", scaleratio = 1) #scales yaxes to xaxes
 
     fig4 = make_subplots(6,1)  #creates subplots
@@ -199,38 +202,19 @@ def update_slider(slider, patient,segment,method,tolerance):
             marker=dict(color = color)),
             idx+1,1)
         range_upper = range_max.get(metric)
-        fig4["layout"][axes[idx]].update(range = [0,range_upper])
+        fig4["layout"][axes[idx]].update(range = [0,range_upper],matches=None,showticklabels=True, 
+                                                    visible = False)
+        print(fig4["annotation"][axes[idx]])
 
-    fig4.update_xaxes(matches=None) #Creates individual xaxis for subplots
-    fig4.for_each_xaxis(lambda xaxis: xaxis.update(showticklabels=True, 
-                                                    visible = False)) # shows labels for all xaxis
     fig4.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1])) # changes subplot title
 
-    return [fig3,fig4]
+    return [fig3,fig4,
+    max,min]
 
 
 old_slice = 0
 old_plus_clicks = None
 old_minus_clicks = None
-
-@callback(
-    [Output(component_id="slider", component_property="max"),
-    Output(component_id="slider", component_property="min")],
-    [Input(component_id="patient", component_property="value"),
-    Input(component_id="segment_slider", component_property="value"),
-    Input(component_id="method_slider", component_property="value"),
-    Input(component_id="tolerance_slider", component_property="value"),
-    Input(component_id="slider", component_property="value")])
-
-def change_slider_range(patient,segment,method,tolerance,slice):
-    global old_slice
-    file = method + "&" + segment + "&Tolerance" + tolerance
-    df_slices = pd.read_csv(f"..\\data\\sliceresults\\dataframes2\\{file}.csv")
-    df_slices = df_slices[df_slices["ID"]==patient] 
-    df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
-    old_slice = slice
-
-    return [df_slices["Index"].max(),df_slices["Index"].min()]
 
 #Change slider value dynamically when chancing tolerance,method,segment and patient
 @callback(
@@ -255,7 +239,7 @@ def change_slider_value(patient,segment,method,tolerance,plus,minus):
         new_slice = old_slice
     else:
         new_slice = df_slices["Index"].min()
-    old_slice = new_slice
+    
 
     # applying plus button
     if plus != old_plus_clicks and  new_slice < df_slices["Index"].max():
@@ -267,5 +251,6 @@ def change_slider_value(patient,segment,method,tolerance,plus,minus):
         
     old_plus_clicks = plus
     old_minus_clicks = minus
+    old_slice = new_slice
     
     return [new_slice]
