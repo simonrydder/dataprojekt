@@ -1,9 +1,10 @@
+from msilib.schema import Font
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, dcc, html
 from pages import Front_page, Metric_page, Performance_page, EPL_page
-from dataloading import segments,metrics,comparisons
-
+from dataloading import segments,metrics,comparisons, patients_slider, segments_slider
+import dash_daq as daq
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -26,9 +27,11 @@ CONTENT_STYLE = {
     "padding": "2rem 1rem",
 }
 
+sidebar_text = "Performance Testing of Auto- Segmentation Algorithms"
+
 sidebar = html.Div(
     [
-        html.H2("Sidebar", className="display-4"),
+        html.H3(sidebar_text),
         html.Hr(),
         html.P(
             dbc.Nav(dbc.NavLink("Home", href="/", active="exact"),vertical=True,
@@ -51,16 +54,27 @@ sidebar = html.Div(
 
 # all components has to be pseudo created here to avoid errors when loading
 content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
-    dcc.Dropdown(id='page-1-dropdown'),
-    dcc.Dropdown(id='page-3-dropdown'),
-    dcc.Dropdown(id='page-2-dropdown'),
-    html.Div(id='page-1-display-value'),
-    html.Div(id='page-2-display-value'),
-    html.Div(id='page-3-display-value'),
     dcc.Dropdown(id="slct_segment",value = [segments[0]]),
     dcc.Dropdown(id="slct_metrics",value = [metrics[0]]),
     dcc.Dropdown(id="slct_comp",value = [comparisons[0]]),
     dcc.Graph(id = "figure_perf"), #Initializing figure
+    daq.Slider(id = "slider", value = 87),
+    dcc.Dropdown(id = "patient",
+                value = patients_slider[0]),
+    dcc.Dropdown(id = "segment_slider", 
+                value = segments_slider[0]),    
+    dcc.Dropdown(id = "method_slider", 
+                value = "GTvsDL"),
+    dcc.Dropdown(id = "tolerance_slider", 
+                value = "0"),
+    dbc.Button("-", "minus"),
+    dbc.Button("+", "plus"), 
+    dcc.Graph(id = "figure_slider"),
+    dcc.Graph(id = "figure_slider_perf"),
+    dcc.Dropdown(id="boxplot_segment",
+                value = [segments[0]]),     
+    dcc.Graph(id = "figure_boxplot"),
+    dbc.Checklist(id="tolerance_toggle",value = [1])
 ])
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])

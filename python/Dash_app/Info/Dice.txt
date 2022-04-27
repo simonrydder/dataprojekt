@@ -1,0 +1,7 @@
+lots of Info about Dice there is alot of info here lots of Info 
+about Dice there is alot of info here lots of Info about Dice there 
+is alot of info here, lots of Info about Dice there is alot of info here 
+
+$$
+x^2\quad\text{this is how you create equations, look at pages\Dice.txt for more}
+$$
