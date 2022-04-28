@@ -1,4 +1,3 @@
-from msilib.schema import Font
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, dcc, html
@@ -40,9 +39,9 @@ sidebar = html.Div(
         ),
         dbc.Nav(
             [
-                dbc.NavLink("Metric overview", href="/Metric_page", active="exact"),
-                dbc.NavLink("EPL visualization", href="/EPL_page", active="exact"),
-                dbc.NavLink("Performance overview", href="/Performance_page", active="exact"),
+                dbc.NavLink("Metric Overview", href="/Metric_page", active="exact"),
+                dbc.NavLink("EPL Visualization", href="/EPL_page", active="exact"),
+                dbc.NavLink("Performance Overview", href="/Performance_page", active="exact"),
             ],
             vertical=True,
             pills=True,
@@ -52,7 +51,7 @@ sidebar = html.Div(
     id = "sidebar"
 )
 
-# all components has to be pseudo created here to avoid errors when loading
+# all components have to be pseudo created here to avoid errors when loading
 content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
     dcc.Dropdown(id="slct_segment",value = [segments[0]]),
     dcc.Dropdown(id="slct_metrics",value = [metrics[0]]),

@@ -20,15 +20,11 @@ for metric in metrics.keys():
         content.append(dcc.Markdown(f.read(),mathjax= True))
     content.append(html.Br())
 
-
-
-
 CONTENT_STYLE = {
     "margin-left": "5rem",
     "margin-right": "5rem",
     "padding": "2rem 1rem",
 }
-
 
 layout = html.Div(content, style = CONTENT_STYLE)
 

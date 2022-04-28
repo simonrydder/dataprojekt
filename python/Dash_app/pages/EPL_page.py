@@ -11,7 +11,7 @@ Style = {'textAlign': 'center', "border-bottom":"2px black solid"}
 
 
 layout = html.Div([
-            html.H1("EPL visulization", style = Style),
+            html.H1("EPL Visualization", style = Style),
             html.Br(),
             daq.Slider(id = "slider", # Slider to switch slice (z)
                         min = 50, 
@@ -76,6 +76,7 @@ old_patient = 0
 old_segment = 0
 old_method = 0
 old_tolerance = 0
+old_slice = 0
 df_slices = 0
 
 #Connections
@@ -98,21 +99,22 @@ def update_slider(slider, patient,segment,method,tolerance):
     global old_method
     global old_tolerance
     global df_slices
+    global old_slice
     #Finding the matching data
     if any([segment != old_segment,
     method != old_method,tolerance != old_tolerance]): # loading data if new file is needed
 
         file = method + "&" + segment + "&Tolerance" + tolerance
-        df_slices = pd.read_csv(f"..\\data\\sliceresults\\dataframes2\\{file}.csv")
+        df_slices = pd.read_csv(f"..\\data\\sliceresults\\dataframes\\{file}.csv")
         df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
 
-        cols_to_change = ["PointsA","PointsB","Vlines","Hlines"]
+        cols_to_change = ["PointsModel","PointsGT","LinesModel","LinesChanged"]
 
         for col in cols_to_change:
             df_slices[col] = df_slices[col].replace(["set()"],["[]"])
             df_slices[col] = df_slices[col].apply(literal_eval)
 
-    metrics = ["EPL","EPL_Line","EPL_Volume","DICE","Haus","MSD"]
+    metrics = ["EPL","LineRatio","VolumeRatio","DICE","Haus","MSD"]
     df_slice = df_slices[df_slices["ID"]==patient]
     max = df_slice["Index"].max() #range for slider
     min = df_slice["Index"].min() #range for slider
@@ -128,20 +130,21 @@ def update_slider(slider, patient,segment,method,tolerance):
     old_segment = segment
     old_method = method
     old_tolerance = tolerance
+    old_slice = slider
 
     # Checking if their is points to plot for the slice
     try:
-        xA,yA = zip(*df_slice["PointsA"].tolist()[0])
+        xA,yA = zip(*df_slice["PointsGT"].tolist()[0])
     except ValueError:
         xA,yA = ([],[])
-    try:
-        xB,yB = zip(*df_slice["PointsB"].tolist()[0])
-    except ValueError:
-        xB,yB = ([],[])
+    # try:
+    #     xB,yB = zip(*df_slice["PointsB"].tolist()[0])
+    # except ValueError:
+    #     xB,yB = ([],[])
 
     # vertical and horizontal lines to plot
-    Vlines = df_slice["Vlines"].tolist()[0]
-    Hlines = df_slice["Hlines"].tolist()[0]
+    lines_model = df_slice["LinesModel"].tolist()[0]
+    lines_changed = df_slice["LinesChanged"].tolist()[0]
 
 
     fig3 = go.Figure()
@@ -151,34 +154,37 @@ def update_slider(slider, patient,segment,method,tolerance):
                     mode = "markers", 
                     name = "GT",
                     marker=dict(color='red',size=8)))
-            
-    fig3.add_trace( #adds points for B to the figure
-        go.Scatter(x=xB, 
-                    y=yB, mode = "markers", 
-                    name = "Guess",
-                    marker=dict(color='LightSkyBlue',size=6)))
 
     #Plotting the boundary
-    for (x0,y0),(x1,y1) in Vlines:
+    for (x0,y0),(x1,y1) in lines_model:
                 x = [x0,x1]
                 y = [y0,y1]
                 fig3.add_trace(
                     go.Scatter(x = x, 
                                 y = y, 
                                 mode = "lines",
-                                line = dict(dash = "dot"),
-                                showlegend = False, marker = dict(color = "red")))
+                                line = dict(dash = "dot"),showlegend = False, marker = dict(color = "blue")))
 
-    for (x0,y0),(x1,y1) in Hlines:
+    for (x0,y0),(x1,y1) in lines_changed:
                 x = [x0,x1]
                 y = [y0,y1]
                 fig3.add_trace(
                     go.Scatter(x = x, 
                                 y = y, 
                                 mode = "lines",
-                                line = dict(dash = "dot"),
-                                showlegend = False, marker = dict(color = "red")))
+                                line = dict(dash = "dot"),showlegend = False, marker = dict(color = "darkcyan")))
+
     
+    if fig3["data"][1]['marker']["color"] == "blue":
+        fig3['data'][1]['showlegend'] = True
+        fig3['data'][1]['name'] = 'Models guess'
+
+    if fig3["data"][-1]['marker']["color"] == "darkcyan":
+        fig3['data'][-1]['showlegend'] = True
+        fig3['data'][-1]['name'] = 'EPL'
+
+
+
                     
     fig3.update_layout(template=plot_theme) #set theme
 
@@ -204,7 +210,6 @@ def update_slider(slider, patient,segment,method,tolerance):
         range_upper = range_max.get(metric)
         fig4["layout"][axes[idx]].update(range = [0,range_upper],matches=None,showticklabels=True, 
                                                     visible = False)
-        print(fig4["annotation"][axes[idx]])
 
     fig4.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1])) # changes subplot title
 
@@ -231,7 +236,7 @@ def change_slider_value(patient,segment,method,tolerance,plus,minus):
     global old_plus_clicks
     global old_minus_clicks
     file = method + "&" + segment + "&Tolerance" + tolerance
-    df_slices = pd.read_csv(f"..\\data\\sliceresults\\dataframes2\\{file}.csv")
+    df_slices = pd.read_csv(f"..\\data\\sliceresults\\dataframes\\{file}.csv")
     df_slices = df_slices[df_slices["ID"]==patient] 
     df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
 
