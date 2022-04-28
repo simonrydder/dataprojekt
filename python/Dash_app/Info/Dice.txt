@@ -1,7 +1,20 @@
-lots of Info about Dice there is alot of info here lots of Info 
-about Dice there is alot of info here lots of Info about Dice there 
-is alot of info here, lots of Info about Dice there is alot of info here 
+The Sorensen–Dice coefficient (DICE) is a statistic used
+estimate or determine the level of the
+similarity between two sets of data. 
+
+Simply put, the volumtetric DICE is calculated as two times the volume overlap
+divided by the total volume of pixels in both images:
 
 $$
-x^2\quad\text{this is how you create equations, look at pages\Dice.txt for more}
+DSC=\frac{2(A \cap B)}{A+B}
 $$
+
+This metric has become arguably the most broadly used tool in the validation 
+of image segmentation algorithms created with AI,
+but it is a much more general concept which can be applied to sets of data for a variety of applications 
+
+So if one have an image segmentation of lets say the brain created by an
+Deep Learning algorithm and a "ground truth" segmentation drawn by a doctor,
+we can calculate the DICE coefficient to measure the level of similarity. The higher the coefficient, the more similarity.
+Anything above 0.8 is broadly seen as close to perfect and above 0.9 perfect.
+
