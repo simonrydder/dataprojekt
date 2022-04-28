@@ -1,4 +1,4 @@
-The mean squared distance (MSD) calculates the average of the minimum
+The mean surface distance (MSD) calculates the average of the minimum
 distances from every point in surface A to every point in surface B, and vice
 versa, and returns the average of the two average distances.
 This tell us how much, on average, the surface varies between the segmentation

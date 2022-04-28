@@ -1,2 +1,2 @@
-Some usefull blablabla about the dashboard below is how to add a picture look at 
-pages\Description_front_page for more
+Welcome to our Dashboard. Here you can find the results of our Performance Testing of different 
+autosegmentation algorithms.

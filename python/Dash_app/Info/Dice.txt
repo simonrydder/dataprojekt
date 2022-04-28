@@ -1,4 +1,4 @@
-The Sorensen–Dice coefficient (DICE) is a statistic used
+The Sorensen-Dice coefficient (DICE) is a statistic used
 estimate or determine the level of the
 similarity between two sets of data. 
 
