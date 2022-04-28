@@ -1,9 +1,9 @@
 
 import os
 import numpy as np
-from Metrics2 import Metrics_Info
-from DataReader2 import Path
-from DataPreparation2 import OAR_Image
+from Metrics import Metrics_Info
+from DataReader import Path
+from DataPreparation import OAR_Image
 
 def PatientKeys(n = "All"):
     dir = "A:\\data\\GT"

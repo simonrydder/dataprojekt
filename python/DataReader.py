@@ -1,58 +1,114 @@
 """
-Authors: Alex Kolby, Eskild Hjerrild Andersen, Simon Rydder
+Authors:        Alex Kolby, Eskild Hjerrild Andersen, Simon Rydder
 
-Created: 21/02/2022
+Created:        21/02/2022
 
-File name: DataReader.py
+File name:      DataReader.py
 
-
-description: Class to find the path for all relevant segmentations related to a specific patient ID
-
-Datareader requires one patient ID to be specified and has the following attributes
-
-GT: The path to "Ground Truth" segmentations
-DL: The path to Deep learning without bounds segmentations
-DLB: The path to Deep learning with bounds segmentations
-ATLAS: The path to ATLAS based segmentations
-
+Description:    Class to find the path for all relevant segmentations related to
+                a specific patient ID on a specific Date.
+                
+                Datareader requires one patient ID and the date of scan to be 
+                specified and has the following attributes:
+                - GT:   The path to "Ground Truth" segmentations
+                - DL:   The path to Deep learning without bounds segmentations
+                - DLB:  The path to Deep learning with bounds segmentations
+                - ATLAS:The path to ATLAS based segmentations
 """
+
+# Initialization
+print(f"Running {__name__}")
+
+
 # Imports
 import os
-from time import sleep
+
 
 # Classes and functions
 class Path():
-    def __init__(self, ID, method):
-        self.ID = ID
-        self.Root = "A:\\data\\"
-        self.Method = method    # "GT", "DL", "DLB", "ATLAS"
-        self.VeraCryptLocation = '..\\data\\projectdata.hc'
-        self.File = self.getPath()
-        
+    _VeraCryptLocation = '..\\data\\projectdata.hc'
 
-    def getPath(self):
-        notMounted = True
-        while notMounted:
+
+    def __init__(self, ID : str = '',
+                 Date : str = '',
+                 Method : str = '',
+                 Root = 'A:\\data\\'):
+
+        assert isinstance(ID, str), 'ID not <class str>'
+        assert isinstance(Date, str), 'Data not <class str>'
+        assert isinstance(Method, str), 'Method not <class str>'
+        assert isinstance(Root, str), 'Root not <class str>'
+
+        self.ID = ID
+        self.Date = Date    # yyyymmdd
+        self.Root = Root    # location of encrypted data
+        self.Method = Method.upper()    # "GT", "DL", "DLB", "ATLAS"
+        self.File = self.GetFile()
+
+    def __str__(self):
+        msg = (
+            f'ID: {self.ID}\n'
+            f'Date: {self.Date}\n'
+            f'Method: {self.Method}\n'
+            f'File: {self.File}'
+        ) 
+        return msg
+
+
+    def GetFile(self):
+        Mounted = False
+        while not Mounted:
             try:
                 files = os.listdir(self.Root + self.Method)
-                notMounted = False
+                Mounted = True
+
             except FileNotFoundError:
                 print('Unable to find directory: ' + self.Root)
                 print('Opening VeraCrypt')            
-                os.startfile(self.VeraCryptLocation)
+                os.startfile(self._VeraCryptLocation)
                 str_input = input('Is data mounted? [N / Y]: ')
-                notMounted = False if str_input.lower() == 'y' else True
-                if notMounted == False:
+                Mounted = True if str_input.lower() == 'y' else False
+                if Mounted:
                     files = os.listdir(self.Root + self.Method)
         
-
         for file in files:
-            if self.ID in file:
+            if self.ID + '&' + self.Date in file:
                 return self.Root + self.Method + "\\" + file
             
-        raise FileNotFoundError(f'File not found for {self.ID}, {self.Method}')
+        return 'NA'
 
 
-# Test
-ID = "1cbDrFdyzAXjFICMJ58Hmja9U"     
-print(Path(ID, "GT").File)
+# Class tester
+if __name__ == "__main__":
+    tests = {'Test1' : ["1cbDrFdyzAXjFICMJ58Hmja9U",
+                        20130521,
+                        'GT'],
+             'Test2' : ["1cbDrFdyzAXjFICMJ58Hmja9U",
+                        '20130521',
+                        'GT'],
+             'Test3' : ["1cbDrFdyzAXjFICMJ58Hmja9U",
+                        '20130521',
+                        'DL'],
+             'Test4' : ["1cbDrFdyzAXjFICMJ58Hmja9U",
+                        '20130521',
+                        'DLB'],
+             'Test5' : ["1cbDrFdyzAXjFICMJ58Hmja9U",
+                        '20130521',
+                        'ATLAS']
+            }
+
+    for test, args in tests.items():
+        try:
+            PI = Path(*args)
+            print(f'{test} succeded')
+            print(PI)
+        except:
+            print(f'{test} failed')
+            for arg in args:
+                print(f'Argument: {arg} : {type(arg)}', end = '\n')
+        finally:
+            print()
+
+    print("Test Path():")
+    P = Path()
+    print(P)

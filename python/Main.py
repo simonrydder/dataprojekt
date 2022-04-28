@@ -15,7 +15,7 @@ import numpy as np
 
 
 # Import other files
-from Metrics2 import Metrics_Info
+from Metrics import Metrics_Info
 
 
 # Functions

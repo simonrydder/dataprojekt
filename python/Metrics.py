@@ -8,63 +8,69 @@ File name:      Metrics.py
 Discribtion:    Skabelon for nye filer.
 """
 
+# Initialization
+print(f"Running {__name__}")
+
+
 # Imports
 import SimpleITK as ITK
-import numpy as np
+
 
 # Import other files
 from DataReader import Path
 from DataPreparation import OAR_Image
-from APL import AddedPathLength
-# from DICE import DICE
+from EditedPathLength import EPL_Metric
 
-# Create class of no-existing image for segment:
-class NoSegment(Exception):
-    pass
 
 # Classes and functions
 class Metrics_Info():
-    def __init__(self, ID, segment, methodA, methodB):
-        self.PatientID = ID     # As id-type
-        self.OAR = segment      # As string i.e. "Brainstem"
-        self.MethodA = methodA.upper()  # "GT", "DL", "DLB", "ATLAS" - Typically "GT"
-        self.MethodB = methodB.upper()  # "GT", "DL", "DLB", "ALTAS" - Typically not "GT"
-        self.Comparison = f'{self.MethodA} vs {self.MethodB}'
-        self.ImageA = self.getImage(self.MethodA)    # OAR_Image from method A
-        self.ImageB = self.getImage(self.MethodB)    # OAR_Image from method B
-        
-        try:
-            if np.all(OAR_Image.GetArray(self.ImageA) == 0) or np.all(OAR_Image.GetArray(self.ImageB) == 0):
-                raise NoSegment
 
+    def __init__(self, ImageA : OAR_Image = OAR_Image(),
+                 ImageB : OAR_Image = OAR_Image(), Tolerence : int = 0):
+
+        self.ImageA = ImageA
+        self.ImageB = ImageB
+        self.Tolerance = Tolerence
+        self.Comparison = self.getComparison()
+        self.Empty = self.ImageA.Exists and self.ImageB.Exists
+
+        if self.Empty:
             self.DICE = self.getDICE()
             self.Hausdorff = self.getHausdorff()
             self.MSD = self.getMSD()
-            self.APL, self.APL_length_ratio, self.APL_volume_ratio = self.getAPL()
+            self.EPL, self.LineRatio, self.VolumeRatio = self.getEPL()
 
-        except NoSegment:
+        else:
             self.DICE = None
             self.Hausdorff = None
             self.MSD = None
-            self.APL, self.APL_length_ratio, self.APL_volume_ratio = None, None, None
-            
+            self.EPL = None
+            self.LineRatio = None
+            self.VolumeRatio = None
+        
 
     def __str__(self):
-        MetricPrint =   f'PatientID: {self.PatientID}\n' + \
-                        f'OAR: {self.OAR}\n' + \
-                        f'Comparison: {self.Comparison}\n' + \
-                        f'DICE: {self.DICE}\n' + \
-                        f'Hausdorff: {self.Hausdorff}\n' + \
-                        f'Mean Surface Distance: {self.MSD}\n' + \
-                        f'Added path length: {self.APL}\n' + \
-                        f'APL length ratio: {self.APL_length_ratio}\n' + \
-                        f'APL volume ratio: {self.APL_volume_ratio}'
-        return MetricPrint
+        msg = (
+            f'PatientID: {self.ImageA.Path.ID}\n'
+            f'OAR: {self.ImageA.OAR}\n'
+            f'Comparison: {self.Comparison}\n'
+            f'DICE: {self.DICE}\n'
+            f'Hausdorff: {self.Hausdorff}\n'
+            f'Mean Surface Distance: {self.MSD}\n'
+            f'Edited Path Length: {self.EPL}\n'
+            f'Line Ratio: {self.LineRatio}\n'
+            f'Volume Ratio: {self.VolumeRatio}'
+        )
+        
+        return msg
 
-    def getImage(self, method):
-        File = Path(self.PatientID, method).File
-        image = OAR_Image(File, self.OAR)
-        return image
+
+    def getComparison(self):
+        M1 = self.ImageA.Path.Method
+        M2 = self.ImageB.Path.Method
+
+        return f'{M1} vs {M2}'
+
     
     def getDICE(self):
         A = self.ImageA.Image   # ITK image
@@ -75,6 +81,7 @@ class Metrics_Info():
 
         return dicecomputer.GetDiceCoefficient()
 
+
     def getHausdorff(self):
         A = self.ImageA.Image   # ITK image
         B = self.ImageB.Image   # ITK image
@@ -83,6 +90,7 @@ class Metrics_Info():
         hauscomputer.Execute(A > 0.5, B > 0.5)
 
         return hauscomputer.GetHausdorffDistance()
+
 
     def getMSD(self):
         A = self.ImageA.Image   # ITK image
@@ -93,19 +101,41 @@ class Metrics_Info():
 
         return hauscomputer.GetAverageHausdorffDistance()
 
-    def getAPL(self):
-        APL_Objekt = AddedPathLength(self.ImageA, self.ImageB)
 
-        return APL_Objekt.APL, APL_Objekt.APL_line_ratio, APL_Objekt.APL_volume_ratio
+    def getEPL(self):
+        EPL = EPL_Metric(self.ImageA, self.ImageB, self.Tolerance)
 
-# Test
-PatientID = "1cbDrFdyzAXjFICMJ58Hmja9U"
-#Segment = "BrainStem"
-Segment = "submandibular_merged"
-Methods = ["GT", "DL"]
+        return EPL.EPL, EPL.LineRatio, EPL.VolumeRatio
 
-print(Path(PatientID, Methods[0]).File)
 
-MET = Metrics_Info(PatientID, Segment, Methods[0], Methods[1])
-print(getattr(MET, "Hausdorff"))
-print(MET)
+    def getAttributes(self):
+        
+        output = {'ID' : [self.ImageA.Path.ID],
+                  'Date' : [self.ImageA.Path.Date],
+                  'DICE': [self.DICE],
+                  'Hausdorff' : [self.Hausdorff],
+                  'MSD' : [self.MSD],
+                  'EPL' : [self.EPL],
+                  'LineRatio' : [self.LineRatio],
+                  'VolumeRatio' : [self.VolumeRatio]}
+        return output
+
+# Class tester
+if __name__ == '__main__':
+    ID = '4Prj3A5sMvSv1sK4u5ihkzlnU'
+    Date = '20190129'
+    P1 = Path(ID, Date, 'GT')
+    P2 = Path(ID, Date, 'DL')
+
+    IA = OAR_Image(P1, 'brainstem')
+    IB = OAR_Image(P2, 'brainstem')
+
+    print(IA)
+    print(IB)
+
+    MI = Metrics_Info(IA, IB)
+    print(MI)
+
+    print('\nEmpty:')
+    MI2 = Metrics_Info()
+    print(MI2)

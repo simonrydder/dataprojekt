@@ -27,9 +27,10 @@ print(f"Running {__name__}")
 import numpy as np
 from functools import lru_cache
 
+
 #Import other files
-from DataPreparation2 import OAR_Image
-from DataReader2 import Path
+from DataPreparation import OAR_Image
+from DataReader import Path
 
 
 #Classes and functions
@@ -68,6 +69,7 @@ class EPL_Metric():
         self.VolumeRatio = 0        # Defined as the ratio between TotalAreaChanged and TotalArea
 
         self.updateMetrics()
+
 
     def __str__(self):
         msg = (
@@ -286,7 +288,7 @@ if __name__ == '__main__':
     P1 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'GT')
     P2 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'DL')
 
-    Segment = 'brain'
+    Segment = 'brainstem'
     IMGA = OAR_Image(P1, Segment)
     IMGB = OAR_Image(P2, Segment)
 
@@ -313,33 +315,35 @@ if __name__ == '__main__':
     print('Done')
 
 
-# P1 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'GT')
-# P2 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'DL')
+# Creating new examples
+if False:
+    P1 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'GT')
+    P2 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'DL')
 
-# Segment = 'parotid_merged'
-# IMGA = OAR_Image(P1, Segment)
-# IMGB = OAR_Image(P2, Segment)
+    Segment = 'parotid_merged'
+    IMGA = OAR_Image(P1, Segment)
+    IMGB = OAR_Image(P2, Segment)
 
-# A = IMGA.GetArray()
-# B = IMGB.GetArray()
-# Slice = np.argmax(np.sum(np.sum(A, axis = 1), axis = 1) + np.sum(np.sum(B, axis = 1), axis = 1))
-# A = A[Slice]
-# B = B[Slice]
-# xA, yA = A.nonzero()
-# xB, yB = B.nonzero()
-# x_min = min(list(xA) + list(xB)) - 3
-# x_max = max(list(xA) + list(xB)) + 3
-# y_min = min(list(yA) + list(yB)) - 3
-# y_max = max(list(yA) + list(yB)) + 3
+    A = IMGA.GetArray()
+    B = IMGB.GetArray()
+    Slice = np.argmax(np.sum(np.sum(A, axis = 1), axis = 1) + np.sum(np.sum(B, axis = 1), axis = 1))
+    A = A[Slice]
+    B = B[Slice]
+    xA, yA = A.nonzero()
+    xB, yB = B.nonzero()
+    x_min = min(list(xA) + list(xB)) - 3
+    x_max = max(list(xA) + list(xB)) + 3
+    y_min = min(list(yA) + list(yB)) - 3
+    y_max = max(list(yA) + list(yB)) + 3
 
-# A = A[x_min:x_max, y_min:y_max]
-# B = B[x_min:x_max, y_min:y_max]
+    A = A[x_min:x_max, y_min:y_max]
+    B = B[x_min:x_max, y_min:y_max]
 
-# with open(f'EPL_examples\\{Segment}A{Slice}.txt', 'w') as f:
-#     for row in A[::-1]:
-#         f.write(' '.join([str(n) for n in list(row)]) + '\n')
+    with open(f'EPL_examples\\{Segment}A{Slice}.txt', 'w') as f:
+        for row in A[::-1]:
+            f.write(' '.join([str(n) for n in list(row)]) + '\n')
 
-# with open(f'EPL_examples\\{Segment}B{Slice}.txt', 'w') as f:
-#     for row in B[::-1]:
-#         f.write(' '.join([str(n) for n in list(row)]) + '\n')
+    with open(f'EPL_examples\\{Segment}B{Slice}.txt', 'w') as f:
+        for row in B[::-1]:
+            f.write(' '.join([str(n) for n in list(row)]) + '\n')
 

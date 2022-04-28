@@ -11,8 +11,8 @@ def findingIndex(A, D):
     return (0, 0, 0)
 
 if __name__ == '__main__':
-    from DataPreparation2 import OAR_Image
-    from DataReader2 import Path
+    from DataPreparation import OAR_Image
+    from DataReader import Path
 
     segment = 'brain'
     ID = '4Prj3A5sMvSv1sK4u5ihkzlnU'
