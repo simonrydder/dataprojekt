@@ -39,9 +39,9 @@ sidebar = html.Div(
         ),
         dbc.Nav(
             [
-                dbc.NavLink("Metric overview", href="/Metric_page", active="exact"),
-                dbc.NavLink("EPL visualization", href="/EPL_page", active="exact"),
-                dbc.NavLink("Performance overview", href="/Performance_page", active="exact"),
+                dbc.NavLink("Metric Overview", href="/Metric_page", active="exact"),
+                dbc.NavLink("EPL Visualization", href="/EPL_page", active="exact"),
+                dbc.NavLink("Performance Overview", href="/Performance_page", active="exact"),
             ],
             vertical=True,
             pills=True,

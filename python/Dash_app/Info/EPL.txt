@@ -19,3 +19,4 @@ $$
 
 Intuitivily, this corresponds to the line that the doctor needs to correct. 
 
+*HOW DID WE IMPLEMENT IT OURSELVES IN PYTHON??*

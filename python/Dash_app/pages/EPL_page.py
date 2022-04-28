@@ -11,7 +11,7 @@ Style = {'textAlign': 'center', "border-bottom":"2px black solid"}
 
 
 layout = html.Div([
-            html.H1("EPL visulization", style = Style),
+            html.H1("EPL Visualization", style = Style),
             html.Br(),
             daq.Slider(id = "slider", # Slider to switch slice (z)
                         min = 50, 
