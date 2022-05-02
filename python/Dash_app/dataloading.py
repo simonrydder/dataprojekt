@@ -1,13 +1,7 @@
 import pandas as pd
-from ast import literal_eval
 
-df = pd.read_csv("..\\data\\results\\merged.csv", index_col = 0)
+df = pd.read_csv("..\\data\\results\\performance_mean.csv")
 metrics = sorted(df["Metric"].unique().tolist())
-df = df.drop(["Date"], axis = 1).round(2)
-df = df.groupby(["Comparison","Metric"]).mean().reset_index()
-df = df.melt(id_vars=["Comparison", "Metric"], 
-    var_name="Segment", 
-    value_name="value") 
 
 segments = sorted(df["Segment"].unique().tolist())
 comparisons = sorted(df["Comparison"].unique().tolist())

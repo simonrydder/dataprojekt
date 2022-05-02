@@ -17,7 +17,7 @@ L = [((1,2),(2,2)),((2,2),(2,3)),((2,3),(3,3)),((3,3),(3,2)),((3,2),(3,1)),
 def find_true_lines(L):
     final = []
     while True:
-        (x1_old,y1_old),(x2_old,y2_old) = L.pop(0)
+        (x1_old,y1_old),(x2_old,y2_old) = L.pop()
         
         try:
             ((_,_),(x2_new,y2_new),idx) = find_next_line(x2_old,y2_old,L)
@@ -32,6 +32,8 @@ def find_true_lines(L):
             L.pop(idx)
             L.append(new_line)
 
+    print(L)
+    print(final)
     return L+final
 
 find_true_lines(L)

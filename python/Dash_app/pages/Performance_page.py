@@ -144,10 +144,10 @@ def toggle_tolerance(toggle,current):
         options = segments
         values = current
     else:
-        options = [segment for segment in segments if segment.endswith("0")]
+        options = [segment for segment in segments if not segment.endswith(("1","2","3","4"))]
         values = [segment for segment in current if segment in options]
     
-    if len(current) == 0:
+    if len(values) == 0:
         values = [segments[0]]
 
     return [options,values]
