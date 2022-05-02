@@ -217,8 +217,8 @@ class EPL_Metric():
             SliceVR = SliceAreaChanged / SliceArea if SliceArea != 0 else 0
             self.SliceVR.append(SliceVR)
 
-        self.updateLineRatio()
-        self.updateVolumeRatio()
+        self.LineRatio = self.updateLineRatio()
+        self.VolumeRatio = self.updateVolumeRatio()
 
 
     def updateLineRatio(self):
@@ -293,6 +293,9 @@ if __name__ == '__main__':
     IMGB = OAR_Image(P2, Segment)
 
     EPL = EPL_Metric(model = IMGB, gt = IMGA, Tolerance = 1)
+
+    print(f'{EPL.EPL = } and {EPL.TotalLength = }: {EPL.LineRatio = }')
+    print(f'{EPL.TotalAreaChanged = } and {EPL.TotalArea = }: {EPL.VolumeRatio = }')
 
     nPointsGT = [len(points) for points in EPL.SlicePointsGT]
     nPointsM = [len(points) for points in EPL.SlicePointsModel]
