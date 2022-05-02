@@ -22,10 +22,10 @@ import SimpleITK as ITK
 
 
 # Imports from other files
-from Metrics2 import Metrics_Info
-from DataReader2 import Path
-from DataPreparation2 import OAR_Image
-from EditedPathLength2 import EPL_Metric
+from Metrics import Metrics_Info
+from DataReader import Path
+from DataPreparation import OAR_Image
+from EditedPathLength import EPL_Metric
 
 
 # Classes and functions
@@ -297,11 +297,12 @@ def PatientKeys(n = "All"):
 # Test
 if __name__ == "__main__":
     Segments = list(OAR_Image.OARs.keys())[2:]
+    print(Segments)
     Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
     Patients = PatientKeys()
     for Tolerance in {0, 1, 2, 3}:
         print(f'{Tolerance = }')
-        GenerateResults(Segments, Comparisons, Patients, Tolerance)
+        GenerateResults(Segments, Comparisons, Patients, Tolerance, True)
         MergeResults(f'total_tolerance{Tolerance}.csv')
 
     Segments = list(OAR_Image.OARs.keys())[2:11]
@@ -314,6 +315,6 @@ if __name__ == "__main__":
                 ('PHbmDBLzKFUqHWIbGMTmUFSmO', '20200212')}
     for Tolerance in {0, 1, 2, 3}:
         print(f'\n{Tolerance = }')
-        GenerateSliceResults(Segments, Comparisons, Patients, Tolerance)
+        GenerateSliceResults(Segments, Comparisons, Patients, Tolerance, True)
     
     MergeSliceResults('total.csv')
