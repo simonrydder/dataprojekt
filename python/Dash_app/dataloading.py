@@ -4,12 +4,12 @@ from ast import literal_eval
 df = pd.read_csv("..\\data\\results\\performance_mean.csv")
 metrics = sorted(df["Metric"].unique().tolist())
 
-df_slices = pd.read_csv("..\\data\\sliceresults\\total.csv")
-df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
-cols_to_change = ["PointsModel","PointsGT","LinesModel","LinesChanged"]
+# df_slices = pd.read_csv("..\\data\\sliceresults\\total.csv")
+# df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
+# cols_to_change = ["PointsModel","PointsGT","LinesModel","LinesChanged"]
 
-for col in cols_to_change:
-    df_slices[col] = df_slices[col].replace(["set()"],["[]"])
+# for col in cols_to_change:
+#     df_slices[col] = df_slices[col].replace(["set()"],["[]"])
 
 
 
