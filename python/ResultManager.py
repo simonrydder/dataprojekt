@@ -296,7 +296,7 @@ def PatientKeys(n = "All"):
 
 # Test
 if __name__ == "__main__":
-    Segments = list(OAR_Image.OARs.keys())[2:]
+    Segments = list(OAR_Image.OARs.keys())[1:2]
     print(Segments)
     Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
     Patients = PatientKeys()
@@ -305,7 +305,7 @@ if __name__ == "__main__":
         GenerateResults(Segments, Comparisons, Patients, Tolerance, True)
         MergeResults(f'total_tolerance{Tolerance}.csv')
 
-    Segments = list(OAR_Image.OARs.keys())[2:11]
+    Segments = list(OAR_Image.OARs.keys())[1:2]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
     Patients = PatientKeys(3)
     Patients = {('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129'),
