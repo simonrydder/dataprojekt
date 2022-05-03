@@ -1,7 +1,7 @@
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, dcc, html
-from pages import Front_page, Metric_page, Performance_page, EPL_page
+from pages import Front_page, Metric_page, Performance_page #EPL_page
 from dataloading import segments,metrics,comparisons, patients_slider, segments_slider
 import dash_daq as daq
 
@@ -40,7 +40,7 @@ sidebar = html.Div(
         dbc.Nav(
             [
                 dbc.NavLink("Metric Overview", href="/Metric_page", active="exact"),
-                dbc.NavLink("EPL Visualization", href="/EPL_page", active="exact"),
+                #dbc.NavLink("EPL Visualization", href="/EPL_page", active="exact"),
                 dbc.NavLink("Performance Overview", href="/Performance_page", active="exact"),
             ],
             vertical=True,
@@ -85,8 +85,8 @@ def render_page_content(pathname):
         return Front_page.layout
     elif pathname == "/Metric_page":
         return Metric_page.layout
-    elif pathname == "/EPL_page":
-        return EPL_page.layout
+    #elif pathname == "/EPL_page":
+    #    return EPL_page.layout
     elif pathname == "/Performance_page":
         return Performance_page.layout
     # If the user tries to reach a different page, return a 404 message
