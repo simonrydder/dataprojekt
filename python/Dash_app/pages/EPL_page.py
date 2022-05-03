@@ -1,5 +1,5 @@
 from dash import dcc, html, Input, Output, callback
-from dataloading import patients_slider,segments_slider, plot_theme
+from dataloading import patients_slider,segments_slider, plot_theme, df_slices
 import dash_daq as daq
 import pandas as pd
 from ast import literal_eval
@@ -8,7 +8,6 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 
 Style = {'textAlign': 'center', "border-bottom":"2px black solid"}
-
 
 layout = html.Div([
             html.H1("EPL Visualization", style = Style),
@@ -70,17 +69,15 @@ layout = html.Div([
         ])   
 
 
-#initiliazing global values for later usages
+#initiliazing global values for later use
 
 old_patient = 0
 old_segment = 0
 old_method = 0
 old_tolerance = 0
 old_slice = 0
-df_slices = 0
 
 #Connections
-
 
 @callback(
     [Output(component_id="figure_slider", component_property="figure"),
@@ -98,31 +95,20 @@ def update_slider(slider, patient,segment,method,tolerance):
     global old_segment
     global old_method
     global old_tolerance
-    global df_slices
     global old_slice
-    #Finding the matching data
-    if any([segment != old_segment,
-    method != old_method,tolerance != old_tolerance]): # loading data if new file is needed
-
-        file = method + "&" + segment + "&Tolerance" + tolerance
-        df_slices = pd.read_csv(f"..\\data\\sliceresults\\dataframes\\{file}.csv")
-        df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
-
-        cols_to_change = ["PointsModel","PointsGT","LinesModel","LinesChanged"]
-
-        for col in cols_to_change:
-            df_slices[col] = df_slices[col].replace(["set()"],["[]"])
-            df_slices[col] = df_slices[col].apply(literal_eval)
-
     metrics = ["EPL","LineRatio","VolumeRatio","DICE","Haus","MSD"]
+    
+    #filtering data
     df_slice = df_slices[df_slices["ID"]==patient]
+    df_slice = df_slice[df_slice["Segment"]==segment]
+    df_slice = df_slice[df_slice["Comparison"]==method]
+    df_slice = df_slice[df_slice["Tolerance"]==int(tolerance)]
     max = df_slice["Index"].max() #range for slider
     min = df_slice["Index"].min() #range for slider
 
     range_max = {metric: df_slice[metric].max()*1.1
                 if metric not in ["DICE"] 
                 else 1 for metric in metrics}
-
     df_slice = df_slice[df_slice["Index"]==slider]
     df_perf = df_slice[df_slice["Index"]==slider].round(3)
 
@@ -132,20 +118,28 @@ def update_slider(slider, patient,segment,method,tolerance):
     old_tolerance = tolerance
     old_slice = slider
 
+    pointsGT = df_slice["PointsGT"].tolist()[0]
+    # pointsGT = pointsGT.replace("{","[")
+    # pointsGT = pointsGT.replace("}","]")
+    pointsGT = eval(pointsGT)
     # Checking if their is points to plot for the slice
     try:
-        xA,yA = zip(*df_slice["PointsGT"].tolist()[0])
+        xA,yA = zip(*pointsGT)
     except ValueError:
         xA,yA = ([],[])
-    # try:
-    #     xB,yB = zip(*df_slice["PointsB"].tolist()[0])
-    # except ValueError:
-    #     xB,yB = ([],[])
 
-    # vertical and horizontal lines to plot
+
+    #Prepping lines to plot
+
     lines_model = df_slice["LinesModel"].tolist()[0]
-    lines_changed = df_slice["LinesChanged"].tolist()[0]
+    # lines_model = lines_model.replace("{","[")
+    # lines_model = lines_model.replace("}","]")
+    lines_model = eval(lines_model)
 
+    lines_changed = df_slice["LinesChanged"].tolist()[0]
+    # lines_changed  = lines_changed .replace("{","[")
+    # lines_changed  = lines_changed .replace("}","]")
+    lines_changed = eval(lines_changed)
 
     fig3 = go.Figure()
     fig3.add_trace( #adds points for A to the figure
@@ -213,8 +207,7 @@ def update_slider(slider, patient,segment,method,tolerance):
 
     fig4.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1])) # changes subplot title
 
-    return [fig3,fig4,
-    max,min]
+    return [fig3,fig4,max,min]
 
 
 old_slice = 0
@@ -235,23 +228,23 @@ def change_slider_value(patient,segment,method,tolerance,plus,minus):
     global old_slice 
     global old_plus_clicks
     global old_minus_clicks
-    file = method + "&" + segment + "&Tolerance" + tolerance
-    df_slices = pd.read_csv(f"..\\data\\sliceresults\\dataframes\\{file}.csv")
-    df_slices = df_slices[df_slices["ID"]==patient] 
-    df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
+    df_patient = df_slices[df_slices["ID"]==patient] 
+    df_patient = df_patient[df_patient["Segment"]==segment]
+    df_patient = df_patient[df_patient["Comparison"]==method]
+    df_patient = df_patient[df_patient["Tolerance"]==int(tolerance)]
 
-    if df_slices["Index"].min() <= old_slice <= df_slices["Index"].max():
+    if df_patient["Index"].min() <= old_slice <= df_patient["Index"].max():
         new_slice = old_slice
     else:
-        new_slice = df_slices["Index"].min()
+        new_slice = df_patient["Index"].min()
     
 
     # applying plus button
-    if plus != old_plus_clicks and  new_slice < df_slices["Index"].max():
+    if plus != old_plus_clicks and  new_slice < df_patient["Index"].max():
         new_slice += 1
     
     # applying minus button
-    if minus != old_minus_clicks and df_slices["Index"].min() < new_slice:
+    if minus != old_minus_clicks and df_patient["Index"].min() < new_slice:
         new_slice -= 1
         
     old_plus_clicks = plus
