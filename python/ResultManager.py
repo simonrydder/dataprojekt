@@ -16,9 +16,9 @@ print(f"Running {__name__}")
 
 # Imports
 import os
-from functools import reduce
 import pandas as pd
 import SimpleITK as ITK
+from progressbar import ProgressBar
 
 
 # Imports from other files
@@ -34,20 +34,38 @@ def GenerateResults(
     Comparisons,        # Iterable object of tuples with comparison methods
     Patients,           # Iterable object of tuples with ID and Date
     Tolerance = 0,      
-    overwrite = False,  # True : Will calculate new values for files loaded.
+    overwrite = False,  # True : Will create new files.
     root = '..\\data\\results\\dataframes\\'):
 
+    # Checks for correct slicing
+    assert isinstance(Segments, list), 'Incorrect slicing - not a list'
+    assert isinstance(Comparisons, set), 'Incorrect slicing - not a set'
+    assert isinstance(Patients, set), 'Incorrect slicing - not a set'
+
+    # Output folder
+    folder = root + f'Tolerance{Tolerance}\\'
+
+    # Checks if output folder exists otherwise create
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        print(f'{folder} created')
+
+    # If folder exists and overwrite is true delete all files in folder
+    elif overwrite:
+        files = os.listdir(folder)
+        for file in files:
+            os.remove(folder + file)
+        
+        print(f'{len(files)} files in {folder} has been deleted')    
+
+    # Creating data
     for Segment in Segments:
 
         for MethodA, MethodB in Comparisons:
             file = f'{MethodA}vs{MethodB}&{Segment}&Tolerance{Tolerance}.csv'
 
             try:
-                if overwrite:
-                    print(f'{file} will be overwritten')
-                    raise FileNotFoundError
-
-                df = pd.read_csv(root + file)
+                df = pd.read_csv(folder + file)
                 print(f'{file} loaded')
 
             except FileNotFoundError:
@@ -57,9 +75,10 @@ def GenerateResults(
             IterTuple = df[['ID', 'Date']].itertuples(index = False)
             cur_Patients = {(ID, str(Date)) for ID, Date in IterTuple}
             patient_dfs = []
-            # print(len(cur_Patients), file)
-
-            for ID, Date in Patients - cur_Patients:
+            
+            print(f'Calculating missing data for {file}')
+            pbar = ProgressBar()
+            for ID, Date in pbar(Patients - cur_Patients):
                 PA = Path(ID, Date, MethodA)
                 PB = Path(ID, Date, MethodB)
 
@@ -73,23 +92,24 @@ def GenerateResults(
 
             if len(patient_dfs):
                 df = pd.concat([df, *patient_dfs])
-                df.to_csv(root + file, index = False)
-                print(f'{file} saved')
+                df.to_csv(folder + file, index = False)
+                print(f'{file} saved to {folder}\n')
 
 
-def MergeResults(filename,
+def MergeResults(Tolerance,
     location = '..\\data\\results\\', folder = 'dataframes\\'):
     
+    folder = folder + f'Tolerance{Tolerance}\\'
     files = os.listdir(location + folder)
 
     dfs = []
     for file in files:
-        comparison, segment, tol = file.split('.')[0].split('&')
-        if tol[-1] == filename.split('.')[0][-1]:
-            df = pd.read_csv(location + folder + file)
-            df['Comparison'] = [comparison] * len(df)
-            df['Segment'] = [segment] * len(df)
-            dfs.append(df)
+        comparison, segment, _ = file.split('.')[0].split('&')
+        
+        df = pd.read_csv(location + folder + file)
+        df['Comparison'] = [comparison] * len(df)
+        df['Segment'] = [segment] * len(df)
+        dfs.append(df)
 
     merged = pd.concat([*dfs])
     idx = list(merged.columns[:2]) + [merged.columns[-2]]
@@ -108,6 +128,7 @@ def MergeResults(filename,
         values = 'value'
     )
 
+    filename = f'total_tolerance{Tolerance}.csv'
     merged.to_csv(location + filename)
     print(f'Merged completed: {filename} saved in {location}\n')
 
@@ -159,6 +180,28 @@ def GenerateSliceResults(
     overwrite = False,  # True : Will calculate new values for files loaded.
     root = '..\\data\\sliceresults\\dataframes\\'):
 
+    # Checks for correct slicing
+    assert isinstance(Segments, list), 'Incorrect slicing - not a list'
+    assert isinstance(Comparisons, set), 'Incorrect slicing - not a set'
+    assert isinstance(Patients, set), 'Incorrect slicing - not a set'
+
+    # Output folder
+    folder = root + f'Tolerance{Tolerance}\\'
+
+    # Checks if output folder exists otherwise create
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+        print(f'{folder} created')
+
+    # If folder exists and overwrite is true delete all files in folder
+    elif overwrite:
+        files = os.listdir(folder)
+        for file in files:
+            os.remove(folder + file)
+        
+        print(f'{len(files)} files in {folder} has been deleted')    
+
+    # Creating data
     for Segment in Segments:
 
         for MethodA, MethodB in Comparisons:
@@ -168,11 +211,7 @@ def GenerateSliceResults(
             colNames = ['Index'] + list(MI.getAttributes().keys())
 
             try:
-                if overwrite:
-                    print(f'{file} will be overwritten')
-                    raise FileNotFoundError
-
-                df = pd.read_csv(root + file)
+                df = pd.read_csv(folder + file)
                 print(f'{file} loaded')
 
             except FileNotFoundError:
@@ -182,7 +221,9 @@ def GenerateSliceResults(
             cur_Patients = {(ID, str(Date)) for ID, Date in IterTuple}
             patient_dfs = []
 
-            for ID, Date in Patients - cur_Patients:
+            print(f'Calculating missing data for {file}')
+            pbar = ProgressBar()
+            for ID, Date in pbar(Patients - cur_Patients):
                 PA = Path(ID, Date, MethodA)
                 PB = Path(ID, Date, MethodB)
 
@@ -219,43 +260,9 @@ def GenerateSliceResults(
 
             if len(patient_dfs):
                 df = pd.concat([df, *patient_dfs])
-                df.to_csv(root + file, index = False)
-                print(f'{file} saved')
+                df.to_csv(folder + file, index = False)
+                print(f'{file} saved to {folder}\n')
 
-
-# def MergeSliceResults(filename,
-#     location = '..\\data\\sliceresults\\', folder = 'dataframes\\'):
-    
-#     files = os.listdir(location + folder)
-
-#     dfs = []
-#     Tolerances = {int(file.split('.')[0].split('&')[-1][-1]) for file in files}
-
-#     for Tolerance in Tolerances:
-
-#         tempdfs = []
-#         for file in files:
-#             comparison, segment, tol = file.split('.')[0].split('&')
-
-#             if int(tol[-1]) == Tolerance:
-#                 df = pd.read_csv(location + folder + file)
-#                 df = df.reset_index(drop = True)
-#                 N = len(df)
-#                 df['Comparison'] = [comparison] * N
-#                 df['Segment'] = [segment] * N
-#                 tempdfs.append(df)
-
-#         tempdf = pd.concat([*tempdfs])
-#         cols = tempdf.columns
-#         newnames = [f'{col}_{Tolerance}' for col in cols[3:13]]
-        
-#         tempdf.columns = list(cols[:3]) + newnames + list(cols[-2:])
-#         dfs.append(tempdf)
-
-#     df_final = reduce(lambda left,right: pd.merge(left, right, 'left', on = list(cols[:3]) + list(cols[-2:])), dfs)
-#     df_final.drop_duplicates()
-
-#     df_final.to_csv(location + filename, index = False)
 
 def MergeSliceResults(filename,
     location = '..\\data\\sliceresults\\', folder = 'dataframes\\'):
@@ -294,27 +301,53 @@ def PatientKeys(n = "All"):
     return keys
 
 
-# Test
+# Generating of results
 if __name__ == "__main__":
-    Segments = list(OAR_Image.OARs.keys())[1:2]
-    print(Segments)
+    # Inputs
+    overwrite = True
+    Segments = list(OAR_Image.OARs.keys())[2:]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
     Patients = PatientKeys()
-    for Tolerance in {0, 1, 2, 3}:
-        print(f'{Tolerance = }')
-        GenerateResults(Segments, Comparisons, Patients, Tolerance, True)
-        MergeResults(f'total_tolerance{Tolerance}.csv')
+    Tolerances = {0, 1}
 
-    Segments = list(OAR_Image.OARs.keys())[1:2]
+    # Script
+    if overwrite:
+        msg = (
+            f'Overwriting current files for Tolerance = {Tolerances}: '
+            '[Press ENTER]\n'
+        )
+        ans = input(msg)
+            
+    for Tolerance in Tolerances:
+        print(f'{Tolerance = }')
+        GenerateResults(Segments, Comparisons, Patients, Tolerance, overwrite)
+        MergeResults(Tolerance)
+
+
+# Generating of sliceresults
+if __name__ == "__main__":
+    # Inputs
+    overwrite = True
+    Segments = list(OAR_Image.OARs.keys())[1:]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
-    Patients = PatientKeys(3)
+    # Patients = PatientKeys(3)
     Patients = {('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129'),
                 ('HNCDL_447', '20170421'),
                 ('HNCDL_340', '20180723'),
                 ('HNCDL_141', '20160926'),
                 ('PHbmDBLzKFUqHWIbGMTmUFSmO', '20200212')}
-    for Tolerance in {0, 1, 2, 3}:
+    Tolerances = {0, 1}
+
+    # Script
+    if overwrite:
+        msg = (
+            f'Overwriting current files for Tolerance = {Tolerances}: '
+            '[Press ENTER]\n'
+        )
+        ans = input(msg)
+
+    for Tolerance in Tolerances:
         print(f'\n{Tolerance = }')
-        GenerateSliceResults(Segments, Comparisons, Patients, Tolerance, True)
+        GenerateSliceResults(Segments, Comparisons, Patients, Tolerance, overwrite)
     
-    MergeSliceResults('total.csv')
+    # MergeSliceResults('total.csv')

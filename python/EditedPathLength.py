@@ -35,8 +35,8 @@ from DataReader import Path
 
 #Classes and functions
 class EPL_Metric():
-    def __init__(self, model : OAR_Image = OAR_Image(),
-                 gt : OAR_Image = OAR_Image(), Tolerance : int = 0):
+    def __init__(self, gt : OAR_Image = OAR_Image(),
+                 model : OAR_Image = OAR_Image(), Tolerance : int = 0):
 
         # Inputs
         self.model = model.GetArray()  # np.array (z, y, x)
@@ -74,8 +74,8 @@ class EPL_Metric():
     def __str__(self):
         msg = (
             f'EPL: {self.EPL}\n'
-            f'EPL (Line Ratio): {self.LineEPL}\n'
-            f'EPL (Volume Ratio): {self.VolumeEPL}'
+            f'Line Ratio: {self.LineRatio}\n'
+            f'Volume Ratio: {self.VolumeRatio}'
         )
 
         return msg
@@ -203,7 +203,7 @@ class EPL_Metric():
             SliceArea = self.Height*self.Width * len(pRes)
             self.TotalArea += SliceArea
 
-            SliceAreaChanged = self.Height*self.Width * len(pM ^ pRes)
+            SliceAreaChanged = self.Height*self.Width * len(pRes - pM)
             self.TotalAreaChanged += SliceAreaChanged
 
             # Add slice results to lists for plotting i dashboard.
@@ -292,10 +292,9 @@ if __name__ == '__main__':
     IMGA = OAR_Image(P1, Segment)
     IMGB = OAR_Image(P2, Segment)
 
-    EPL = EPL_Metric(model = IMGB, gt = IMGA, Tolerance = 1)
+    EPL = EPL_Metric(gt = IMGA, model = IMGB, Tolerance = 1)
 
-    print(f'{EPL.EPL = } and {EPL.TotalLength = }: {EPL.LineRatio = }')
-    print(f'{EPL.TotalAreaChanged = } and {EPL.TotalArea = }: {EPL.VolumeRatio = }')
+    print(EPL)
 
     nPointsGT = [len(points) for points in EPL.SlicePointsGT]
     nPointsM = [len(points) for points in EPL.SlicePointsModel]
