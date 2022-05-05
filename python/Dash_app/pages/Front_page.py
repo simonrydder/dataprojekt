@@ -1,5 +1,5 @@
 from dash import dcc, html, Input, Output, callback
-from app import app
+#from app import app
 
 
 Title = "Perfomance Testing of Auto-Segmentation Algorithms"
@@ -26,9 +26,10 @@ layout = html.Div([
     html.Br(),
     description,
     html.Br(),
-    html.Div(
-    html.Img(src=app.get_asset_url('test1.png')), 
-    style = Style)
+    html.Br(),
+    #html.Div(
+    #html.Img(src=app.get_asset_url('test1.png'), style = Style)),
+    html.A("Here is a link to our GitHub Page!", href = "https://www.github.com/simonrydder/dataprojekt")
 ])
 
 

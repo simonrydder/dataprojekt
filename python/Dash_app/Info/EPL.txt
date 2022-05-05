@@ -19,4 +19,7 @@ $$
 
 Intuitivily, this corresponds to the line that the doctor needs to correct. 
 
-*HOW DID WE IMPLEMENT IT OURSELVES IN PYTHON??*
+As this is a novel metric, no such implementation of the metric exists online, 
+so we have made our own implementation of the metric in Python. We achieved this
+by looping over every slice in the segmentation (so the z-axis) and for every
+pixcel in the image, we d
