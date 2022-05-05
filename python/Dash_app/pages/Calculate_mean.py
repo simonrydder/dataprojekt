@@ -1,8 +1,9 @@
 import pandas as pd
 
 dfs = []
+max_tol = 1
 
-for i in range(0,5):
+for i in range(0,max_tol+1):
     df  = pd.read_csv(f"..\\data\\results\\total_tolerance{i}.csv")
     df = df.drop("Date",axis = 1)
     if i != 0:
@@ -17,6 +18,15 @@ df = df.melt(id_vars=["Comparison", "Metric"],
     value_name="value")
 
 df.to_csv("..\\data\\results\\performance_mean.csv")
+dfs = []
+for i in range(max_tol + 1):
+    df  = pd.read_csv(f"..\\data\\results\\total_tolerance{i}.csv")
+    df["Tolerance"] = i
+    dfs.append(df)
+
+
+df = pd.concat(dfs)
+df.to_csv("..\\data\\results\\total_merged.csv")
 
 
 

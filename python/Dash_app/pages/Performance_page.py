@@ -1,5 +1,5 @@
 from dash import dcc, html, Input, Output, callback
-from dataloading import segments, metrics, comparisons, plot_theme, df
+from dataloading import segments, metrics, comparisons, plot_theme, df, df_violin, boxplot_segments
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
@@ -49,13 +49,49 @@ layout = html.Div([
             dcc.Graph(id = "figure_perf", figure = {}), #Initializing figure,
             html.Br(),
             dcc.Dropdown(id="boxplot_segment", # dropdown for metrics
-                            options =segments,
+                            options =boxplot_segments,
+                            multi = False,
+                            value = [boxplot_segments[0]],
+                            style = {"width": 500},
+                            clearable = False),
+            dcc.Dropdown(id="boxplot_comp", # dropdown for 
+                            options = ["GTvsDL","GTvsDLB"],
                             multi = True,
-                            value = [segments[0]],
-                            style = {"width": 1000},
-                            clearable = True),
+                            value = ["GTvsDL"],
+                            style = {"width": 500},
+                            clearable = False),
             html.Br(),
-            dcc.Graph(id = "figure_boxplot", figure = {}), #Initializing figure,
+             dbc.Row([
+                dbc.Col([
+                            dcc.Graph(id = "figure_DICE", figure = {}, style = {"height": 350})
+
+
+                ],width = 4),
+                dbc.Col([  dcc.Graph(id = "figure_Line", figure = {}, style = {"height": 350})
+
+                ],width = 4),
+                dbc.Col([ dcc.Graph(id = "figure_Volume", figure = {}, style = {"height": 350})
+
+                ],width = 4)
+            ],className="g-0"),
+
+            dbc.Row([
+                dbc.Col([
+                            dcc.Graph(id = "figure_EPL", figure = {}, style = {"height": 350})
+
+
+                ],width = 4),
+                dbc.Col([  dcc.Graph(id = "figure_MSD", figure = {}, style = {"height": 350})
+
+                ],width = 4),
+                dbc.Col([ dcc.Graph(id = "figure_Haus", figure = {}, style = {"height": 350})
+
+                ],width = 4)
+            ],className="g-0")
+
+
+
+            #Initializing figure,
 ])
 
 #Update graph for performance
@@ -100,18 +136,6 @@ def update_graph(slct_metrics, slct_segment,slct_comp):
     return [fig]
 
 
-
-
-# Make segment dropdown non clearable
-# @callback(
-#     [Output(component_id="slct_segment", component_property="value")],
-#     [Input(component_id="slct_segment", component_property="value")])
-# def update_dropdown_options_segment(values):
-#     if len(values) == 0:
-#         return [[segments[0]]]
-#     else:
-#         return [values]
-
 # Make metrics dropdown non clearable
 @callback(
     [Output(component_id="slct_metrics", component_property="value")],
@@ -153,3 +177,45 @@ def toggle_tolerance(toggle,current):
     return [options,values]
 
     
+
+@callback(
+    [Output(component_id="figure_DICE", component_property="figure"),
+    Output(component_id="figure_Line", component_property="figure"),
+    Output(component_id="figure_Volume", component_property="figure"),
+    Output(component_id="figure_EPL", component_property="figure"),
+    Output(component_id="figure_MSD", component_property="figure"),
+    Output(component_id="figure_Haus", component_property="figure")],
+    [Input(component_id="boxplot_comp", component_property="value"),
+    Input(component_id="boxplot_segment", component_property="value")])
+def update_dropdown_options_metric(comps,segment):
+    metrics = ["DICE","LineRatio","VolumeRatio","EPL","MSD","Hausdorff"]
+    figs = []
+    print(comps)
+    for metric in metrics:
+        df = df_violin[df_violin["Metric"]==metric]
+        #df = df[df["Comparison"].isin(comps)]
+        fig = px.violin(df,
+                        x = "Tolerance",
+                        y = segment,
+                        facet_col = "Metric",
+                        color = "Comparison",
+                        violinmode="overlay",
+                         template = plot_theme)
+
+        if metric == metrics[0]:
+            fig.update_layout(legend=dict(
+                        orientation="h",
+                        y=1.25,
+                        
+                        ),margin=dict(l=0, r=10, b=0))
+        else:
+            fig.update_layout(showlegend = False,
+             margin=dict(l=0, r=10, b=0)
+            )
+
+        fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+                        
+
+        figs.append(fig)
+
+    return figs
