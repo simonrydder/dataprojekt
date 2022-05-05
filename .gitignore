@@ -4,3 +4,5 @@ data/projectdata.hc
 .ipynb_checkpoints
 ~$*
 __pycache__
+total.csv
+data/sliceresults/total.csv
