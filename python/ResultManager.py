@@ -267,23 +267,26 @@ def GenerateSliceResults(
 def MergeSliceResults(filename,
     location = '..\\data\\sliceresults\\', folder = 'dataframes\\'):
     
-    files = os.listdir(location + folder)
+    tolFolders = os.listdir(location + folder)
 
     dfs = []
-    for file in files:
-        comparison, segment, tol = file.split('.')[0].split('&')
 
-        df = pd.read_csv(location + folder + file)
-        df = df.reset_index(drop = True)
-        N = len(df)
-        df['Comparison'] = [comparison] * N
-        df['Segment'] = [segment] * N
-        df['Tolerance'] = [int(tol[-1])] * N
-        
-        cols = list(df.columns)
-        df = df[cols[:3] + cols[-3:] + cols[3:-3]]
+    for tolFolder in tolFolders:
 
-        dfs.append(df)
+        for file in os.listdir(location + folder + tolFolder):
+            comparison, segment, tol = file.split('.')[0].split('&')
+
+            df = pd.read_csv(location + folder + tolFolder + '\\' + file)
+            df = df.reset_index(drop = True)
+            N = len(df)
+            df['Comparison'] = [comparison] * N
+            df['Segment'] = [segment] * N
+            df['Tolerance'] = [int(tol[-1])] * N
+            
+            cols = list(df.columns)
+            df = df[cols[:3] + cols[-3:] + cols[3:-3]]
+
+            dfs.append(df)
 
     df_final = pd.concat([*dfs])
 
@@ -304,7 +307,7 @@ def PatientKeys(n = "All"):
 # Generating of results
 if __name__ == "__main__":
     # Inputs
-    overwrite = True
+    overwrite = False
     Segments = list(OAR_Image.OARs.keys())[2:]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
     Patients = PatientKeys()
@@ -327,8 +330,8 @@ if __name__ == "__main__":
 # Generating of sliceresults
 if __name__ == "__main__":
     # Inputs
-    overwrite = True
-    Segments = list(OAR_Image.OARs.keys())[1:]
+    overwrite = False
+    Segments = list(OAR_Image.OARs.keys())[2:]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
     # Patients = PatientKeys(3)
     Patients = {('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129'),
@@ -350,4 +353,4 @@ if __name__ == "__main__":
         print(f'\n{Tolerance = }')
         GenerateSliceResults(Segments, Comparisons, Patients, Tolerance, overwrite)
     
-    # MergeSliceResults('total.csv')
+    MergeSliceResults('total.csv')
