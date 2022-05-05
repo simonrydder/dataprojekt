@@ -190,7 +190,6 @@ def toggle_tolerance(toggle,current):
 def update_dropdown_options_metric(comps,segment):
     metrics = ["DICE","LineRatio","VolumeRatio","EPL","MSD","Hausdorff"]
     figs = []
-    print(comps)
     for metric in metrics:
         df = df_violin[df_violin["Metric"]==metric]
         #df = df[df["Comparison"].isin(comps)]
@@ -214,8 +213,6 @@ def update_dropdown_options_metric(comps,segment):
             )
 
         fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
-                        
-
         figs.append(fig)
 
     return figs

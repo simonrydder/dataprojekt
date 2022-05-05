@@ -57,15 +57,14 @@ layout = html.Div([
             dbc.Button("+", "plus",style ={'display': 'inline-block'},
             outline=True, color="success"), # minus button
             html.Br(),
-
-            dcc.Graph(id = "figure_slider", figure = {}, #Initializing slider figure
-                    style={'width': 700, 
-                    'height': 600,'display': 'inline-block'}),
-
-            dcc.Graph(id = "figure_slider_perf", figure = {}, #Initializing perf_slider figure
-                    style={'width': 450, 
-                    'height': 600,'display': 'inline-block'})
-        
+            dbc.Row([
+                dbc.Col([
+            dcc.Graph(id = "figure_slider", figure = {}) #Initializing slider figure
+                ], width = 8),
+                dbc.Col([
+            dcc.Graph(id = "figure_slider_perf", figure = {}
+            )], width = 4)
+            ])
         ])   
 
 
