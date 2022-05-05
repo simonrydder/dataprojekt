@@ -1,0 +1,19 @@
+mathis vil gerne bare se tallene
+
+boxplot eller mathisplotsne
+
+violinplots
+
+scatter mellem atlas og dl
+
+ligger yderligere inf i de nye metrikker. 
+
+dosisplanlægning - der siger volumeratio mest
+
+hvilke metrikker skal man bruge til hvad.
+
+dosimetriske vinkel meget vigtig
+
+atlas data, dashboard, plots, 
+
+ingen probs med anonymitet. 
