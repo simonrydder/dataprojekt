@@ -90,7 +90,9 @@ content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
     dcc.Dropdown(id="scatter_metric",
                 value = [metrics[0]]), 
     dcc.Dropdown(id="scatter_segments",
-                value = [segments[0]])
+                value = [segments[0]]),
+    dbc.Button("Download CSV", id = "btn"),
+    dcc.Download(id="download")
 ])
 
 # initializing the app

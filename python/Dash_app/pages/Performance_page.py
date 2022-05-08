@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 import numpy as np
 import dash_bootstrap_components as dbc
 import numpy as np
+import pandas as pd
 
 Style = {'textAlign': 'center', "border-bottom":"2px black solid"}
 
@@ -129,10 +130,14 @@ layout = html.Div([
                 ],width = 7)
 
             ],className="g-0"),
-            dcc.Graph(id = "figure_scatter", figure = {})
+            dcc.Graph(id = "figure_scatter", figure = {}),
 
+            # Download button csv for performance data:
+
+            html.Br(),
+            dbc.Button("Download CSV", id="btn"),
+            dcc.Download(id="download")
 ###
-
 ]) # End of layout
 
 
@@ -279,6 +284,20 @@ def update_dropdown_options_comp(values):
         return[[comparisons[0]]]
     else:
         return [values]
+
+
+# Load the correct csv file and make it downloadable:
+
+result_file = pd.read_csv("..\\data\\results\\total_merged.csv", index_col=0)
+
+@callback(
+    Output("download", "data"),
+    Input("btn", "n_clicks"),
+    prevent_initial_call =True,
+)
+
+def generate_csv(n_clicks):
+    return dcc.send_data_frame(result_file.to_csv, "results.csv")
 
 # Still under construction
 
