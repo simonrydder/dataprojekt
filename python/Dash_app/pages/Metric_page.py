@@ -1,5 +1,6 @@
 from dash import dcc, html, Input, Output
 from app import app 
+
 Style = {'textAlign': 'center', "border-bottom":"2px black solid"}
 
 

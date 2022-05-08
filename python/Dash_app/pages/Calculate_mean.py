@@ -1,8 +1,9 @@
 import pandas as pd
 
 dfs = []
-max_tol = 1
+max_tol = 1 #set the max number of tolerance
 
+#Creating mean performance csv file
 for i in range(0,max_tol+1):
     df  = pd.read_csv(f"..\\data\\results\\total_tolerance{i}.csv")
     df = df.drop("Date",axis = 1)
@@ -18,6 +19,8 @@ df = df.melt(id_vars=["Comparison", "Metric"],
     value_name="value")
 
 df.to_csv("..\\data\\results\\performance_mean.csv")
+
+#Create violin plot results csv
 dfs = []
 for i in range(max_tol + 1):
     df  = pd.read_csv(f"..\\data\\results\\total_tolerance{i}.csv")

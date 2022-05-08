@@ -7,7 +7,7 @@ import dash_daq as daq
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
-# the style arguments for the sidebar. We use position:fixed and a fixed width
+# the style arguments for the sidebar
 SIDEBAR_STYLE = {
     "position": "fixed",
     "top": 0,
@@ -26,8 +26,10 @@ CONTENT_STYLE = {
     "padding": "2rem 1rem",
 }
 
+#Text at the top of the sidebar
 sidebar_text = "Performance Testing of Auto- Segmentation Algorithms"
 
+#Constructing the sidebar
 sidebar = html.Div(
     [
         html.H3(sidebar_text),
@@ -51,7 +53,9 @@ sidebar = html.Div(
     id = "sidebar"
 )
 
-# all components have to be pseudo created here to avoid errors when loading
+# all components of the dashboard have to be pseudo created here to 
+# avoid errors when loading
+
 content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
     dcc.Dropdown(id="slct_segment",value = [segments[0]]),
     dcc.Dropdown(id="slct_metrics",value = [metrics[0]]),
@@ -73,7 +77,7 @@ content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
     dcc.Dropdown(id="boxplot_segment",
                 value = [segments[0]]), 
     dcc.Dropdown(id="boxplot_comp",
-                value = [segments[0]]),     
+                value = [comparisons[0]]),     
     dcc.Graph(id = "figure_boxplot"),
     dbc.Checklist(id="tolerance_toggle",value = [1]),
     dcc.Graph(id = "figure_DICE", figure = {}),
@@ -81,12 +85,19 @@ content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
     dcc.Graph(id = "figure_Haus", figure = {}),
     dcc.Graph(id = "figure_Line", figure = {}),
     dcc.Graph(id = "figure_Volume", figure = {}),
-    dcc.Graph(id = "figure_MSD", figure = {})
+    dcc.Graph(id = "figure_MSD", figure = {}),
+    dcc.Graph(id = "figure_scatter", figure = {}),
+    dcc.Dropdown(id="scatter_metric",
+                value = [metrics[0]]), 
+    dcc.Dropdown(id="scatter_segments",
+                value = [segments[0]])
 ])
 
+# initializing the app
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 
+#Call back function to update the page based on the site
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/":
