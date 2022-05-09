@@ -286,13 +286,16 @@ if __name__ == '__main__':
 
 if __name__ == '__main__':
     P1 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'GT')
-    P2 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'DL')
+    P2 = Path('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129', 'agt')
 
-    Segment = 'brainstem'
+    # P1 = Path('0ku1qeiExUvrl65s5bvTX5fKA', '20140505', 'GT')
+    # P2 = Path('0ku1qeiExUvrl65s5bvTX5fKA', '20140505', 'agt')
+
+    Segment = 'brain'
     IMGA = OAR_Image(P1, Segment)
     IMGB = OAR_Image(P2, Segment)
 
-    EPL = EPL_Metric(gt = IMGA, model = IMGB, Tolerance = 1)
+    EPL = EPL_Metric(gt = IMGA, model = IMGB, Tolerance = 0)
 
     print(EPL)
 
@@ -310,7 +313,7 @@ if __name__ == '__main__':
 
     plotLines(EPL.SliceLinesModel[layer])
     plotLines(EPL.SliceLinesChanged[layer], color = 'r', style = 'dashed')
-    plotPoints(EPL.SlicePointsGT[layer])
+    # plotPoints(EPL.SlicePointsGT[layer])
     plot(xlimits, ylimits,
         title = f'{Segment}[{layer}]: EPL = {EPL.SliceEPL[layer]}, LineRatio = {EPL.SliceLR[layer]}, VolumeRatio = {EPL.SliceVR[layer]}')
 

@@ -309,7 +309,7 @@ if __name__ == "__main__":
     # Inputs
     overwrite = False
     Segments = list(OAR_Image.OARs.keys())[2:]
-    Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
+    Comparisons = {('GT', 'DL'), ('GT', 'DLB'), ('GT', 'ATLAS')}
     Patients = PatientKeys()
     Tolerances = {0, 1}
 

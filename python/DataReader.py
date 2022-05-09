@@ -94,6 +94,9 @@ if __name__ == "__main__":
                         'DLB'],
              'Test5' : ["1cbDrFdyzAXjFICMJ58Hmja9U",
                         '20130521',
+                        'ATLAS'],
+             'Test6' : ["notExsisting",
+                        '20130521',
                         'ATLAS']
             }
 
