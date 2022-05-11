@@ -54,14 +54,14 @@ class Path():
 
     def GetFile(self):
         try:
-            files = os.listdir(self.root + '\\' + self.Method)
+            files = os.listdir(self.Root + '\\' + self.Method)
 
         except FileNotFoundError:
             return 'NA'
             
         for file in files:
             if self.ID + '&' + self.Date in file:
-                return self.Root + self.Method + "\\" + file
+                return self.Root +'\\' + self.Method + "\\" + file
             
         return 'NA'
 

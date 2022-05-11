@@ -311,7 +311,7 @@ if __name__ == "__main__":
     Segments = list(OAR_Image.OARs.keys())[2:]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB'), ('GT', 'ATLAS')}
     Patients = PatientKeys()
-    Tolerances = {0, 1}
+    Tolerances = {0, 1, 2}
 
     # Script
     if overwrite:
@@ -332,14 +332,14 @@ if __name__ == "__main__":
     # Inputs
     overwrite = False
     Segments = list(OAR_Image.OARs.keys())[2:]
-    Comparisons = {('GT', 'DL'), ('GT', 'DLB')}
+    Comparisons = {('GT', 'DL'), ('GT', 'DLB'), ('GT', 'ATLAS')}
     # Patients = PatientKeys(3)
     Patients = {('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129'),
                 ('HNCDL_447', '20170421'),
                 ('HNCDL_340', '20180723'),
                 ('HNCDL_141', '20160926'),
                 ('PHbmDBLzKFUqHWIbGMTmUFSmO', '20200212')}
-    Tolerances = {0, 1}
+    Tolerances = {0, 1, 2}
 
     # Script
     if overwrite:

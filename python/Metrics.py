@@ -125,10 +125,10 @@ if __name__ == '__main__':
     ID = '4Prj3A5sMvSv1sK4u5ihkzlnU'
     Date = '20190129'
     P1 = Path(ID, Date, 'GT')
-    P2 = Path(ID, Date, 'DL')
+    P2 = Path(ID, Date, 'ATLAS')
 
-    IA = OAR_Image(P1, 'brainstem')
-    IB = OAR_Image(P2, 'brainstem')
+    IA = OAR_Image(P1, 'brain')
+    IB = OAR_Image(P2, 'brain')
 
     print(IA)
     print(IB)
