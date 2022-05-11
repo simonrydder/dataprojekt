@@ -82,7 +82,3 @@ if __name__ == '__main__':
         dct[file] = fInfo
 
     writeCorruptedFiles(dct)
-
-
-
-
