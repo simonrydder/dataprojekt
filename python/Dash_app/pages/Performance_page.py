@@ -7,6 +7,7 @@ import numpy as np
 import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
+from plotly.subplots import make_subplots
 
 Style = {'textAlign': 'center', "border-bottom":"2px black solid"}
 
@@ -73,70 +74,37 @@ layout = html.Div([
             html.Br(),
 
             #Defining subplots for violin plots
-             dbc.Row([
-                dbc.Col([
-                    dcc.Graph(id = "figure_DICE", 
-                              figure = {}, 
-                              style = {"height": 350})
-                ],width = 4),
-                dbc.Col([
-                    dcc.Graph(id = "figure_Line", 
-                             figure = {}, 
-                             style = {"height": 350})
-                ],width = 4),
-                dbc.Col([ 
-                    dcc.Graph(id = "figure_Volume", 
-                              figure = {}, 
-                              style = {"height": 350})
-                ],width = 4)
-            ],className="g-0"),
-
-            dbc.Row([
-                dbc.Col([
-                    dcc.Graph(id = "figure_EPL", 
-                              figure = {}, 
-                              style = {"height": 350})
-                ],width = 4),
-                dbc.Col([  
-                    dcc.Graph(id = "figure_MSD",
-                              figure = {}, 
-                              style = {"height": 350})
-                ],width = 4),
-                dbc.Col([ 
-                    dcc.Graph(id = "figure_Haus", 
-                              figure = {}, 
-                            style = {"height": 350})
-                ],width = 4)
-            ],className="g-0"),
+            dcc.Graph(id = "figure_boxplot", figure = {},style = {"height": 700}),
             html.Br(),
 
 #This part is still under construction 
 ### 
             dbc.Row([
                 dbc.Col([
-                        dcc.Dropdown(id="scatter_metric", # dropdown for metrics
-                        options =metrics,
-                        multi = True,
-                        value = [metrics[0]],
-                        clearable = True)],
-                        width = 5),
-                dbc.Col([
                         dcc.Dropdown(id="scatter_segments", # dropdown for 
                             options = segments,
-                            multi = True,
-                            value = [segments[0]],
+                            multi = False,
+                            value = segments[0],
                             clearable = False),
 
-                ],width = 7)
+                ],width = 7),
+                dbc.Col([
+                        dbc.Checklist(options =  #Toggle option for tolerance
+                        [{"label": "Show Tolerance options", "value": 1}],
+                        value=[1],
+                        id="tolerance_toggle_scatter",
+                        switch=True)
+                ], width={"size": 3, "offset": 1})
 
             ],className="g-0"),
-            dcc.Graph(id = "figure_scatter", figure = {}),
+            dcc.Graph(id = "figure_scatter", figure = {},style = {"height": 700}),
 
             # Download button csv for performance data:
 
             html.Br(),
             dbc.Button("Download CSV", id="btn"),
             dcc.Download(id="download")
+            
 ###
 ]) # End of layout
 
@@ -156,7 +124,6 @@ def update_graph(slct_metrics, slct_segment,slct_comp):
     df_perf = df_perf[df_perf["Segment"].isin(slct_segment)]
     df_perf = df_perf[df_perf["Comparison"].isin(slct_comp)]
 
-    
     
     fig = px.bar(df_perf, #Creates barplot
                 x = "Comparison", 
@@ -227,53 +194,6 @@ def toggle_tolerance(toggle,current):
 
     return [options,values]
 
-    
-# Creating Violinplot
-@callback(
-    [Output(component_id="figure_DICE", component_property="figure"),
-    Output(component_id="figure_Line", component_property="figure"),
-    Output(component_id="figure_Volume", component_property="figure"),
-    Output(component_id="figure_EPL", component_property="figure"),
-    Output(component_id="figure_MSD", component_property="figure"),
-    Output(component_id="figure_Haus", component_property="figure")],
-    [Input(component_id="boxplot_comp", component_property="value"),
-    Input(component_id="boxplot_segment", component_property="value")])
-
-def update_violin_plots(comps,segment):
-    metrics = ["DICE","LineRatio","VolumeRatio","EPL","MSD","Hausdorff"]
-    figs = [] #Initializing a list of figs to return
-
-    # For each metric create a violin plot
-    for metric in metrics:
-        #Filtering data
-        df = df_violin[df_violin["Metric"]==metric]
-        df = df[df["Comparison"].isin(comps)]
-        fig = px.violin(df,
-                        x = "Tolerance",
-                        y = segment,
-                        facet_col = "Metric",
-                        color = "Comparison",
-                        violinmode="overlay",
-                        template = plot_theme
-                )
-
-        # If it is the first metric add a legend in the upper left corner
-        if metric == metrics[0]:
-            fig.update_layout(legend=dict(
-                        orientation="h",
-                        y=1.25,  
-                        ),margin=dict(l=0, r=10, b=0))
-        else:
-            fig.update_layout(showlegend = False,
-             margin=dict(l=0, r=10, b=0)
-            )
-
-        #Change titles
-        fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
-        #Append to the figs list
-        figs.append(fig)
-
-    return figs
 
 # make comparisons for violin plots non clearable
 @callback(
@@ -304,33 +224,166 @@ def generate_csv(n_clicks):
 ###
 @callback(
     [Output(component_id="figure_scatter", component_property="figure")],
-    [Input(component_id="scatter_segments", component_property="value"),
-    Input(component_id="scatter_metric", component_property="value")])
+    [Input(component_id="scatter_segments", component_property="value")])
 
-def update_scatter(segments,metric):
-    df = df_scatter[df_scatter["Metric"].isin(metric)]
-    df = df[df["Segment"].isin(segments)]
+def update_scatter(segments):
     
-    x = np.linspace(0,1,100)
+    df = df_scatter[df_scatter["Segment"].isin([segments])]
+    
+    rows = 2
+    cols = 3
 
-    fig = go.Figure()
-    x = df["GTvsDL"]
-    y = df["GTvsDLB"]
-    color = df["Segment"]
-    facet_col = df["Metric"]
-    fig.add_trace(go.Scatter(
-                    x = x,
-                    y = y,
-                    mode = "markers",
-                    name = "segment"))
+    fig = make_subplots(rows,cols,
+                        x_title="Deep learning",
+                        y_title="Deep learning bounded",
+                        subplot_titles = metrics)
 
-    fig.add_trace(
-        go.Scatter(
-            x = x, 
-            y = x, 
-            mode = "lines",
-            name = "identity line"))
 
+    scale = [
+        [0, "darkcyan"],
+        [0.5, "darkcyan"],
+        [0.5, "red"],
+        [1.0, "red"]
+        ]
+
+    i = 0
+    for row in range(1,rows+1):
+        for col in range(1,cols+1):
+            df_metric = df[df["Metric"] == metrics[i]]
+            x = df_metric["GTvsDL"]
+            y = df_metric["GTvsDLB"]
+            x_min = np.nanmin(x)*0.95
+            x_max = np.nanmax(x)*1.05
+            x_line = np.linspace(x_min,x_max,100)
+            if i == 0:
+                fig.add_trace(
+                        go.Scatter(
+                            x = x_line, 
+                            y = x_line, 
+                            mode = "lines",
+                            name = "Identity line",
+                            opacity  = 0.5,
+                            line = dict(color = "black")),
+                            row = row, col = col)
+                fig.add_trace(
+                        go.Scatter(
+                            x = x,
+                            y = y,
+                            mode = "markers",
+                            name = "DLB outperforms DL",
+                            marker = dict(color = 
+                            ["darkcyan" if x > y 
+                            else "red" for x,y in zip(x,y)])),
+                            row = row, col = col)
+                            
+            else:
+                fig.add_trace(
+                        go.Scatter(
+                            x = x_line, 
+                            y = x_line, 
+                            mode = "lines",
+                            name = "Identity line",
+                            opacity  = 0.5,
+                            line = dict(color = "black"),
+                            showlegend = False),
+                            row = row, col = col)
+
+                fig.add_trace(
+                        go.Scatter(
+                            x = x,
+                            y = y,
+                            mode = "markers",
+                            name = segments,
+                            showlegend = False,
+                            marker = dict(color = 
+                            ["red" if x > y else 
+                            "darkcyan" for x,y in zip(x,y)])),
+                            row = row, col = col)
+           
+            i+=1
+        
+
+    fig.update_layout(template=plot_theme,
+    title_text="Performance between ATLAS and Deep Learning model",
+    title_x = 0.05,
+    title_y = 0.97,
+    legend=dict(
+                        orientation="h",
+                        y=1.1  
+                        ))
     return [fig]
 
+@callback(
+    [Output("scatter_segments", "options"),
+    Output("scatter_segments", "value")],
+    [Input("tolerance_toggle_scatter", "value"),
+    Input("scatter_segments", "value")])
+
+def toggle_tolerance_Scatter(toggle,current):
+    # When turned on return the all segments and value is the current
+    if len(toggle) == 1:
+        options = segments
+        value = current
+    else: # When turned off, return only Tolerance 0
+        options = [segment for segment in segments if not segment.endswith(("1","2","3","4"))]
+        if current in options:
+            value = current
+        else:
+            value = options[0]
+    
+    # if No 0 Tolerance was in the values set the value equal to the first segment
+
+    return [options,value]
+
 ###
+
+
+@callback(
+    [Output(component_id="figure_boxplot", component_property="figure")],
+    [Input(component_id="boxplot_comp", component_property="value"),
+    Input(component_id="boxplot_segment", component_property="value")])
+
+def update_scatter(comps,segment):
+    
+    metrics = ["DICE","LineRatio","VolumeRatio","EPL","MSD","Hausdorff"]
+    rows = 2
+    cols = 3
+
+    fig = make_subplots(rows,cols,
+                        x_title="Tolerance",
+                        y_title="Value",
+                        subplot_titles = metrics)
+
+    i = 0
+    color_dict = {"GTvsDL": "cornflowerblue", "GTvsDLB": "orange"}
+    legend_show = [True]+[False]*5
+
+    for row in range(1,rows+1):
+        for col in range(1,cols+1):
+            df = df_violin[df_violin["Metric"]==metrics[i]]
+            for comp in comps:
+                df_comp = df[df["Comparison"]==comp]
+                x = df_comp["Tolerance"].squeeze()
+                y = df_comp[segment].squeeze()
+                if i == 0:
+                    fig.add_trace(go.Violin(x = x,
+                                y = y,line_color = color_dict.get(comp),
+                                name = comp),row = row, col = col)
+                else:
+                    fig.add_trace(go.Violin(x = x,
+                                y = y,line_color = color_dict.get(comp),
+                                showlegend = False),row = row, col = col)
+
+                        
+        
+           
+            i+=1
+
+    fig.update_layout(violinmode='overlay',
+    template=plot_theme,
+    legend=dict(
+                        orientation="h",
+                        y=1.1  
+                        ))
+        
+    return [fig]
