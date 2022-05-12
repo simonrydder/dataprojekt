@@ -1,19 +1,28 @@
 import pandas as pd
 from ast import literal_eval
 
-df = pd.read_csv("..\\data\\results\\merged.csv", index_col = 0)
+#Dataframe for mean plot
+df = pd.read_csv("..\\data\\results\\performance_mean.csv")
 metrics = sorted(df["Metric"].unique().tolist())
-df = df.drop(["Date"], axis = 1).round(2)
-df = df.groupby(["Comparison","Metric"]).mean().reset_index()
-df = df.melt(id_vars=["Comparison", "Metric"], 
-    var_name="Segment", 
-    value_name="value") 
 
+
+#Dataframe for slice plots
+df_slices = pd.read_csv("..\\data\\sliceresults\\total.csv")
+df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
+cols_to_change = ["PointsModel","PointsGT","LinesModel","LinesChanged"]
+
+for col in cols_to_change:
+    df_slices[col] = df_slices[col].replace(["set()"],["[]"])
+
+
+#Dataframe for violin plots
+df_violin = pd.read_csv("..\\data\\results\\total_merged.csv")
+
+
+# Defining options for dropdowns
 segments = sorted(df["Segment"].unique().tolist())
 comparisons = sorted(df["Comparison"].unique().tolist())
-
-plot_theme = "seaborn"
-
+boxplot_segments = [segment for segment in segments if not segment.endswith(("1","2","3","4"))]
 
 patients_slider = ["4Prj3A5sMvSv1sK4u5ihkzlnU","PHbmDBLzKFUqHWIbGMTmUFSmO", 
                     "HNCDL_340","HNCDL_447","HNCDL_141"]
@@ -21,3 +30,8 @@ patients_slider = ["4Prj3A5sMvSv1sK4u5ihkzlnU","PHbmDBLzKFUqHWIbGMTmUFSmO",
 segments_slider = ["brainstem","spinalcord",
                     "lips", "esophagus", "pcm_low",
                     "pcm_mid", "pcm_up", "mandible"]
+
+df_scatter = pd.read_csv("..\\data\\results\\scatter_data.csv")
+
+#Setting plot theme
+plot_theme = "seaborn"

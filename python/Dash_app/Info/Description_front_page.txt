@@ -4,5 +4,3 @@ to further conceptually understand the metric and how we implemented it. Lastly,
 is avalaible to get a quick overview of the different metrics used in our project with their mathematical formulas. 
 
 Finally, you are welcome to visit our GitHub repository to take a deep dive in our code and our implementation. 
-
-https://github.com/simonrydder/dataprojekt
