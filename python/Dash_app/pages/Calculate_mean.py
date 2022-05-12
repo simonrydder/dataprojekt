@@ -13,12 +13,12 @@ for i in range(0,max_tol+1):
     
 
 df = pd.concat(dfs, axis = 1)
-df = df.groupby(["Comparison","Metric"]).mean().reset_index()
+df = df.groupby(["Comparison","Metric"]).median().reset_index()
 df = df.melt(id_vars=["Comparison", "Metric"], 
     var_name="Segment", 
     value_name="value")
 
-df.to_csv("..\\data\\results\\performance_mean.csv")
+df.to_csv("..\\data\\results\\performance_median.csv")
 
 #Create violin plot results csv
 dfs = []

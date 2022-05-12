@@ -81,6 +81,27 @@ layout = html.Div([
             html.Br(),
             dcc.Graph(id = "figure_violin", figure = {},style = {"height": 700}),
             html.Br(),
+            html.H3('Boxplots', style = Styletitles),
+            dbc.Row([
+                dbc.Col([ 
+                    dcc.Dropdown(id="boxplot_segment", # dropdown for metrics for violin plot
+                        options =boxplot_segments, 
+                        multi = False,
+                        value = [boxplot_segments[0]],
+                        clearable = False)
+                ], width = 4),
+                dbc.Col([
+                    dcc.Dropdown(id="boxplot_comp", # dropdown for comparisons for violin plot
+                        options = tolerances,
+                        multi = True,
+                        value = [tolerances[0]],
+                        clearable = True)
+                ], width = 4)
+            ],className="g-0"),
+            #Defining subplots for violin plots
+            html.Br(),
+            dcc.Graph(id = "figure_boxplot", figure = {},style = {"height": 700}),
+            html.Br(),
 
 #This part is still under construction 
 ###         
@@ -220,7 +241,7 @@ result_file = pd.read_csv("..\\data\\results\\total_merged.csv", index_col=0)
 def generate_csv(n_clicks):
     return dcc.send_data_frame(result_file.to_csv, "results.csv")
 
-# Still under construction
+# Still under construction (scatter plot)
 
 ###
 @callback(
@@ -350,9 +371,7 @@ def toggle_tolerance_Scatter(toggle,current):
 
     return [options,value]
 
-###
-
-
+### Make violin plots
 @callback(
     [Output(component_id="figure_violin", component_property="figure")],
     [Input(component_id="boxplot_comp", component_property="value"),
@@ -387,6 +406,58 @@ def update_violin(tols,segment):
                                 name = f"Tolerance {tol}"),row = row, col = col)
                 else:
                     fig.add_trace(go.Violin(x = x,
+                                y = y,line_color = color_dict.get(tol),
+                                showlegend = False),row = row, col = col)
+
+            i+=1
+
+    fig.update_layout(violinmode='overlay',
+    template=plot_theme,
+    legend=dict(
+                        orientation="h",
+                        y=1.1  
+                        ))
+
+
+        
+    return [fig]
+
+
+# Make boxplots:
+@callback(
+    [Output(component_id="figure_boxplot", component_property="figure")],
+    [Input(component_id="boxplot_comp", component_property="value"),
+    Input(component_id="boxplot_segment", component_property="value")])
+
+def update_boxplot(tols,segment):
+    
+    metrics = ["DICE","LineRatio","VolumeRatio","EPL","MSD","Hausdorff"]
+    rows = 2
+    cols = 3
+
+    fig = make_subplots(rows,cols,
+                        x_title="Comparison",
+                        y_title="Value",
+                        subplot_titles = metrics)
+
+    i = 0
+    # color_dict = {"GTvsDL": "cornflowerblue", "GTvsDLB": "orange", "GTvsATLAS" : "lightgreen"}
+    color_dict = {0 : "cornflowerblue", 1 : "orange", 2 : "lightgreen"}
+    legend_show = [True]+[False]*5
+
+    for row in range(1,rows+1):
+        for col in range(1,cols+1):
+            df = df_violin[df_violin["Metric"]==metrics[i]]
+            for tol in tols:
+                df_tol = df[df["Tolerance"]==tol]
+                x = df_tol["Comparison"].squeeze()
+                y = df_tol[segment].squeeze()
+                if i == 0:
+                    fig.add_trace(go.Box(x = x,
+                                y = y,line_color = color_dict.get(tol),
+                                name = f"Tolerance {tol}"),row = row, col = col)
+                else:
+                    fig.add_trace(go.Box(x = x,
                                 y = y,line_color = color_dict.get(tol),
                                 showlegend = False),row = row, col = col)
 

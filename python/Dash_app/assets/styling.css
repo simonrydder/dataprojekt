@@ -12,6 +12,11 @@ body {
     border: 2px solid rgb(0, 0, 0);
 }
 
+#figure_boxplot{
+    border: 2px solid rgb(0, 0, 0);
+}
+
+
 #figure_scatter{
     border: 2px solid rgb(0, 0, 0);
 }

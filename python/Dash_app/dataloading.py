@@ -2,7 +2,7 @@ import pandas as pd
 from ast import literal_eval
 
 #Dataframe for mean plot
-df = pd.read_csv("..\\data\\results\\performance_mean.csv")
+df = pd.read_csv("..\\data\\results\\performance_median.csv")
 metrics = sorted(df["Metric"].unique().tolist())
 
 
