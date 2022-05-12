@@ -73,12 +73,11 @@ layout = html.Div([
             html.Br(),
             html.H3('Violinplots', style = Styletitles),
             #Defining subplots for violin plots
-            dcc.Graph(id = "figure_boxplot", figure = {},style = {"height": 700}),
+            dcc.Graph(id = "figure_violin", figure = {},style = {"height": 700}),
             html.Br(),
 
 #This part is still under construction 
 ###         
-            html.H3('Scatterplot', style = Style),
             dbc.Row([
                 dbc.Col([
                         dcc.Dropdown(id="scatter_segments", # dropdown for 
@@ -97,6 +96,8 @@ layout = html.Div([
                 ], width={"size": 3, "offset": 1})
 
             ],className="g-0"),
+            html.Br(),
+            html.H3('Scatterplot', style = Styletitles),
             dcc.Graph(id = "figure_scatter", figure = {},style = {"height": 700}),
 
             # Download button csv for performance data:
@@ -338,7 +339,7 @@ def toggle_tolerance_Scatter(toggle,current):
 
 
 @callback(
-    [Output(component_id="figure_boxplot", component_property="figure")],
+    [Output(component_id="figure_violin", component_property="figure")],
     [Input(component_id="boxplot_comp", component_property="value"),
     Input(component_id="boxplot_segment", component_property="value")])
 

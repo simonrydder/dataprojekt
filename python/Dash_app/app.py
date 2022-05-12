@@ -79,7 +79,7 @@ content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
                 value = [segments[0]]), 
     dcc.Dropdown(id="boxplot_comp",
                 value = [comparisons[0]]),     
-    dcc.Graph(id = "figure_boxplot"),
+    dcc.Graph(id = "figure_violin"),
     dbc.Checklist(id="tolerance_toggle",value = [1]),
     dbc.Checklist(id="tolerance_toggle_scatter",value = [1]),
     dcc.Graph(id = "figure_scatter", figure = {}), 

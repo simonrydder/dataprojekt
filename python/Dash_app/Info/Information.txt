@@ -1,1 +1,7 @@
-GT stands for Ground Truth blablabla
+Below is some practical information of the different abbreviations:
+
+* GT - Ground truth. Used to specify the manual correction of an segmentation made by a doctor. Is the closest thing we can get to the 'perfect' segmentation. 
+* DL - Deep Learning. Used to specify the auto-segmentation computed by a Deep-Learning model. 
+* DLB - Deep Learning bounded. Same as above but added bounds to the segmentation. 
+* ATLAS - Used to specify the autosegmentation computed as a standard mean of the placement of organs.
+* Tolerance - Used to specify a tolerance added to the segmentations whom to be compared. A tolerance of 0 indicates that no tolerance is added, where as 1 
