@@ -52,6 +52,11 @@ layout = html.Div([
             html.Br(),
             html.H3('Barplot of mean performance', style = Styletitles),
             dcc.Graph(id = "figure_perf", figure = {}), #Initializing mean performance figure,
+            # Download button csv for performance data:
+            html.Br(),
+            dbc.Button("Download CSV", id="btn"),
+            dcc.Download(id="download"),
+            html.Br(),
             html.Br(),
             dbc.Row([
                 dbc.Col([ 
@@ -69,8 +74,6 @@ layout = html.Div([
                         clearable = True)
                 ], width = 4)
             ],className="g-0"),
-
-            html.Br(),
             html.H3('Violinplots', style = Styletitles),
             #Defining subplots for violin plots
             dcc.Graph(id = "figure_violin", figure = {},style = {"height": 700}),
@@ -98,12 +101,7 @@ layout = html.Div([
             ],className="g-0"),
             html.Br(),
             html.H3('Scatterplot', style = Styletitles),
-            dcc.Graph(id = "figure_scatter", figure = {},style = {"height": 700}),
-
-            # Download button csv for performance data:
-            html.Br(),
-            dbc.Button("Download CSV", id="btn"),
-            dcc.Download(id="download")
+            dcc.Graph(id = "figure_scatter", figure = {},style = {"height": 700})
             
 ###
 ]) # End of layout
