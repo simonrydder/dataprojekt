@@ -22,6 +22,7 @@ df_violin = pd.read_csv("..\\data\\results\\total_merged.csv")
 # Defining options for dropdowns
 segments = sorted(df["Segment"].unique().tolist())
 comparisons = sorted(df["Comparison"].unique().tolist())
+tolerances = sorted(df_violin["Tolerance"].unique().tolist())
 boxplot_segments = [segment for segment in segments if not segment.endswith(("1","2","3","4"))]
 
 patients_slider = ["4Prj3A5sMvSv1sK4u5ihkzlnU","PHbmDBLzKFUqHWIbGMTmUFSmO", 

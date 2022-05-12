@@ -2,7 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, dcc, html
 from pages import Front_page, Metric_page, Performance_page, EPL_page
-from dataloading import segments,metrics,comparisons, patients_slider, segments_slider
+from dataloading import segments,metrics,comparisons, patients_slider, segments_slider, tolerances
 import dash_daq as daq
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -78,7 +78,7 @@ content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
     dcc.Dropdown(id="boxplot_segment",
                 value = [segments[0]]), 
     dcc.Dropdown(id="boxplot_comp",
-                value = [comparisons[0]]),     
+                value = [tolerances[0]]),     
     dcc.Graph(id = "figure_violin"),
     dbc.Checklist(id="tolerance_toggle",value = [1]),
     dbc.Checklist(id="tolerance_toggle_scatter",value = [1]),

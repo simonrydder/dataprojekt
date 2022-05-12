@@ -1,6 +1,6 @@
 from dash import dcc, html, Input, Output, callback
 from dataloading import segments, metrics, comparisons, plot_theme, \
-                        df, df_violin, boxplot_segments, df_scatter
+                        df, df_violin, boxplot_segments, df_scatter, tolerances
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
@@ -68,9 +68,9 @@ layout = html.Div([
                 ], width = 4),
                 dbc.Col([
                     dcc.Dropdown(id="boxplot_comp", # dropdown for comparisons for violin plot
-                        options = comparisons,
+                        options = tolerances,
                         multi = True,
-                        value = [comparisons[0]],
+                        value = [tolerances[0]],
                         clearable = True)
                 ], width = 4)
             ],className="g-0"),
@@ -199,7 +199,7 @@ def toggle_tolerance(toggle,current):
     [Input(component_id="boxplot_comp", component_property="value")])
 def update_dropdown_options_comp(values):
     if len(values) == 0:
-        return[[comparisons[0]]]
+        return[[tolerances[0]]]
     else:
         return [values]
 
@@ -355,39 +355,38 @@ def toggle_tolerance_Scatter(toggle,current):
     [Input(component_id="boxplot_comp", component_property="value"),
     Input(component_id="boxplot_segment", component_property="value")])
 
-def update_scatter(comps,segment):
+def update_violin(tols,segment):
     
     metrics = ["DICE","LineRatio","VolumeRatio","EPL","MSD","Hausdorff"]
     rows = 2
     cols = 3
 
     fig = make_subplots(rows,cols,
-                        x_title="Tolerance",
+                        x_title="Comparison",
                         y_title="Value",
                         subplot_titles = metrics)
 
     i = 0
-    color_dict = {"GTvsDL": "cornflowerblue", "GTvsDLB": "orange"}
+    # color_dict = {"GTvsDL": "cornflowerblue", "GTvsDLB": "orange", "GTvsATLAS" : "lightgreen"}
+    color_dict = {0 : "cornflowerblue", 1 : "orange", 2 : "lightgreen"}
+    legend_show = [True]+[False]*5
 
     for row in range(1,rows+1):
         for col in range(1,cols+1):
             df = df_violin[df_violin["Metric"]==metrics[i]]
-            for comp in comps:
-                df_comp = df[df["Comparison"]==comp]
-                x = df_comp["Tolerance"].squeeze()
-                y = df_comp[segment].squeeze()
+            for tol in tols:
+                df_tol = df[df["Tolerance"]==tol]
+                x = df_tol["Comparison"].squeeze()
+                y = df_tol[segment].squeeze()
                 if i == 0:
                     fig.add_trace(go.Violin(x = x,
-                                y = y,line_color = color_dict.get(comp),
-                                name = comp),row = row, col = col)
+                                y = y,line_color = color_dict.get(tol),
+                                name = tol),row = row, col = col)
                 else:
                     fig.add_trace(go.Violin(x = x,
-                                y = y,line_color = color_dict.get(comp),
+                                y = y,line_color = color_dict.get(tol),
                                 showlegend = False),row = row, col = col)
 
-                        
-        
-           
             i+=1
 
     fig.update_layout(violinmode='overlay',

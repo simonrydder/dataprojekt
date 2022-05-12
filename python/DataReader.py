@@ -26,13 +26,10 @@ import os
 
 # Classes and functions
 class Path():
-    _VeraCryptLocation = '..\\data\\projectdata.hc'
-
-
     def __init__(self, ID : str = '',
                  Date : str = '',
                  Method : str = '',
-                 Root = 'A:\\data\\'):
+                 Root = '..\\data\\data'):
 
         assert isinstance(ID, str), 'ID not <class str>'
         assert isinstance(Date, str), 'Data not <class str>'
@@ -56,24 +53,15 @@ class Path():
 
 
     def GetFile(self):
-        Mounted = False
-        while not Mounted:
-            try:
-                files = os.listdir(self.Root + self.Method)
-                Mounted = True
+        try:
+            files = os.listdir(self.Root + '\\' + self.Method)
 
-            except FileNotFoundError:
-                print('Unable to find directory: ' + self.Root)
-                print('Opening VeraCrypt')            
-                os.startfile(self._VeraCryptLocation)
-                str_input = input('Is data mounted? [N / Y]: ')
-                Mounted = True if str_input.lower() == 'y' else False
-                if Mounted:
-                    files = os.listdir(self.Root + self.Method)
-        
+        except FileNotFoundError:
+            return 'NA'
+            
         for file in files:
             if self.ID + '&' + self.Date in file:
-                return self.Root + self.Method + "\\" + file
+                return self.Root +'\\' + self.Method + "\\" + file
             
         return 'NA'
 
@@ -93,6 +81,9 @@ if __name__ == "__main__":
                         '20130521',
                         'DLB'],
              'Test5' : ["1cbDrFdyzAXjFICMJ58Hmja9U",
+                        '20130521',
+                        'ATLAS'],
+             'Test6' : ["notExsisting",
                         '20130521',
                         'ATLAS']
             }

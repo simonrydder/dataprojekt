@@ -1,5 +1,5 @@
 from dash import dcc, html, Input, Output, callback
-from dataloading import patients_slider,segments_slider, plot_theme, df_slices
+from dataloading import comparisons, tolerances, patients_slider,segments_slider, plot_theme, df_slices
 import dash_daq as daq
 import pandas as pd
 import dash_bootstrap_components as dbc
@@ -56,9 +56,9 @@ layout = html.Div([
             dbc.Row([
                 dbc.Col([            
                     dcc.Dropdown(id = "method_slider", #Dropdown for Method for EPL plot
-                        options = ["GTvsDL","GTvsDLB"],
+                        options = comparisons,
                         multi = False,
-                        value = "GTvsDL",
+                        value = comparisons[0],
                         style = {"cursor": "pointer"},
                         clearable = False)
                 ],width = 3),
@@ -66,9 +66,9 @@ layout = html.Div([
                 
                 dbc.Col([
                     dcc.Dropdown(id = "tolerance_slider", #Dropdown for Tolerance for EPL plot
-                        options = ["0","1","2","3",],
+                        options = tolerances,
                         multi = False,
-                        value = "0",
+                        value = tolerances[0],
                         style = {"cursor": "pointer"},
                         clearable = False)
                 ],width = 2),
