@@ -237,71 +237,83 @@ def update_scatter(segments):
                         x_title="Deep learning",
                         y_title="Deep learning bounded",
                         subplot_titles = metrics)
+    
+    legend_text = {"darkcyan": "DL outperforms DLB","black": "Equal performance", "red": "DLB outperforms DL"}
+    black_plottet = False
+    cyan_plottet = False
+    
 
-
-    scale = [
-        [0, "darkcyan"],
-        [0.5, "darkcyan"],
-        [0.5, "red"],
-        [1.0, "red"]
-        ]
 
     i = 0
     for row in range(1,rows+1):
         for col in range(1,cols+1):
             df_metric = df[df["Metric"] == metrics[i]]
-            x = df_metric["GTvsDL"]
-            y = df_metric["GTvsDLB"]
-            x_min = np.nanmin(x)*0.95
-            x_max = np.nanmax(x)*1.05
+            x_temp = df_metric["GTvsDL"]
+            x_min = np.nanmin(x_temp)*0.95
+            x_max = np.nanmax(x_temp)*1.05
             x_line = np.linspace(x_min,x_max,100)
             if i == 0:
                 fig.add_trace(
-                        go.Scatter(
-                            x = x_line, 
-                            y = x_line, 
-                            mode = "lines",
-                            name = "Identity line",
-                            opacity  = 0.5,
-                            line = dict(color = "black")),
-                            row = row, col = col)
-                fig.add_trace(
-                        go.Scatter(
-                            x = x,
-                            y = y,
-                            mode = "markers",
-                            name = "DLB outperforms DL",
-                            marker = dict(color = 
-                            ["darkcyan" if x > y 
-                            else "red" for x,y in zip(x,y)])),
-                            row = row, col = col)
-                            
+                                    go.Scatter(
+                                        x = x_line, 
+                                        y = x_line, 
+                                        mode = "lines",
+                                        name = "Identity line",
+                                        opacity  = 0.5,
+                                        legendgroup = "group1",
+                                        line = dict(color = "black")),
+                                        row = row, col = col)
             else:
                 fig.add_trace(
-                        go.Scatter(
-                            x = x_line, 
-                            y = x_line, 
-                            mode = "lines",
-                            name = "Identity line",
-                            opacity  = 0.5,
-                            line = dict(color = "black"),
-                            showlegend = False),
-                            row = row, col = col)
+                                    go.Scatter(
+                                        x = x_line, 
+                                        y = x_line, 
+                                        mode = "lines",
+                                        name = "Identity line",
+                                        opacity  = 0.5,
+                                        showlegend = False,
+                                        legendgroup = "group1",
+                                        line = dict(color = "black")),
+                                        row = row, col = col)
 
-                fig.add_trace(
-                        go.Scatter(
-                            x = x,
-                            y = y,
-                            mode = "markers",
-                            name = segments,
-                            showlegend = False,
-                            marker = dict(color = 
-                            ["red" if x > y else 
-                            "darkcyan" for x,y in zip(x,y)])),
-                            row = row, col = col)
-           
+            for color in ["darkcyan","black","red"]:
+                if metrics[i] == "DICE":
+                    df_col = df_metric[df_metric["Color_Dice"]==color]
+                else:
+                    df_col = df_metric[df_metric["Color"]==color]
+
+                x = df_col["GTvsDL"]
+                y = df_col["GTvsDLB"]
+
+                if i == 0:
+                    fig.add_trace(
+                            go.Scatter(
+                                x = x,
+                                y = y,
+                                mode = "markers",
+                                name = legend_text.get(color),
+                                legendgroup = color,
+                                marker = dict(color = 
+                                ["darkcyan" if x > y 
+                                else "red" if x < y else "black" for x,y in zip(x,y)])),
+                                row = row, col = col)
+                                
+                else:
+                    fig.add_trace(
+                            go.Scatter(
+                                x = x,
+                                y = y,
+                                mode = "markers",
+                                name = legend_text.get(color),
+                                showlegend = False,
+                                legendgroup = color,
+                                marker = dict(color = 
+                                ["red" if x > y else 
+                                "darkcyan" if x < y else "black" for x,y in zip(x,y)])),
+                                row = row, col = col)
+            
             i+=1
-        
+            
 
     fig.update_layout(template=plot_theme,
     title_text="Performance between ATLAS and Deep Learning model",
@@ -311,6 +323,8 @@ def update_scatter(segments):
                         orientation="h",
                         y=1.1  
                         ))
+
+
     return [fig]
 
 @callback(
@@ -356,7 +370,6 @@ def update_scatter(comps,segment):
 
     i = 0
     color_dict = {"GTvsDL": "cornflowerblue", "GTvsDLB": "orange"}
-    legend_show = [True]+[False]*5
 
     for row in range(1,rows+1):
         for col in range(1,cols+1):
@@ -385,5 +398,7 @@ def update_scatter(comps,segment):
                         orientation="h",
                         y=1.1  
                         ))
+
+
         
     return [fig]
