@@ -381,7 +381,7 @@ def update_violin(tols,segment):
                 if i == 0:
                     fig.add_trace(go.Violin(x = x,
                                 y = y,line_color = color_dict.get(tol),
-                                name = tol),row = row, col = col)
+                                name = f"Tolerance {tol}"),row = row, col = col)
                 else:
                     fig.add_trace(go.Violin(x = x,
                                 y = y,line_color = color_dict.get(tol),
