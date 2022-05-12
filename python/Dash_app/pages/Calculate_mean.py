@@ -1,7 +1,7 @@
 import pandas as pd
 
 dfs = []
-max_tol = 1 #set the max number of tolerance
+max_tol = 2 #set the max number of tolerance
 
 #Creating mean performance csv file
 for i in range(0,max_tol+1):

@@ -244,17 +244,17 @@ def GenerateSliceResults(
 
                 df = pd.DataFrame({'Index' : list(range(Z)),
                                    'ID' : [ID]*Z,
-                              'Date' : [Date]*Z,
-                              'DICE' : DICE,
-                              'Haus' : Haus,
-                              'MSD' : MSD,
-                              'EPL' : EPL,
-                              'LineRatio' : LineRatio,
-                              'VolumeRatio' : VolumeRatio,
-                              'PointsModel' : pModel,
-                              'PointsGT' : pGT,
-                              'LinesModel' : LinesModel,
-                              'LinesChanged' : LinesChanged})
+                                    'Date' : [Date]*Z,
+                                    'DICE' : DICE,
+                                    'Haus' : Haus,
+                                    'MSD' : MSD,
+                                    'EPL' : EPL,
+                                    'LineRatio' : LineRatio,
+                                    'VolumeRatio' : VolumeRatio,
+                                    'PointsModel' : pModel,
+                                    'PointsGT' : pGT,
+                                    'LinesModel' : LinesModel,
+                                    'LinesChanged' : LinesChanged})
 
                 patient_dfs.append(df)
 
