@@ -295,7 +295,7 @@ def MergeSliceResults(filename,
 
 
 def PatientKeys(n = "All"):
-    dir = "A:\\data\\GT"
+    dir = "..\\data\\data\\GT"
     files = os.listdir(dir)
     if isinstance(n, int):
         files = files[:n]
