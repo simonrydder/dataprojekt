@@ -6,6 +6,7 @@ from dataloading import segments,metrics,comparisons, patients_slider, segments_
 import dash_daq as daq
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app.css.config.serve_locally = False
 
 # the style arguments for the sidebar
 SIDEBAR_STYLE = {
@@ -91,7 +92,7 @@ content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
                 value = [metrics[0]]), 
     dcc.Dropdown(id="scatter_segments",
                 value = [segments[0]]),
-    dbc.Button("Download CSV", id = "btn"),
+    dbc.Button("Download Excel", id = "btn"),
     dcc.Download(id="download")
 ])
 

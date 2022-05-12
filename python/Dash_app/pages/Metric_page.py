@@ -4,7 +4,7 @@ from app import app
 Style = {'textAlign': 'center', "border-bottom":"2px black solid"}
 
 
-metrics = {"Dice": "Dice Coefficient","Hausdorff": "Hausdorff Distance",
+metrics = {"DICE": "Dice Coefficient","Hausdorff": "Hausdorff Distance",
             "MSD": "Mean Surface Distance","EPL": "Edited Path Length",
             "EPL_Line": "Edited Path Length Line Ratio",
             "EPL_Volume": "Edited Path Length Volume Ratio"}
@@ -18,7 +18,7 @@ for metric in metrics.keys():
     with open(f"Dash_app\\info\\{metric}.txt") as f:
         content.append(dcc.Markdown(f.read(),mathjax= True))
     try:
-        content.append(html.Img(src = app.get_asset_url(f'{metric}.png'), width="520", height="260"))
+        content.append(html.Img(src = app.get_asset_url(f"{metric}.png"), style={'height':'80%', 'width':'80%'}))
         content.append(html.Br())
     except Exception:
         print('error')

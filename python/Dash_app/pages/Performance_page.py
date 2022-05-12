@@ -135,7 +135,7 @@ layout = html.Div([
             # Download button csv for performance data:
 
             html.Br(),
-            dbc.Button("Download CSV", id="btn"),
+            dbc.Button("Download Excel", id="btn"),
             dcc.Download(id="download")
 ###
 ]) # End of layout
@@ -296,8 +296,8 @@ result_file = pd.read_csv("..\\data\\results\\total_merged.csv", index_col=0)
     prevent_initial_call =True,
 )
 
-def generate_csv(n_clicks):
-    return dcc.send_data_frame(result_file.to_csv, "results.csv")
+def generate_excel(n_clicks):
+    return dcc.send_data_frame(result_file.to_excel, "results.xlsx")
 
 # Still under construction
 
