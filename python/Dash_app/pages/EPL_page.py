@@ -50,7 +50,7 @@ layout = html.Div([
                         color="info",
                         className="d-grid gap-2 col-6 mx-auto",
                         size = "sm")
-                    ],width = 2)
+                    ],width = 2, align = "Top")
             ],className="g-0"),
 
             dbc.Row([
@@ -78,7 +78,7 @@ layout = html.Div([
                         color="info",
                         className="d-grid gap-2 col-6 mx-auto",
                         size = "sm")
-                    ],width = 2)
+                    ],width = 2, align = "Top")
                 ],className="g-0"),
 
             dbc.Row([
@@ -203,9 +203,9 @@ def update_slider(slider,patient,segment,method,tolerance):
                 )
 
     #Showing the correct legend
-    if fig3["data"][1]['marker']["color"] == "blue":
+    if fig3["data"][1]['marker']["color"] == "orange":
         fig3['data'][1]['showlegend'] = True
-        fig3['data'][1]['name'] = 'Models guess'
+        fig3['data'][1]['name'] = 'Guess'
 
     if fig3["data"][-1]['marker']["color"] == "darkcyan":
         fig3['data'][-1]['showlegend'] = True
@@ -247,6 +247,7 @@ def update_slider(slider,patient,segment,method,tolerance):
                                          visible = False)
 
     fig4.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1])) # changes the subplot title
+    fig4.update_layout(title = f"Performance for the slice")
 
     return [fig3,fig4,max,min]
 

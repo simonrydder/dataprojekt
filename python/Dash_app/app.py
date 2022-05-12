@@ -81,18 +81,11 @@ content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
                 value = [comparisons[0]]),     
     dcc.Graph(id = "figure_boxplot"),
     dbc.Checklist(id="tolerance_toggle",value = [1]),
-    dcc.Graph(id = "figure_DICE", figure = {}),
-    dcc.Graph(id = "figure_EPL", figure = {}),
-    dcc.Graph(id = "figure_Haus", figure = {}),
-    dcc.Graph(id = "figure_Line", figure = {}),
-    dcc.Graph(id = "figure_Volume", figure = {}),
-    dcc.Graph(id = "figure_MSD", figure = {}),
-    dcc.Graph(id = "figure_scatter", figure = {}),
-    dcc.Dropdown(id="scatter_metric",
-                value = [metrics[0]]), 
+    dbc.Checklist(id="tolerance_toggle_scatter",value = [1]),
+    dcc.Graph(id = "figure_scatter", figure = {}), 
     dcc.Dropdown(id="scatter_segments",
-                value = [segments[0]]),
-    dbc.Button("Download Excel", id = "btn"),
+                value = segments[0]),
+    dbc.Button("Download CSV", id = "btn"),
     dcc.Download(id="download")
 ])
 
