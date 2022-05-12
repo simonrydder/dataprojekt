@@ -59,8 +59,8 @@ sidebar = html.Div(
 
 content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
     dcc.Dropdown(id="slct_segment",value = [segments[0]]),
-    dcc.Dropdown(id="slct_metrics",value = [metrics[0]]),
-    dcc.Dropdown(id="slct_comp",value = [comparisons[0]]),
+    dcc.Dropdown(id="slct_metrics",value = metrics),
+    dcc.Dropdown(id="slct_comp",value = comparisons),
     dcc.Graph(id = "figure_perf"), #Initializing figure
     daq.Slider(id = "slider", value = 87),
     dcc.Dropdown(id = "patient",

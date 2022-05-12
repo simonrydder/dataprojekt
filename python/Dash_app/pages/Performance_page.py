@@ -16,6 +16,8 @@ Styletitles = {'textAlign': 'left'}
 layout = html.Div([
     html.H1('Performance', style = Style),
     html.Br(),
+            html.Br(),
+            html.H3('Barplot of mean performance', style = Styletitles),
             dbc.Row([
                 dbc.Col([
                         dcc.Dropdown(id="slct_segment", # dropdown for segment for mean performance
@@ -50,14 +52,15 @@ layout = html.Div([
                 ],width = 6)
             ],className="g-0"),
             html.Br(),
-            html.H3('Barplot of mean performance', style = Styletitles),
-            dcc.Graph(id = "figure_perf", figure = {}), #Initializing mean performance figure,
+            dcc.Graph(id = "figure_perf", figure = {}), #Initializing mean performance figure
+
             # Download button csv for performance data:
             html.Br(),
             dbc.Button("Download CSV", id="btn"),
             dcc.Download(id="download"),
             html.Br(),
             html.Br(),
+            html.H3('Violinplots', style = Styletitles),
             dbc.Row([
                 dbc.Col([ 
                     dcc.Dropdown(id="boxplot_segment", # dropdown for metrics for violin plot
@@ -74,13 +77,14 @@ layout = html.Div([
                         clearable = True)
                 ], width = 4)
             ],className="g-0"),
-            html.H3('Violinplots', style = Styletitles),
             #Defining subplots for violin plots
+            html.Br(),
             dcc.Graph(id = "figure_violin", figure = {},style = {"height": 700}),
             html.Br(),
 
 #This part is still under construction 
 ###         
+            html.H3('Scatterplot', style = Styletitles),
             dbc.Row([
                 dbc.Col([
                         dcc.Dropdown(id="scatter_segments", # dropdown for 
@@ -100,7 +104,6 @@ layout = html.Div([
 
             ],className="g-0"),
             html.Br(),
-            html.H3('Scatterplot', style = Styletitles),
             dcc.Graph(id = "figure_scatter", figure = {},style = {"height": 700})
             
 ###
@@ -381,7 +384,7 @@ def update_violin(tols,segment):
                 if i == 0:
                     fig.add_trace(go.Violin(x = x,
                                 y = y,line_color = color_dict.get(tol),
-                                name = tol),row = row, col = col)
+                                name = f"Tolerance {tol}"),row = row, col = col)
                 else:
                     fig.add_trace(go.Violin(x = x,
                                 y = y,line_color = color_dict.get(tol),
