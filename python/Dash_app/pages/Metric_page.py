@@ -9,20 +9,20 @@ metrics = {"DICE": "Dice Coefficient","Hausdorff": "Hausdorff Distance",
             "EPL_Line": "Edited Path Length Line Ratio",
             "EPL_Volume": "Edited Path Length Volume Ratio"}
     
-
-content = [html.H1("Info Regarding Metrics", style = Style),html.Br()]
+content = [html.H1("Introduction", style = Style),html.Br()]
+with open(f"Dash_app\\info\\Information.txt") as f:
+    content.append(dcc.Markdown(f.read(),mathjax= True))
+content.append(html.H1("Info Regarding Metrics", style = Style))
+content.append(html.Br())
 
 for metric in metrics.keys():
     content.append(html.H3(metrics.get(metric)))
     content.append(html.Br())
     with open(f"Dash_app\\info\\{metric}.txt") as f:
         content.append(dcc.Markdown(f.read(),mathjax= True))
-    try:
         content.append(html.Img(src = app.get_asset_url(f"{metric}.png"), style={'height':'80%', 'width':'80%'}))
         content.append(html.Br())
-    except Exception:
-        print('error')
-
+  
 
 CONTENT_STYLE = {
     "margin-left": "5rem",

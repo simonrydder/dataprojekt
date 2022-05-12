@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 Style = {'textAlign': 'center', "border-bottom":"2px black solid"}
-
+Styletitles = {'textAlign': 'left'}
 #Defining layout for the site 
 
 layout = html.Div([
@@ -48,11 +48,10 @@ layout = html.Div([
                             clearable = True)
                 ],width = 6)
             ],className="g-0"),
-
             html.Br(),
+            html.H3('Barplot of mean performance', style = Styletitles),
             dcc.Graph(id = "figure_perf", figure = {}), #Initializing mean performance figure,
             html.Br(),
-
             dbc.Row([
                 dbc.Col([ 
                     dcc.Dropdown(id="boxplot_segment", # dropdown for metrics for violin plot
@@ -71,7 +70,7 @@ layout = html.Div([
             ],className="g-0"),
 
             html.Br(),
-
+            html.H3('Violinplots', style = Styletitles),
             #Defining subplots for violin plots
              dbc.Row([
                 dbc.Col([
@@ -111,7 +110,8 @@ layout = html.Div([
             html.Br(),
 
 #This part is still under construction 
-### 
+###         
+            html.H3('Scatterplot', style = Style),
             dbc.Row([
                 dbc.Col([
                         dcc.Dropdown(id="scatter_metric", # dropdown for metrics

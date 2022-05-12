@@ -8,6 +8,11 @@ body {
     border: 2px solid rgb(0, 0, 0);
 }
 
+#figure_violin{
+    border: 2px solid rgb(0, 0, 0);
+}
+
+
 #slct_segment{
     cursor: pointer;
     padding: 2px;
