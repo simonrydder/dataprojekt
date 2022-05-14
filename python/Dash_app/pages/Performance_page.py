@@ -17,7 +17,7 @@ layout = html.Div([
     html.H1('Performance', style = Style),
     html.Br(),
             html.Br(),
-            html.H3('Barplot of mean performance', style = Styletitles),
+            html.H3('Barplot of median performance', style = Styletitles),
             dbc.Row([
                 dbc.Col([
                         dcc.Dropdown(id="slct_segment", # dropdown for segment for mean performance
@@ -105,7 +105,7 @@ layout = html.Div([
 
 #This part is still under construction 
 ###         
-            html.H3('Scatterplot', style = Styletitles),
+            html.H3('Scatterplots', style = Styletitles),
             dbc.Row([
                 dbc.Col([
                         dcc.Dropdown(id="scatter_segments", # dropdown for 
@@ -131,7 +131,7 @@ layout = html.Div([
 ]) # End of layout
 
 
-#Update graph for mean performance
+#Update graph for median performance
 @callback(
   [Output(component_id="figure_perf", component_property="figure")],
     [Input(component_id="slct_metrics", component_property="value"),
@@ -230,7 +230,7 @@ def update_dropdown_options_comp(values):
 
 # Load the correct csv file and make it downloadable:
 
-result_file = pd.read_csv("..\\data\\results\\total_merged.csv", index_col=0)
+result_file = pd.read_csv("..\\data\\results\\performance_median.csv", index_col=0)
 
 @callback(
     Output("download", "data"),
@@ -403,11 +403,11 @@ def update_violin(tols,segment):
                 if i == 0:
                     fig.add_trace(go.Violin(x = x,
                                 y = y,line_color = color_dict.get(tol),
-                                name = f"Tolerance {tol}"),row = row, col = col)
+                                name = f"Tolerance {tol}", hoverinfo = 'none'),row = row, col = col)
                 else:
                     fig.add_trace(go.Violin(x = x,
                                 y = y,line_color = color_dict.get(tol),
-                                showlegend = False),row = row, col = col)
+                                showlegend = False,hoverinfo = 'none'),row = row, col = col)
 
             i+=1
 
@@ -455,11 +455,13 @@ def update_boxplot(tols,segment):
                 if i == 0:
                     fig.add_trace(go.Box(x = x,
                                 y = y,line_color = color_dict.get(tol),
-                                name = f"Tolerance {tol}"),row = row, col = col)
+                                name = f"Tolerance {tol}", boxpoints = False),row = row, col = col)
                 else:
                     fig.add_trace(go.Box(x = x,
                                 y = y,line_color = color_dict.get(tol),
-                                showlegend = False),row = row, col = col)
+                                showlegend = False, boxpoints = False),row = row, col = col)
+
+                                
 
             i+=1
 
