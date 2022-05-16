@@ -219,6 +219,16 @@ def toggle_tolerance(toggle,current):
 
 # make comparisons for violin plots non clearable
 @callback(
+    [Output(component_id="violin_comp", component_property="value")],
+    [Input(component_id="violin_comp", component_property="value")])
+def update_dropdown_options_comp(values):
+    if len(values) == 0:
+        return[[tolerances[0]]]
+    else:
+        return [values]
+
+# make comparisons for boxplots non clearable
+@callback(
     [Output(component_id="boxplot_comp", component_property="value")],
     [Input(component_id="boxplot_comp", component_property="value")])
 def update_dropdown_options_comp(values):
@@ -395,12 +405,13 @@ def update_violin(tols,segment):
 
     for row in range(1,rows+1):
         for col in range(1,cols+1):
-            df = df_violin[df_violin["Metric"]==metrics[i]]
+            df = df_violin.drop(df_violin[(df_violin['Tolerance'].isin([1,2])) & (df_violin['Metric'].isin(['DICE', 'Hausdorff', 'MSD']))].index) #Hotfix to remove DICE,haus, MSD for tol 1,2
+            df = df[df["Metric"]==metrics[i]]
             for tol in tols:
                 df_tol = df[df["Tolerance"]==tol]
                 x = df_tol["Comparison"].squeeze()
                 y = df_tol[segment].squeeze()
-                if i == 0:
+                if i == 1: # 0 has DICE metric, which do NOT have tol but i = 1 (Line_Ratio) has. 
                     fig.add_trace(go.Violin(x = x,
                                 y = y,line_color = color_dict.get(tol),
                                 name = f"Tolerance {tol}", hoverinfo = 'none'),row = row, col = col)
@@ -447,12 +458,13 @@ def update_boxplot(tols,segment):
 
     for row in range(1,rows+1):
         for col in range(1,cols+1):
-            df = df_boxplot[df_boxplot["Metric"]==metrics[i]]
+            df = df_boxplot.drop(df_boxplot[(df_boxplot['Tolerance'].isin([1,2])) & (df_boxplot['Metric'].isin(['DICE', 'Hausdorff', 'MSD']))].index)
+            df = df[df["Metric"]==metrics[i]]
             for tol in tols:
                 df_tol = df[df["Tolerance"]==tol]
                 x = df_tol["Comparison"].squeeze()
                 y = df_tol[segment].squeeze()
-                if i == 0:
+                if i == 1: # 0 has DICE metric, which do NOT have tol but i = 1 (Line_Ratio) has. 
                     fig.add_trace(go.Box(x = x,
                                 y = y,line_color = color_dict.get(tol),
                                 name = f"Tolerance {tol}", boxpoints = False),row = row, col = col)
@@ -465,7 +477,7 @@ def update_boxplot(tols,segment):
 
             i+=1
 
-    fig.update_layout(violinmode='overlay',
+    fig.update_layout(
     template=plot_theme,
     legend=dict(
                         orientation="h",

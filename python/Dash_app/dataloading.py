@@ -16,7 +16,7 @@ for col in cols_to_change:
 
 
 #Dataframe for violin plots
-df_violin = pd.read_csv("..\\data\\results\\total_merged.csv", index_col = 0)
+df_violin = pd.read_csv("..\\data\\results\\total_merged.csv", index_col = 0).reset_index(drop = True)
 
 df_boxplot =pd.read_csv("..\\data\\results\\total_merged_no_outliers.csv", index_col = 0)
 

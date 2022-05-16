@@ -82,4 +82,4 @@ def outlierDectection(original_df):
 df_violin = pd.read_csv("..\\data\\results\\total_merged.csv", index_col = 0)
 df, outliers = outlierDectection(df_violin)
 
-
+df_boxplot =pd.read_csv("..\\data\\results\\total_merged_no_outliers.csv", index_col = 0)
