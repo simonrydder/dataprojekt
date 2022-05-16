@@ -20,7 +20,7 @@ for metric in metrics.keys():
     content.append(html.Br())
     with open(f"Dash_app\\info\\{metric}.txt") as f:
         content.append(dcc.Markdown(f.read(),mathjax= True))
-        content.append(html.Img(src = app.get_asset_url(f"{metric}.png"), style={'height':'80%', 'width':'80%'}))
+        content.append(html.Img(src = app.get_asset_url(f"{metric}.png"), style={'height':'60%', 'width':'60%'}))
         content.append(html.Br())
   
 

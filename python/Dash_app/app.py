@@ -2,7 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, dcc, html
 from pages import Front_page, Metric_page, Performance_page, EPL_page
-from dataloading import segments,metrics,comparisons, patients_slider, segments_slider, tolerances
+from dataloading import segments, metrics,comparisons, patients_slider, segments_slider, tolerances
 import dash_daq as daq
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -75,6 +75,10 @@ content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
     dbc.Button("+", "plus"), 
     dcc.Graph(id = "figure_slider"),
     dcc.Graph(id = "figure_slider_perf"),
+    dcc.Dropdown(id="violin_segment",
+                value = [segments[0]]), 
+    dcc.Dropdown(id="violin_comp",
+                value = [tolerances[0]]),   
     dcc.Dropdown(id="boxplot_segment",
                 value = [segments[0]]), 
     dcc.Dropdown(id="boxplot_comp",
@@ -113,7 +117,6 @@ def render_page_content(pathname):
             html.P(f"The pathname {pathname} was not recognised..."),
         ]
     )
-
 
 if __name__ == '__main__':
     app.run_server(debug=True)

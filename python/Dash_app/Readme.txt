@@ -1,4 +1,4 @@
-This document explains the technical setup of the dashboard. this folder has 
+This document explains the technical setup of the dashboard. This folder has 
 the following structure:
 
 app.py --> Main file that runs the dashboard and creates the basic layout and
@@ -7,9 +7,9 @@ app.py --> Main file that runs the dashboard and creates the basic layout and
 Dataloading.py --> File containing cleaned datasets etc. ready for import.
 
 assets folder --> Contains a css script to set the style of some parts of the 
-dashboard Furthermore it contains all images used in the dashboard.
+dashboard. Furthermore it contains all images used in the dashboard.
 
-pages folder --> contains a .py file for each tab in the dashboard. the .py 
+pages folder --> contains a .py file for each tab in the dashboard. The .py 
 file is responsible for setting the layout for the tab and all callbacks
 associated with the tab
 

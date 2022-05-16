@@ -1,6 +1,6 @@
 from dash import dcc, html, Input, Output, callback
 from dataloading import segments, metrics, comparisons, plot_theme, \
-                        df, df_violin, boxplot_segments, df_scatter, tolerances
+                        df, df_violin, df_boxplot, boxplot_segments, df_scatter, tolerances
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
@@ -63,14 +63,14 @@ layout = html.Div([
             html.H3('Violinplots', style = Styletitles),
             dbc.Row([
                 dbc.Col([ 
-                    dcc.Dropdown(id="boxplot_segment", # dropdown for metrics for violin plot
+                    dcc.Dropdown(id="violin_segment", # dropdown for metrics for violin plot
                         options =boxplot_segments, 
                         multi = False,
                         value = [boxplot_segments[0]],
                         clearable = False)
                 ], width = 4),
                 dbc.Col([
-                    dcc.Dropdown(id="boxplot_comp", # dropdown for comparisons for violin plot
+                    dcc.Dropdown(id="violin_comp", # dropdown for comparisons for violin plot
                         options = tolerances,
                         multi = True,
                         value = [tolerances[0]],
@@ -374,8 +374,8 @@ def toggle_tolerance_Scatter(toggle,current):
 ### Make violin plots
 @callback(
     [Output(component_id="figure_violin", component_property="figure")],
-    [Input(component_id="boxplot_comp", component_property="value"),
-    Input(component_id="boxplot_segment", component_property="value")])
+    [Input(component_id="violin_comp", component_property="value"),
+    Input(component_id="violin_segment", component_property="value")])
 
 def update_violin(tols,segment):
     
@@ -390,7 +390,7 @@ def update_violin(tols,segment):
 
     i = 0
     # color_dict = {"GTvsDL": "cornflowerblue", "GTvsDLB": "orange", "GTvsATLAS" : "lightgreen"}
-    color_dict = {0 : "cornflowerblue", 1 : "orange", 2 : "lightgreen"}
+    color_dict_violin = {0 : "cornflowerblue", 1 : "orange", 2 : "lightgreen"}
     legend_show = [True]+[False]*5
 
     for row in range(1,rows+1):
@@ -402,11 +402,11 @@ def update_violin(tols,segment):
                 y = df_tol[segment].squeeze()
                 if i == 0:
                     fig.add_trace(go.Violin(x = x,
-                                y = y,line_color = color_dict.get(tol),
+                                y = y,line_color = color_dict_violin.get(tol),
                                 name = f"Tolerance {tol}", hoverinfo = 'none'),row = row, col = col)
                 else:
                     fig.add_trace(go.Violin(x = x,
-                                y = y,line_color = color_dict.get(tol),
+                                y = y,line_color = color_dict_violin.get(tol),
                                 showlegend = False,hoverinfo = 'none'),row = row, col = col)
 
             i+=1
@@ -442,23 +442,23 @@ def update_boxplot(tols,segment):
 
     i = 0
     # color_dict = {"GTvsDL": "cornflowerblue", "GTvsDLB": "orange", "GTvsATLAS" : "lightgreen"}
-    color_dict = {0 : "cornflowerblue", 1 : "orange", 2 : "lightgreen"}
+    color_dict_boxplot = {0 : "cornflowerblue", 1 : "orange", 2 : "lightgreen"}
     legend_show = [True]+[False]*5
 
     for row in range(1,rows+1):
         for col in range(1,cols+1):
-            df = df_violin[df_violin["Metric"]==metrics[i]]
+            df = df_boxplot[df_boxplot["Metric"]==metrics[i]]
             for tol in tols:
                 df_tol = df[df["Tolerance"]==tol]
                 x = df_tol["Comparison"].squeeze()
                 y = df_tol[segment].squeeze()
                 if i == 0:
                     fig.add_trace(go.Box(x = x,
-                                y = y,line_color = color_dict.get(tol),
+                                y = y,line_color = color_dict_boxplot.get(tol),
                                 name = f"Tolerance {tol}", boxpoints = False),row = row, col = col)
                 else:
                     fig.add_trace(go.Box(x = x,
-                                y = y,line_color = color_dict.get(tol),
+                                y = y,line_color = color_dict_boxplot.get(tol),
                                 showlegend = False, boxpoints = False),row = row, col = col)
 
                                 
