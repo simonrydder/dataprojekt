@@ -1,5 +1,4 @@
 import pandas as pd
-from ast import literal_eval
 
 #Dataframe for mean plot
 df = pd.read_csv("..\\data\\results\\performance_median.csv")

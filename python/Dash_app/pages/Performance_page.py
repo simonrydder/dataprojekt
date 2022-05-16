@@ -19,6 +19,7 @@ layout = html.Div([
             html.Br(),
             html.H3('Barplot of median performance', style = Styletitles),
             dbc.Row([
+                dbc.Col(["Segments"],width = 1, align = "center"),
                 dbc.Col([
                         dcc.Dropdown(id="slct_segment", # dropdown for segment for mean performance
                         options =segments,
@@ -26,31 +27,33 @@ layout = html.Div([
                         value = [segments[0]],
                         clearable = True)
 
-                ], width = 9),
+                ], width = 8),
                 dbc.Col([
                         dbc.Checklist(options =  #Toggle option for tolerance
                         [{"label": "Show Tolerance options", "value": 1}],
                         value=[1],
                         id="tolerance_toggle",
                         switch=True)
-                ],width = 3)
+                ],width = 3, align = "center")
             ]),
 
             dbc.Row([
+                dbc.Col(["Metrics"],width = 1, align = "center"),
                 dbc.Col([
                         dcc.Dropdown(id="slct_metrics", # Dropdown for metrics for mean performance 
                         options =metrics,
                         multi = True,
                         value = metrics,
                         clearable = True)
-                ],width = 6),
+                ],width = 8)]),
+            dbc.Row([
+                dbc.Col(["Methods"],width = 1, align = "center"),
                 dbc.Col([ dcc.Dropdown(id="slct_comp", #Dropdown for comparisons for mean performance
                             options =comparisons,
                             multi = True,
                             value = comparisons,
                             clearable = True)
-                ],width = 6)
-            ],className="g-0"),
+                ],width = 8)]),
             html.Br(),
             dcc.Graph(id = "figure_perf", figure = {}), #Initializing mean performance figure
 
@@ -62,13 +65,17 @@ layout = html.Div([
             html.Br(),
             html.H3('Violinplots', style = Styletitles),
             dbc.Row([
+                dbc.Col(["Segment"], width = 1),
                 dbc.Col([ 
                     dcc.Dropdown(id="violin_segment", # dropdown for metrics for violin plot
                         options =boxplot_segments, 
                         multi = False,
                         value = [boxplot_segments[0]],
                         clearable = False)
-                ], width = 4),
+                ], width = 4)
+            ]),
+            dbc.Row([
+                dbc.Col(["Tolerance"], width = 1),
                 dbc.Col([
                     dcc.Dropdown(id="violin_comp", # dropdown for comparisons for violin plot
                         options = tolerances,
@@ -76,7 +83,7 @@ layout = html.Div([
                         value = [tolerances[0]],
                         clearable = True)
                 ], width = 4)
-            ],className="g-0"),
+            ]),
             #Defining subplots for violin plots
             html.Br(),
             dcc.Graph(id = "figure_violin", figure = {},style = {"height": 700}),
@@ -107,6 +114,7 @@ layout = html.Div([
 ###         
             html.H3('Scatterplots', style = Styletitles),
             dbc.Row([
+                dbc.Col(["Segment"], width = 1,align = "center"),
                 dbc.Col([
                         dcc.Dropdown(id="scatter_segments", # dropdown for 
                             options = segments,
@@ -114,14 +122,14 @@ layout = html.Div([
                             value = segments[0],
                             clearable = False),
 
-                ],width = 7),
+                ],width = 4),
                 dbc.Col([
                         dbc.Checklist(options =  #Toggle option for tolerance
                         [{"label": "Show Tolerance options", "value": 1}],
                         value=[1],
                         id="tolerance_toggle_scatter",
                         switch=True)
-                ], width={"size": 3, "offset": 1})
+                ], width={"size": 3, "offset": 1}, align = "center")
 
             ],className="g-0"),
             html.Br(),

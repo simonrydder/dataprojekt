@@ -79,6 +79,7 @@ content = html.Div(id="page-content", style=CONTENT_STYLE, children= [
                 value = [segments[0]]), 
     dcc.Dropdown(id="violin_comp",
                 value = [tolerances[0]]),   
+    dcc.Graph(id = 'epl_vis'),
     dcc.Dropdown(id="boxplot_segment",
                 value = [segments[0]]), 
     dcc.Dropdown(id="boxplot_comp",
