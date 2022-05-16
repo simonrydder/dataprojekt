@@ -390,7 +390,7 @@ def update_violin(tols,segment):
 
     i = 0
     # color_dict = {"GTvsDL": "cornflowerblue", "GTvsDLB": "orange", "GTvsATLAS" : "lightgreen"}
-    color_dict_violin = {0 : "cornflowerblue", 1 : "orange", 2 : "lightgreen"}
+    color_dict= {0 : "cornflowerblue", 1 : "orange", 2 : "lightgreen"}
     legend_show = [True]+[False]*5
 
     for row in range(1,rows+1):
@@ -402,11 +402,11 @@ def update_violin(tols,segment):
                 y = df_tol[segment].squeeze()
                 if i == 0:
                     fig.add_trace(go.Violin(x = x,
-                                y = y,line_color = color_dict_violin.get(tol),
+                                y = y,line_color = color_dict.get(tol),
                                 name = f"Tolerance {tol}", hoverinfo = 'none'),row = row, col = col)
                 else:
                     fig.add_trace(go.Violin(x = x,
-                                y = y,line_color = color_dict_violin.get(tol),
+                                y = y,line_color = color_dict.get(tol),
                                 showlegend = False,hoverinfo = 'none'),row = row, col = col)
 
             i+=1
@@ -442,7 +442,7 @@ def update_boxplot(tols,segment):
 
     i = 0
     # color_dict = {"GTvsDL": "cornflowerblue", "GTvsDLB": "orange", "GTvsATLAS" : "lightgreen"}
-    color_dict_boxplot = {0 : "cornflowerblue", 1 : "orange", 2 : "lightgreen"}
+    color_dict = {0 : "cornflowerblue", 1 : "orange", 2 : "lightgreen"}
     legend_show = [True]+[False]*5
 
     for row in range(1,rows+1):
@@ -454,11 +454,11 @@ def update_boxplot(tols,segment):
                 y = df_tol[segment].squeeze()
                 if i == 0:
                     fig.add_trace(go.Box(x = x,
-                                y = y,line_color = color_dict_boxplot.get(tol),
+                                y = y,line_color = color_dict.get(tol),
                                 name = f"Tolerance {tol}", boxpoints = False),row = row, col = col)
                 else:
                     fig.add_trace(go.Box(x = x,
-                                y = y,line_color = color_dict_boxplot.get(tol),
+                                y = y,line_color = color_dict.get(tol),
                                 showlegend = False, boxpoints = False),row = row, col = col)
 
                                 
