@@ -501,11 +501,11 @@ def update_violin(tols,segment):
                 if i == 1: # 0 has DICE metric, which do NOT have tol but i = 1 (Line_Ratio) has. 
                     fig.add_trace(go.Violin(x = x,
                                 y = y,line_color = color_dict.get(tol),
-                                name = f"Tolerance {tol}", hoverinfo = 'none'),row = row, col = col)
+                                name = f"Tolerance {tol}", hoverinfo = 'none', legendgroup = tol),row = row, col = col)
                 else:
                     fig.add_trace(go.Violin(x = x,
                                 y = y,line_color = color_dict.get(tol),
-                                showlegend = False,hoverinfo = 'none'),row = row, col = col)
+                                showlegend = False,hoverinfo = 'none', legendgroup = tol),row = row, col = col)
 
             i+=1
 
@@ -553,11 +553,13 @@ def update_boxplot(tols,segment):
                 if i == 1: # 0 has DICE metric, which do NOT have tol but i = 1 (Line_Ratio) has. 
                     fig.add_trace(go.Box(x = x,
                                 y = y,line_color = color_dict.get(tol),
-                                name = f"Tolerance {tol}", boxpoints = False),row = row, col = col)
+                                name = f"Tolerance {tol}", boxpoints = False, 
+                                legendgroup = tol),row = row, col = col)
                 else:
                     fig.add_trace(go.Box(x = x,
                                 y = y,line_color = color_dict.get(tol),
-                                showlegend = False, boxpoints = False),row = row, col = col)
+                                showlegend = False, boxpoints = False,
+                                legendgroup = tol),row = row, col = col)
 
                                 
 

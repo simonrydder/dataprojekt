@@ -512,6 +512,7 @@ def update_epl_vis(slider, patient, segment, method, tolerance):
 old_slice = 0
 old_plus_clicks = None
 old_minus_clicks = None
+old_segment = None
 
 #Change slider value dynamically when chancing tolerance,method,segment and patient
 
@@ -529,6 +530,7 @@ def change_slider_value(patient,segment,method,tolerance,plus,minus):
     global old_slice 
     global old_plus_clicks
     global old_minus_clicks
+    global old_segment
     #Finding correct data
     if patient != None and segment != None and method != None and tolerance != None:
         df_patient = df_slices[df_slices["ID"]==patient] 
@@ -537,7 +539,7 @@ def change_slider_value(patient,segment,method,tolerance,plus,minus):
         df_patient = df_patient[df_patient["Tolerance"]==int(tolerance)]
 
         # Checking if the former slice index is in the range when changing patient, segment etc.
-        if df_patient["Index"].min() <= old_slice <=  df_patient["Index"].max():
+        if df_patient["Index"].min() <= old_slice <=  df_patient["Index"].max() and segment == old_segment:
             new_slice = old_slice
         else:
             new_slice = df_patient["Index"].min()
@@ -555,6 +557,7 @@ def change_slider_value(patient,segment,method,tolerance,plus,minus):
         old_plus_clicks = plus
         old_minus_clicks = minus
         old_slice = new_slice
+        old_segment = segment
     
         return [new_slice]
     else:
