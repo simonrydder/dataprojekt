@@ -31,18 +31,20 @@ layout = html.Div([
                     dcc.Dropdown(id = "patient", # Dropdown for Patient for EPL plot
                         options = patients_slider, 
                         multi = False,
-                        value = patients_slider[0],
+                        value = None,
                         style = {"cursor": "pointer"},
-                        clearable = False)
+                        clearable = True,
+                        placeholder = "Select a Patient")
                 ],width = 3),
 
                 dbc.Col([ 
                     dcc.Dropdown(id = "segment_slider", #Dropdown for segments for EPL plot
                         options = segments_slider,
                         multi = False,
-                        value = segments_slider[0],
+                        value = None,
                         style = {"cursor": "pointer"},
-                        clearable = False)
+                        clearable = True,
+                        placeholder = "Select a segment")
                 ],width = 2),
 
                 dbc.Col([
@@ -58,9 +60,10 @@ layout = html.Div([
                     dcc.Dropdown(id = "method_slider", #Dropdown for Method for EPL plot
                         options = comparisons,
                         multi = False,
-                        value = comparisons[0],
+                        value = None,
                         style = {"cursor": "pointer"},
-                        clearable = False)
+                        clearable = True,
+                        placeholder = "Select a method")
                 ],width = 3),
 
                 
@@ -68,9 +71,10 @@ layout = html.Div([
                     dcc.Dropdown(id = "tolerance_slider", #Dropdown for Tolerance for EPL plot
                         options = tolerances,
                         multi = False,
-                        value = tolerances[0],
+                        value = None,
                         style = {"cursor": "pointer"},
-                        clearable = False)
+                        clearable = True,
+                        placeholder = "Select a tolerance")
                 ],width = 2),
 
                 dbc.Col([
@@ -120,7 +124,31 @@ def update_slider(slider,patient,segment,method,tolerance):
     global old_method
     global old_tolerance
     global old_slice
+    color = "Darkcyan"
+    axes = ["xaxis","xaxis2","xaxis3","xaxis4","xaxis5","xaxis6"]
     metrics = ["EPL","LineRatio","VolumeRatio","DICE","Haus","MSD"]
+    if patient == None or segment == None or method == None or tolerance == None:
+        print("here")
+        fig3 = go.Figure(go.Scatter(x=[],y=[]))
+        fig4 = make_subplots(6,1)
+        for idx, metric in enumerate(metrics):
+            fig4.add_trace(
+                    go.Bar(x = [0], 
+                    y = [metric], 
+                    orientation = "h", # Horizontal plot
+                    showlegend = False
+                    ),
+            idx+1,1)
+            fig4["layout"][axes[idx]].update(
+                                         showticklabels=True, 
+                                         visible = False)
+        max = 1
+        min = 0
+        fig4.update_layout(title = f"Performance for the slice")
+        return [fig3,fig4,max,min]
+
+    
+
     
     #filtering data
     df_slice = df_slices[df_slices["ID"]==patient]
@@ -222,8 +250,6 @@ def update_slider(slider,patient,segment,method,tolerance):
 
     fig4 = make_subplots(6,1)  #Initialzing subplots
     
-    color = "Darkcyan"
-    axes = ["xaxis","xaxis2","xaxis3","xaxis4","xaxis5","xaxis6"]
     #plotting for each metric
     for idx, metric in enumerate(metrics):
         value = df_perf[metric].iloc[0] #The value for for metric
@@ -273,29 +299,32 @@ def change_slider_value(patient,segment,method,tolerance,plus,minus):
     global old_plus_clicks
     global old_minus_clicks
     #Finding correct data
-    df_patient = df_slices[df_slices["ID"]==patient] 
-    df_patient = df_patient[df_patient["Segment"]==segment]
-    df_patient = df_patient[df_patient["Comparison"]==method]
-    df_patient = df_patient[df_patient["Tolerance"]==int(tolerance)]
+    if patient != None and segment != None and method != None and tolerance != None:
+        df_patient = df_slices[df_slices["ID"]==patient] 
+        df_patient = df_patient[df_patient["Segment"]==segment]
+        df_patient = df_patient[df_patient["Comparison"]==method]
+        df_patient = df_patient[df_patient["Tolerance"]==int(tolerance)]
 
-    # Checking if the former slice index is in the range when changing patient, segment etc.
-    if df_patient["Index"].min() <= old_slice <=  df_patient["Index"].max():
-        new_slice = old_slice
-    else:
-        new_slice = df_patient["Index"].min()
-    
-
-    # applying plus button if still less than max index
-    if plus != old_plus_clicks and  new_slice < df_patient["Index"].max():
-        new_slice += 1
-    
-    # applying minus button if still higher than min index
-    if minus != old_minus_clicks and df_patient["Index"].min() < new_slice:
-        new_slice -= 1
+        # Checking if the former slice index is in the range when changing patient, segment etc.
+        if df_patient["Index"].min() <= old_slice <=  df_patient["Index"].max():
+            new_slice = old_slice
+        else:
+            new_slice = df_patient["Index"].min()
         
-    # Assigning global variables new values
-    old_plus_clicks = plus
-    old_minus_clicks = minus
-    old_slice = new_slice
+
+        # applying plus button if still less than max index
+        if plus != old_plus_clicks and  new_slice < df_patient["Index"].max():
+            new_slice += 1
+        
+        # applying minus button if still higher than min index
+        if minus != old_minus_clicks and df_patient["Index"].min() < new_slice:
+            new_slice -= 1
+            
+        # Assigning global variables new values
+        old_plus_clicks = plus
+        old_minus_clicks = minus
+        old_slice = new_slice
     
-    return [new_slice]
+        return [new_slice]
+    else:
+        return [None]
