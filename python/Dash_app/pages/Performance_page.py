@@ -8,6 +8,7 @@ import dash_bootstrap_components as dbc
 import numpy as np
 import pandas as pd
 from plotly.subplots import make_subplots
+from numpy import isnan
 
 Style = {'textAlign': 'center', "border-bottom":"2px black solid"}
 Styletitles = {'textAlign': 'left'}
@@ -101,7 +102,7 @@ layout = html.Div([
                             value = segments[0],
                             clearable = False),
 
-                ],width = 4),
+                ],width = 3),
                 dbc.Col([
                         dbc.Checklist(options =  #Toggle option for tolerance
                         [{"label": "Show Tolerance options", "value": 1}],
@@ -111,6 +112,23 @@ layout = html.Div([
                 ], width={"size": 3, "offset": 1}, align = "center")
 
             ],className="g-0"),
+            dbc.Row([
+                dbc.Col(["x-axis"], width = 1,align = "center"),
+                dbc.Col([
+                        dcc.Dropdown(id="x-axis", # dropdown for 
+                            options = ["DL","DLB","ATLAS"],
+                            multi = False,
+                            value = "DL",
+                            clearable = False)],width = 2),
+                dbc.Col(["y-axis"], width = 1,align = "center"),
+                dbc.Col([
+                        dcc.Dropdown(id="y-axis", # dropdown for 
+                            options = ["DL","DLB","ATLAS"],
+                            multi = False,
+                            value = "DLB",
+                            clearable = False)],width = 2),
+
+            ]),
             html.Br(),
             dcc.Graph(id = "figure_scatter", figure = {},style = {"height": 700})
             
@@ -189,7 +207,7 @@ def update_dropdown_options_comp(values):
     Input("slct_segment", "value")])
 
 def toggle_tolerance(toggle,current):
-    # When turned on return the all segments and value is the current
+    # When turned on return all segments and value is the current
     if len(toggle) == 1:
         options = segments
         values = current
@@ -233,34 +251,49 @@ def generate_csv(n_clicks):
 ###
 @callback(
     [Output(component_id="figure_scatter", component_property="figure")],
-    [Input(component_id="scatter_segments", component_property="value")])
+    [Input(component_id="scatter_segments", component_property="value"),
+    Input(component_id="y-axis", component_property="value"),
+    Input(component_id="x-axis", component_property="value")])
 
-def update_scatter(segments):
-    
+def update_scatter(segments,yaxis,xaxis):
+    n_points = {"DICE":[],"EPL":[],"MSD":[],"LineRatio":[],"VolumeRatio": [],"Hausdorff": []}
+    legend_plottet = {"red": False, "darkcyan": False, "black": False}
     df = df_scatter[df_scatter["Segment"].isin([segments])]
-    
     rows = 2
     cols = 3
+    title = {"DL": "Deep Learning", 
+            "DLB": "Deep Learning Bounded", 
+            "ATLAS": "ATLAS"}
 
     fig = make_subplots(rows,cols,
-                        x_title="Deep learning",
-                        y_title="Deep learning bounded",
+                        x_title=title.get(xaxis),
+                        y_title=title.get(yaxis),
                         subplot_titles = metrics)
     
-    legend_text = {"darkcyan": "DL outperforms DLB","black": "Equal performance", "red": "DLB outperforms DL"}
-    black_plottet = False
-    cyan_plottet = False
+    legend_text = {"darkcyan": f"{xaxis} outperforms {yaxis}",
+                    "black": "Equal performance", 
+                    "red": f"{yaxis} outperforms {xaxis}"}
     
-
-
     i = 0
     for row in range(1,rows+1):
         for col in range(1,cols+1):
             df_metric = df[df["Metric"] == metrics[i]]
-            x_temp = df_metric["GTvsDL"]
-            x_min = np.nanmin(x_temp)*0.95
+            x_temp = df_metric[f"GTvs{xaxis}"]
+            y_temp = df_metric[f"GTvs{yaxis}"]
+            x_min = np.nanmin(x_temp)*0.7
             x_max = np.nanmax(x_temp)*1.05
-            x_line = np.linspace(x_min,x_max,100)
+            y_min = np.nanmin(y_temp)*0.7
+            y_max = np.nanmax(y_temp)*1.05
+            # if metrics[i] in ["DICE","LineRatio","VolumeRatio"]:
+            #     max_range = x_max if x_max > y_max else y_max
+            #     min_range = x_min if x_min < y_min else y_min
+            # else:
+            max_range = x_max if x_max > y_max else y_max
+            min = x_min if x_min < y_min else y_min
+            min_range = min-0.1*max_range
+            x_line = np.linspace(min_range,max_range,100)
+            fig.update_xaxes(range=[min_range,max_range], col = col, row = row)
+            fig.update_yaxes(range=[min_range,max_range], col = col, row = row)
             if i == 0:
                 fig.add_trace(
                                     go.Scatter(
@@ -287,14 +320,27 @@ def update_scatter(segments):
 
             for color in ["darkcyan","black","red"]:
                 if metrics[i] == "DICE":
-                    df_col = df_metric[df_metric["Color_Dice"]==color]
+                    df_col = df_metric[df_metric[f"Color_Dice_{xaxis}{yaxis}"]==color]
+                    colors = [x for x,comp1,comp2 in 
+                    zip(df_col[f"Color_Dice_{xaxis}{yaxis}"],
+                        df_col["GTvs" + xaxis],
+                        df_col["GTvs" + yaxis]) 
+                        if not isnan(comp1) and not isnan(comp2)]
+                    n_color = len(colors)
                 else:
-                    df_col = df_metric[df_metric["Color"]==color]
-
-                x = df_col["GTvsDL"]
-                y = df_col["GTvsDLB"]
-
-                if i == 0:
+                    df_col = df_metric[df_metric[f"Color_{xaxis}{yaxis}"]==color]
+                    colors = [x for x,comp1,comp2 in 
+                    zip(df_col[f"Color_{xaxis}{yaxis}"],
+                        df_col["GTvs" + xaxis],
+                        df_col["GTvs" + yaxis]) 
+                        if not isnan(comp1) and not isnan(comp2)]
+                    n_color = len(colors)
+                    
+                n_points[metrics[i]].append(n_color)
+                
+                x = df_col["GTvs" + xaxis]
+                y = df_col["GTvs" + yaxis]
+                if not legend_plottet.get(color) and n_color != 0:
                     fig.add_trace(
                             go.Scatter(
                                 x = x,
@@ -303,9 +349,9 @@ def update_scatter(segments):
                                 name = legend_text.get(color),
                                 legendgroup = color,
                                 marker = dict(color = 
-                                ["darkcyan" if x > y 
-                                else "red" if x < y else "black" for x,y in zip(x,y)])),
+                                colors)),
                                 row = row, col = col)
+                    legend_plottet[color] = True
                                 
                 else:
                     fig.add_trace(
@@ -317,25 +363,55 @@ def update_scatter(segments):
                                 showlegend = False,
                                 legendgroup = color,
                                 marker = dict(color = 
-                                ["red" if x > y else 
-                                "darkcyan" if x < y else "black" for x,y in zip(x,y)])),
+                                colors)),
                                 row = row, col = col)
             
             i+=1
-            
-
+        
     fig.update_layout(template=plot_theme,
-    title_text="Performance between ATLAS and Deep Learning model",
-    title_x = 0.05,
-    title_y = 0.97,
-    legend=dict(
+                        legend=dict(
                         orientation="h",
-                        y=1.1  
+                        y=1.15  
                         ))
 
+    fig.for_each_annotation(lambda a: a.update(text = a.text + '<br>' +
+                            f"{xaxis} best: " + str(n_points.get(a.text)[0]) + 
+                            "   Equal: " + str(n_points.get(a.text)[1]) + 
+                            f"   {yaxis} best: " + str(n_points.get(a.text)[2])) 
+                            if a.text not in 
+                            title.values()
+                            else None)
 
     return [fig]
 
+# Swap x and y axis if x == y
+@callback(
+    [Output("x-axis", "value"),
+    Output("y-axis", "value")],
+    [Input("x-axis", "value"),
+    Input("y-axis", "value")])
+
+def swap_xaxis_yaxis(x,y):
+    global old_x_axis
+    global old_y_axis 
+    if x == y and old_x_axis != x:
+        value_y = old_x_axis
+        value_x = x
+    elif x == y and old_y_axis != y:
+        value_y = y
+        value_x = old_y_axis
+    else:
+        value_y = y
+        value_x = x
+    
+    old_x_axis = value_x
+    old_y_axis = value_y
+
+    return [value_x,value_y]
+
+
+
+# Tolerance Toggle Scatter plots
 @callback(
     [Output("scatter_segments", "options"),
     Output("scatter_segments", "value")],
@@ -354,7 +430,6 @@ def toggle_tolerance_Scatter(toggle,current):
         else:
             value = options[0]
     
-    # if No 0 Tolerance was in the values set the value equal to the first segment
 
     return [options,value]
 
@@ -380,7 +455,6 @@ def update_violin(tols,segment):
     i = 0
     # color_dict = {"GTvsDL": "cornflowerblue", "GTvsDLB": "orange", "GTvsATLAS" : "lightgreen"}
     color_dict = {0 : "cornflowerblue", 1 : "orange", 2 : "lightgreen"}
-    legend_show = [True]+[False]*5
 
     for row in range(1,rows+1):
         for col in range(1,cols+1):
@@ -401,11 +475,8 @@ def update_violin(tols,segment):
             i+=1
 
     fig.update_layout(violinmode='overlay',
-    template=plot_theme,
-    legend=dict(
-                        orientation="h",
-                        y=1.1  
-                        ))
+                        template=plot_theme,
+                        legend=dict(orientation="h", y=1.1))
 
 
         
