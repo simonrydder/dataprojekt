@@ -90,13 +90,17 @@ layout = html.Div([
             html.Br(),
             html.H3('Boxplots', style = Styletitles),
             dbc.Row([
+                dbc.Col(["Segment"], width = 1),
                 dbc.Col([ 
                     dcc.Dropdown(id="boxplot_segment", # dropdown for metrics for violin plot
                         options =boxplot_segments, 
                         multi = False,
                         value = [boxplot_segments[0]],
                         clearable = False)
-                ], width = 4),
+                ], width = 4)
+            ]),
+            dbc.Row([
+                dbc.Col(["Tolerance"], width = 1),
                 dbc.Col([
                     dcc.Dropdown(id="boxplot_comp", # dropdown for comparisons for violin plot
                         options = tolerances,
@@ -104,8 +108,8 @@ layout = html.Div([
                         value = [tolerances[0]],
                         clearable = True)
                 ], width = 4)
-            ],className="g-0"),
-            #Defining subplots for violin plots
+            ]),
+            #Defining subplots for boxplots
             html.Br(),
             dcc.Graph(id = "figure_boxplot", figure = {},style = {"height": 700}),
             html.Br(),
