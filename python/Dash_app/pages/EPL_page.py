@@ -1,6 +1,4 @@
-import plistlib
 from dash import dcc, html, Input, Output, callback
-from matplotlib.pyplot import margins
 from dataloading import comparisons, tolerances, patients_slider,segments_slider, plot_theme, df_slices
 import dash_daq as daq
 import pandas as pd
