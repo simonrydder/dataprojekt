@@ -1,3 +1,9 @@
-Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test Test test test 
+This page is created to give a visual presentation of the 'Edited Path 
+Length' implementation. After selecting a 'Patient' (anonymized ID), a segment 
+(Organ at Risk), method and tolerance the figure will show two plots. On the
+**left** the 'Ground Truth'-points (black dots), the 'Edited Path Length' (darkcyan 
+dotted line) and the 'Guess' of the selected model (orange dotted line) from the
+selected slice. 
 
-Vi gør sådan her.. fint plot.. vi er dygtige..
+By using the slider or (+/-)-buttoms it is possible to illustrate different
+slices of the segment (organ). 
