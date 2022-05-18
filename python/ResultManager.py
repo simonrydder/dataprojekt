@@ -35,7 +35,7 @@ def GenerateResults(
     Patients,           # Iterable object of tuples with ID and Date
     Tolerance = 0,      
     overwrite = False,  # True : Will create new files.
-    root = '..\\data\\results\\dataframes\\'):
+    root = '../data/results/dataframes/'):
 
     # Checks for correct slicing
     assert isinstance(Segments, list), 'Incorrect slicing - not a list'
@@ -43,7 +43,7 @@ def GenerateResults(
     assert isinstance(Patients, set), 'Incorrect slicing - not a set'
 
     # Output folder
-    folder = root + f'Tolerance{Tolerance}\\'
+    folder = root + f'Tolerance{Tolerance}/'
 
     # Checks if output folder exists otherwise create
     if not os.path.exists(folder):
@@ -97,9 +97,9 @@ def GenerateResults(
 
 
 def MergeResults(Tolerance,
-    location = '..\\data\\results\\', folder = 'dataframes\\'):
+    location = '../data/results/', folder = 'dataframes/'):
     
-    folder = folder + f'Tolerance{Tolerance}\\'
+    folder = folder + f'Tolerance{Tolerance}/'
     files = os.listdir(location + folder)
 
     dfs = []
@@ -178,7 +178,7 @@ def GenerateSliceResults(
     Patients,           # Iterable object of tuples with ID and Date
     Tolerance = 0,      
     overwrite = False,  # True : Will calculate new values for files loaded.
-    root = '..\\data\\sliceresults\\dataframes\\'):
+    root = '../data/sliceresults/dataframes/'):
 
     # Checks for correct slicing
     assert isinstance(Segments, list), 'Incorrect slicing - not a list'
@@ -186,7 +186,7 @@ def GenerateSliceResults(
     assert isinstance(Patients, set), 'Incorrect slicing - not a set'
 
     # Output folder
-    folder = root + f'Tolerance{Tolerance}\\'
+    folder = root + f'Tolerance{Tolerance}/'
 
     # Checks if output folder exists otherwise create
     if not os.path.exists(folder):
@@ -264,38 +264,32 @@ def GenerateSliceResults(
                 print(f'{file} saved to {folder}\n')
 
 
-def MergeSliceResults(filename,
-    location = '..\\data\\sliceresults\\', folder = 'dataframes\\'):
+def MergeSliceResults(Tolerance,
+    location = '../data/sliceresults/', folder = 'dataframes/'):
     
-    tolFolders = os.listdir(location + folder)
+    folder = folder + f'Tolerance{Tolerance}/'
+    files = os.listdir(location + folder)
 
     dfs = []
+    for file in files:
+        comparison, segment, _ = file.split('.')[0].split('&')
+        
+        df = pd.read_csv(location + folder + file)
+        df['Comparison'] = [comparison] * len(df)
+        df['Segment'] = [segment] * len(df)
+        cols = df.columns.to_list()
+        df = df[cols[:3] + cols[-2:] + cols[3:-2]]
+        dfs.append(df)
 
-    for tolFolder in tolFolders:
-
-        for file in os.listdir(location + folder + tolFolder):
-            comparison, segment, tol = file.split('.')[0].split('&')
-
-            df = pd.read_csv(location + folder + tolFolder + '\\' + file)
-            df = df.reset_index(drop = True)
-            N = len(df)
-            df['Comparison'] = [comparison] * N
-            df['Segment'] = [segment] * N
-            df['Tolerance'] = [int(tol[-1])] * N
-            
-            cols = list(df.columns)
-            df = df[cols[:3] + cols[-3:] + cols[3:-3]]
-
-            dfs.append(df)
-
-    df_final = pd.concat([*dfs])
-
-    df_final.to_csv(location + filename, index = False)
+    merged = pd.concat([*dfs])
+    
+    filename = f'total_tolerance{Tolerance}.csv'
+    merged.to_csv(location + filename)
     print(f'Merged completed: {filename} saved in {location}\n')
 
 
 def PatientKeys(n = "All"):
-    dir = "..\\data\\data\\GT"
+    dir = "../data/data/GT"
     files = os.listdir(dir)
     if isinstance(n, int):
         files = files[:n]
@@ -352,5 +346,4 @@ if __name__ == "__main__":
     for Tolerance in Tolerances:
         print(f'\n{Tolerance = }')
         GenerateSliceResults(Segments, Comparisons, Patients, Tolerance, overwrite)
-    
-    MergeSliceResults('total.csv')
+        MergeSliceResults(Tolerance, location = '../data/sliceresults/')
