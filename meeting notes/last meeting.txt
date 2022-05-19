@@ -1,0 +1,22 @@
+Sidste meeting
+
+ændr akser i epl vis. måske bare fjern tal og lav streger. 
+epl performance på slices skal justeres så den er relativ til max
+grid ændres. kun lige fornemme det. 
+barplot, for _1_2 fjern alt undtagen epl, lratio, vratio
+rækkefølge på subplots, standard metrikke øverst. (alle plots!). 
+they like scatterplots
+enheder på akserne. 
+fane med konklusion - ifht eksamen. hvad kan de forskellige metrikker osv. 
+løfte det lidt op - vise en dybere forståelse. 
+de nyere metrikker kan også fortolkes på der. 
+perspektivere. 
+vise at nogle organer er metoder ik så vigtigt fx. 
+værdien i de forskellge plots på per overview. hvad er de egnet til? hvorfor flere?
+vi kan ikke udtale os endeligt, men ud fra data kan vi godt sige lidt
+dlb ikke problem.
+usikkerheden i GT. Link med tol. den perfekte segmentation. 
+
+vi sletter alt data til sidst.
+ryd op i github
+
