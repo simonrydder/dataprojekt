@@ -1,5 +1,0 @@
-../data/results/preformance_median.csv
-../data/results/scatter_data.csv
-../data/results/merged_total.csv
-../data/results/merged_total_no_outliers.csv
-../data/sliceresults/merged_total.csv

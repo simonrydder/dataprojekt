@@ -467,6 +467,47 @@ def generate_scatter(
     print(f'Scatter data completed: {filename} saved in {location}\n')
 
 
+
+def generate_performance(
+    location = '../data/results/', # Output folder
+    filename = 'performance_median.csv', # Output file name
+    file = 'total_merged.csv'   # Input file
+):
+    df = pd.read_csv(location + file)
+    df = df.drop('Date', axis = 1)
+    
+    segments = df.columns[3:-1]
+
+    df = pd.melt(
+        frame = df,
+        id_vars = ['ID', 'Metric', 'Comparison', 'Tolerance'],
+        value_vars = segments,
+        var_name = 'Segment'
+    )
+
+    df['Segment'] = df['Segment'] + '_' + df['Tolerance'].astype(str)
+    df = df.drop('Tolerance', axis = 1)
+
+    df['Segment'] = df['Segment'].apply(lambda x : re.sub(r'_[0]', '', x))
+
+    df = df.groupby(['Comparison', 'Metric', 'Segment']).median().reset_index()
+
+    df.dropna(inplace = True)
+    df = df.reset_index(drop = True)
+
+    df.to_csv(location + filename, index = False)
+    print(f'Performance median completed: {filename} saved in {location}\n')
+
+def generate_outlier(
+    location = '../data/results/', # Output folder
+    noOutliers = 'total_merged_no_outlers.csv',
+    Outliers = 'total_merged_only_outliers.csv'
+):
+
+    pass
+
+
+
 def main():
     Segments = list(OAR_Image.OARs.keys())[2:]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB'), ('GT', 'ATLAS')}
@@ -491,9 +532,9 @@ def main():
     #     Tolerances = {0, 1, 2}
     # )
 
-    generate_scatter()
+    # generate_scatter()
 
-
+    generate_performance()
 
 def test():
 
