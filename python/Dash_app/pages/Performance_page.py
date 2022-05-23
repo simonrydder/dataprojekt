@@ -192,7 +192,7 @@ def update_graph(slct_metrics, slct_segment,slct_comp):
     fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1])) # changes subplot title
 
 
-    #Changes range of yaxis to [0,1] for "DICE", "LineRatio", "VolumeRatio"
+    # Changes range of yaxis to [0,1] for "DICE", "LineRatio", "VolumeRatio"
     plots = []
     axes = ["yaxis","yaxis2","yaxis3","yaxis4","yaxis5","yaxis6"]
     fig.for_each_annotation(lambda trace: plots.append(trace.text))
@@ -270,7 +270,7 @@ def update_dropdown_options_comp(values):
 
 # Load the correct csv file and make it downloadable:
 
-result_file = pd.read_csv("..\\data\\results\\performance_median.csv", index_col=0)
+result_file = pd.read_csv("../data/results/performance_median.csv", index_col=0)
 
 @callback(
     Output("download", "data"),

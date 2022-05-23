@@ -1,12 +1,12 @@
 import pandas as pd
 
 #Dataframe for mean plot
-df = pd.read_csv("..\\data\\results\\performance_median.csv")
+df = pd.read_csv("../data/results/performance_median.csv")
 metrics = sorted(df["Metric"].unique().tolist())
 
 
 #Dataframe for slice plots
-df_slices = pd.read_csv("..\\data\\sliceresults\\total.csv")
+df_slices = pd.read_csv("../data/sliceresults/total.csv")
 df_slices = df_slices.drop(df_slices[df_slices["DICE"] > 10].index)
 cols_to_change = ["PointsModel","PointsGT","LinesModel","LinesChanged"]
 
@@ -15,9 +15,9 @@ for col in cols_to_change:
 
 
 #Dataframe for violin plots
-df_violin = pd.read_csv("..\\data\\results\\total_merged.csv", index_col = 0).reset_index(drop = True)
+df_violin = pd.read_csv("../data/results/total_merged.csv", index_col = 0).reset_index(drop = True)
 
-df_boxplot =pd.read_csv("..\\data\\results\\total_merged_no_outliers.csv", index_col = 0)
+df_boxplot =pd.read_csv("../data/results/total_merged_no_outliers.csv", index_col = 0)
 
 
 
@@ -36,7 +36,7 @@ segments_slider = ["brainstem","spinalcord",
                     "lips", "esophagus", "pcm_low",
                     "pcm_mid", "pcm_up", "mandible"]
 
-df_scatter = pd.read_csv("..\\data\\results\\scatter_data.csv")
+df_scatter = pd.read_csv("../data/results/scatter_data.csv")
 
 #Setting plot theme
 plot_theme = "seaborn"

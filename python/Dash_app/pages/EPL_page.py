@@ -15,7 +15,7 @@ CONTENT_STYLE = {
     "padding": "0rem 1rem",
 }
 
-with open('Dash_app\\info\\EPL_Visualization.txt') as f:
+with open('Dash_app/info/EPL_Visualization.txt') as f:
     content = [dcc.Markdown(f.read(),mathjax= True)]
 
 

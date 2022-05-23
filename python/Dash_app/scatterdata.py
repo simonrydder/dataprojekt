@@ -5,7 +5,7 @@ max_tol = 2
 dfs = []
 
 for i in range(0,max_tol+1):
-    df  = pd.read_csv(f"..\\data\\results\\total_tolerance{i}.csv")
+    df  = pd.read_csv(f"..\\data\\results2\\total_tolerance{i}.csv")
     df = df.drop("Date",axis = 1)
     if i != 0:
         df = df.add_suffix(f"_{i}")
@@ -46,9 +46,9 @@ for method in ["DL","DLB","ATLAS"]:
     
 
 
-df.to_csv("..\\data\\results\\scatter_data.csv")
+df.to_csv("..\\data\\results2\\scatter_data.csv")
 
-df = pd.read_csv("..\\data\\results\\scatter_data.csv")
+df = pd.read_csv("..\\data\\results2\\scatter_data.csv")
 
 for color in ["darkcyan","red","black"]:
     for segment in segments:
@@ -59,4 +59,4 @@ for color in ["darkcyan","red","black"]:
        'Color_Dice_DLBATLAS': color, 'Color_DLBATLAS': color,'Color_DLDL': color,'Color_DLBDLB': color,'Color_ATLASATLAS': color}
         df = df.append(new, ignore_index = True)
 
-df.to_csv("..\\data\\results\\scatter_data.csv")
+df.to_csv("..\\data\\results2\\scatter_data.csv")

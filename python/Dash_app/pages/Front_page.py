@@ -7,7 +7,7 @@ Authors = "Simon Rydder, Eskild Hjerrild Andersen & Alex Kolby"
 Supervisors =  "Stine Korreman, Mathis Ersted Rasmussen & Asger Hobolt"
 
 
-with open(f"Dash_app\\info\\Description_front_page.txt") as f:
+with open(f"Dash_app/info/Description_front_page.txt") as f:
         description =  f.read().replace("\n", "")
 
 Style_title = {'textAlign': 'center', "border-bottom":"2px black solid"}

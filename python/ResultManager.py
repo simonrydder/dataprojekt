@@ -288,7 +288,34 @@ def MergeSliceResults(Tolerance,
     print(f'Merged completed: {filename} saved in {location}\n')
 
 
-def PatientKeys(n = "All"):
+def TotalMerge(location = '../data/sliceresults/', names = 'total_tolerance'):
+
+    files = os.listdir(location)
+
+    dfs = []
+    for file in files:
+        if file.split('.')[-1] != 'csv':
+            continue
+
+        if file.split('.')[0][:-1] != names:
+            continue
+
+        tol = int(file.split('.')[0][-1])
+        df = pd.read_csv(location + file)
+        df['Tolerance'] = tol
+        dfs.append(df)
+    
+    merged = pd.concat([*dfs])
+    merged = merged.drop(merged[merged['DICE'] > 10].index)
+
+    for col in ["PointsModel","PointsGT","LinesModel","LinesChanged"]:
+        merged[col] = merged[col].replace(['set()'],['[]'])
+
+    filename = f'total_merged.csv'
+    merged.to_csv(location + filename)
+
+
+def PatientKeys(n = None):
     dir = "../data/data/GT"
     files = os.listdir(dir)
     if isinstance(n, int):
@@ -347,3 +374,5 @@ if __name__ == "__main__":
         print(f'\n{Tolerance = }')
         GenerateSliceResults(Segments, Comparisons, Patients, Tolerance, overwrite)
         MergeSliceResults(Tolerance, location = '../data/sliceresults/')
+    
+    TotalMerge()
