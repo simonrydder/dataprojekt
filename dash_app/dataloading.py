@@ -2,7 +2,7 @@ import pandas as pd
 import urllib
 
 _git_url = 'https://raw.githubusercontent.com/'
-_branch = 'simon'
+_branch = 'main'
 _main_url = f'simonrydder/dataprojekt/{_branch}/data/results/'
 _base_url = _git_url + _main_url
 _max_tol = 10
