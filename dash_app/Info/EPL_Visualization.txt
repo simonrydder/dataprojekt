@@ -1,0 +1,17 @@
+This page is created to give a visual presentation of the 'Edited Path 
+Length' implementation. After selecting a 'Patient' (anonymized ID), a segment 
+(Organ at Risk), method and tolerance the figure will show two plots. On the
+*left* side the 'Ground Truth'-points (black dots), the 'Edited Path Length' 
+(darkcyan dotted line) and the 'Guess' of the selected model (orange dotted 
+line) from the selected slice. On the *right* side a bar plot of all the 
+different metrics, showing the performance of the selected slice. 
+
+By using the slider or (+/-)-buttoms it is possible to change the slice of the 
+segment plottet. the segments is viewed from above, so when changing slice the 
+z-axis is changing, meaning we are moving down or up through the patients body.
+
+The idea with this tool is that outside readers can get a better intuition of 
+how EPL is defined, calculated and also how an added tolerance impacts this 
+metric. Finally, one can easily select a patient, segment, tolerance level 
+and switch between the different comparisons to see how their 
+segmentation differs for the individual slice. 

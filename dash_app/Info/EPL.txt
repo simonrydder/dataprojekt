@@ -1,0 +1,15 @@
+The Edited Path Length (EPL) is a novel metric introduced by Vaassen et al.
+and is conceptually the distance that an editor's (e.g doctor) cursor travels
+when making corrections to an automated segmentation (e.g created with Deep Learning). Numerically it
+is the number of voxels in the corrected segmentation surface that are not
+shared in the automated segmentation surface.
+
+Vaassen et al. demonstrated that the EPL correlates better with the time
+required to correct a segmentation than more traditional and popular metrics such
+as the volumetric Dice similarity coefficient or the Hausdorff distance. And therefore do 
+the EPL capture the expected time-savings benefit of automated segmentation
+better than traditional metrics.
+
+As illustrated in the figure below, adding (or removing) one voxel can have different effects depending of the location.
+Therefore it was decided to change the definition of EPL introduced in Vaassen et al. from number of voxels added or removed
+to the line \[mm\] added or removed.

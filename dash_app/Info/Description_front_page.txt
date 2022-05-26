@@ -1,0 +1,11 @@
+Welcome to our Dashboard. Here you can find the results of our data science project on "Performance Testing of Deep Learning 
+Autosegmentation Algorithms". 
+
+The dashboard is divided into 3 subpages, "Overview", "EPL Visualization", and "Performance Overview" which can be accessed through the sidebar on the left in the dashboard.
+
+
+* The sidepage "Overview" includes a short introduction to the project, and a chapter with a thorough explanation of the metrics used, their properties both mathematically and visually.
+* Next the page "EPL Visualization" contains a tool that visually explains how the metric 'Edited Path Length' works and yields a greater understanding of the metric. 
+* Lastly, the page "Performance Overview" sums up our results in the project in forms of barplots, boxplots and etc. 
+
+As an extra information, you are welcome to visit our GitHub repository to take a deep dive in our code and our implementation. 

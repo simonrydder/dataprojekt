@@ -1,0 +1,26 @@
+For radiation treatment of head and neck cancer patients it is crucial that the tumor receives the necessary radiation, but without damaging the surrounding organs. 
+These different surrounding organs are called **O**rgans **A**t **R**isk (OARs).
+To prevent the OARs of exceeding the amount of radiation they can tolerate, an optimization algorithm
+is applied based on a doctors delineation of the OARs on a Computed Tomography scan (CT-scan). 
+To reduce the time it takes for doctors to draw the delineation of the OARs, the clinic uses a autosegmentation algorithm called ATLAS.
+The ATLAS algorithm uses a standard mean of a human delineation to predict the placement of organs, which unfortunately are not always accurate. 
+Therefore Aarhus University Hospital has developed a Deep Learning (and Deep Learning Bounded) model to predict the placement of organs.
+The **D**eep **L**earning **B**ounded (DLB) model gets an input of the upper and lower placement bounds of a given organ from a doctor, 
+which differs from the **D**eep **L**earning (DL) model, which does not get any user inputs. 
+
+To compare the performance of the three different autosegmentation algorithms, ATLAS, DL and DLB, a common base line to compare against is needed. 
+The base line we are using is a actual delineation made by a doctor on CT-scans for patients treated with cancer, which we call the '**G**round **T**ruth' (GT).
+As illustrated on the figure on the Home page, two doctors may delineate OARs quite differently which gives a certain variation in the ground truth. Hence,
+the ground truth cannot be seen as a perfect or "correct" segmentation, but it is the best approximation we can get of the true placement of OARs. Therefore it might not always be the best base line to 
+use as a comparison, since in some case any of the models might be more accurate, due to reasons mentioned above. Potentially, this can lead to some issues regarding our results, since we might punish
+a great autosegmentation due to a poor GT segmentation. However to test whether any of the models is actually more accurate than the GT segmentation, a whole new 
+study would have to be made, which is out of the scope for this project.
+
+The most common metrics used to measure performance of segmentations today are the Sørensen-Dice coefficient (DICE), the Hausdorff Distance and/or the Mean Surface Distance (MSD),
+which all measure different qualities of the segmentation and all have their limitations. This is described in more details under *Metric Definitions*.
+As the main goal of autosegmentation is to reduce time spent on delineation, a new metric called '**E**dited **P**ath **L**ength' (EPL) is introduced, 
+which has been shown to correlate greatly with the time spent ([see Paper for more detail](/https://www.sciencedirect.com/science/article/pii/S2405631619300636)).
+
+**Note**: For some organs e i. brainstem ATLAS data is missing, due to problems with the recieved data. Hence some plots may appear empty when choosing ATLAS as method.
+
+

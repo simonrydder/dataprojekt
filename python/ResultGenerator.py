@@ -498,50 +498,37 @@ def generate_performance(
     df.to_csv(location + filename, index = False)
     print(f'Performance median completed: {filename} saved in {location}\n')
 
-def generate_outlier(
-    location = '../data/results/', # Output folder
-    noOutliers = 'total_merged_no_outlers.csv',
-    Outliers = 'total_merged_only_outliers.csv'
-):
-
-    pass
-
 
 
 def main():
     Segments = list(OAR_Image.OARs.keys())[2:]
     Comparisons = {('GT', 'DL'), ('GT', 'DLB'), ('GT', 'ATLAS')}
 
-    # generate_total_merged(
-    #     Patients = PatientKeys(),
-    #     Segments = Segments,
-    #     Comparisons = Comparisons,
-    #     Tolerances = {0, 1, 2}
-    # )
+    generate_total_merged(
+        Patients = PatientKeys(),
+        Segments = Segments,
+        Comparisons = Comparisons,
+        Tolerances = {0, 1, 2}
+    )
 
-    # generate_slice(
-    #     Patients = {
-    #         ('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129'),
-    #         ('HNCDL_447', '20170421'),
-    #         ('HNCDL_340', '20180723'),
-    #         ('HNCDL_141', '20160926'),
-    #         ('PHbmDBLzKFUqHWIbGMTmUFSmO', '20200212')
-    #     },
-    #     Segments = Segments,
-    #     Comparisons = Comparisons,
-    #     Tolerances = {0, 1, 2}
-    # )
+    generate_slice(
+        Patients = {
+            ('4Prj3A5sMvSv1sK4u5ihkzlnU', '20190129'),
+            ('HNCDL_447', '20170421'),
+            ('HNCDL_340', '20180723'),
+            ('HNCDL_141', '20160926'),
+            ('PHbmDBLzKFUqHWIbGMTmUFSmO', '20200212')
+        },
+        Segments = Segments,
+        Comparisons = Comparisons,
+        Tolerances = {0, 1, 2}
+    )
 
-    # generate_scatter()
+    generate_scatter()
 
     generate_performance()
-
-def test():
-
-    pass
 
 
 # Script
 if __name__ == '__main__':
-    # test()
     main()

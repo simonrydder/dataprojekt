@@ -1,0 +1,10 @@
+In the clinic when drawing the delineation the doctor edits one slice after another, starting from the head towards the toes (corresponding to the z-axis), 
+so instead of looking at the segmentation as one 3D image, it gives more sence to look at it as many 2D images.
+The EPL is then mathematically defined as the sum of the manually corrected segmentation delineation *A*  for a given slice *z* minus the 
+intercept between 'A' and the autosegmentation delineation *B* for a given slice *z*, for all slices *Z*.
+
+$$
+\sum_{z \in Z} A_{z} - (A_{z} \cap B_{z})
+$$
+
+The illustration below shows how *A* and *B* is defined for a given slice *z*.

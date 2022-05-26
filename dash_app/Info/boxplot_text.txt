@@ -1,0 +1,10 @@
+Below are boxplots and violinplots for every metric, comparison and segment (Organ At Risk). Boxplots provide the basic statistical values such as median, quartiles, min, max e.g. Violinplots on the other hand
+shows the distribution of data more clearly and can give a clearer idea of the variance.
+Suspected outliers are plotted as hollow points whereas the obvious ones are plotted as filled points. 
+
+* The pros of these plots are that one can get a better indication of how data is distributed and how many outliers are present. Instead of one single median value, one can get the precise
+quartiles. 
+* The cons of these plot are that it can be confusing to interpret especially with alot of outliers. 
+
+*Note*: Remember it is possible to zoom, pan, reset axes and save the image as a PNG by hovering in the upper right side of the plot. 
+

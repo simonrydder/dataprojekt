@@ -1,0 +1,7 @@
+Below are barplots of the median performance for every metric, comparison and segment (Organ At Risk). Tolerance options for segments can be toggled on and off for the metrics in which it is implemented, e.g (EPL, LineRatio and VolumeRatio).
+Median performance is chosen over mean performance, since data containts noticable outliers in which median handles better. Option to download a CSV-file with data is added below.  
+
+* The pros of these plots are that one can quickly get a brief overview and indication of the performance for the specificed arguments.
+* The cons of these plots are that a lot of information is lost, so e.g the distribution and variance of the data is hard to uncover.  
+
+*Note*: Remember it is possible to zoom, pan, reset axes and save the image as a PNG by hovering in the upper right side of the plot. 

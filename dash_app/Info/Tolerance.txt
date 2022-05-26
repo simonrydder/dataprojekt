@@ -1,0 +1,7 @@
+Due to the fact that most doctors would not take the time to move a delineation from a autosegmentation one, two or maybe even five voxels (3D-pixels), depending on the OAR,
+a tolerance is introduced for the Edited Path Length metric and therefore also for Line Ratio and Volume Ratio.
+
+The tolerance is a margin around the ground truth in which the quess from the autosegmentation is seen as perfect, or seen as intercepting with the ground truth.
+
+For a visual presentation and better understanding of how the EPL is changeing due to different tolerances please see the EPL Visualization page.
+And for a better understanding of the implementation check out the GitHub on the Home page.

@@ -1,0 +1,9 @@
+Below are scatterplots of the compared performence of segments (Organ At Risk) given the chosen comparison. These are constructed in the way that the identity line is plotted together with
+points that have x and y values corresponding to the chosen comparisons. The idea is that one easily can see where the points are distributed relative to the identity line 
+and given this distribution, the performance of the comparisons can be evaluated. 
+
+* The pros of these plots are that the performance between comparisons can better be evaluated than boxplots and it is possible to see the performance 
+between each individual data point.
+* The cons of these plots are that it doesn't provide as much information about the specific segments as a boxplot would provide e.g.
+
+*Note*: Remember it is possible to zoom, pan, reset axes and save the image as a PNG by hovering in the upper right side of the plot. 

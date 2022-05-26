@@ -1,0 +1,26 @@
+The Edited path length volume ratio (EPL_Volume) is a novel metric introduced 
+by Rydder, Kolby & Andersen and is the ratio between the added volume of 
+the edited path length and the Final segmenation volume. 
+
+Again this is a ratio meaning it is forced between 0 and 1, which makes it somewhat easy 
+to interpret the outcome of. In this case a score of 0 means that no volume was manually added to the 
+final segmentation e i. the autosegmentation was equal the final segmenation. Meanwhile a score of 1 indicates
+that all volume was added manually meaning no overlap beetween the autosegmentation and the final segmenation.
+
+Again since the doctor is editing several 2D images it can mathematically be described as the sum of 
+the added area for each slice on the z-axis, divide by the sum of the area for the final segmenation 
+for each slice on the z-axis.
+
+$$
+\frac{\sum_{z \in Z} \text{Area}\big(A_{z} - (A_{z} \cap B_{z})\big)}{\sum_{z \in Z} \text{Area}(A_{z})}
+$$
+
+
+This metric is especially great at estimating the change
+in the dosis planning of radiation  treatment, since you account for the amount of volume that is added, which is better
+than looking at the EPL for this purpose. Since adding a lot of line does not always lead to adding a lot of volume. 
+However for this implementation there is still some limitations since it does not really take into account if 
+any area is removed from the autosegmentation, hence if the final segmenation is a 
+true subset of the autosegmentation it would recieve a score of 0, 
+indicating a perfect segmentation, which would not be true. Furthermore it is not an appropiate metric to correlate with the time
+spend editing an autosegmentation.

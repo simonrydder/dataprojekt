@@ -1,0 +1,26 @@
+The Edited Path Length Line Ratio (EPL_Line) is a novel metric introduced by Rydder, Kolby & Andersen and is the ratio between the 
+Edited Path Length and the manually corrected segmentation. Conceptually, one can imagine
+it as "how much of the final correction I have drawn myself". E.g if the Line Ratio is 0, 
+the Edited Path Length must be zero (if we assume the ground truth exist for the given segmentation) and therefore
+I have not drawn anything to the final correction, because the guess is identical to the ground truth. 
+On the contrary, if the Line Ratio is 1, the Edited Path Length must be equal to the GT-segmentation, 
+which tells us that I have drawn the entire segmentation myself, so the guess had no line overlap with the GT. 
+
+Because the metric is a ratio, it is forced between 0 and 1 and can therefore be interpreted more easily, 
+as a low value suggests a high similiarity between guess and ground truth and vice versa.
+
+Again, that this is a novel metric, no such implementation of the metric exists online, 
+so we have made our own implementation of the metric in Python. Since the doctor edits many 2D images, 
+it is calculated as the sum of EPL for each slice on the z-axis, divide by the sum of the line length 
+for the ground truth segmentation for each slice on the z-axis.
+
+$$
+\frac{\sum_{z \in Z} A_{z} - (A_{z} \cap B_{z})}{\sum_{z \in Z} A_{z}}
+$$
+
+This metric is limited in the same way as the DICE metric where it is not possible to converte the value to time spent as it does not tell how much change is needed.
+Instead it is good at showing if the algorithm is guessing a large or small fraction of the organ correct or not and 
+how the workload of an organ changes with different tolerances and algorithms.
+
+Below is an illustration of how the EPL Line Ratio is calculated for one slice.
+
